@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SceneKit
 
 class Galaxy{
     internal init(stars: [Star]?) {

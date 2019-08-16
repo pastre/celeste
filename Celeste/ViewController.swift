@@ -109,7 +109,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let cameraPos = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
         
         if let selectedStar = self.currentSelectedStar{
-            selectedStar.position = SCNVector3((cameraPos.x) + (self.startDragPosition.x), selectedStar.position.y, (cameraPos.z) + self.startDragPosition.z)
+            selectedStar.position = cameraPos + SCNVector3(0.25, 0.25, 0.25)
         }
     }
     
@@ -143,5 +143,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         default:
             self.onEndDrag(endPosition: gesture.location(in: self.view))
         }
+    }
+}
+
+extension SCNVector3{
+    static func + (lhr: SCNVector3, rhr: SCNVector3) -> SCNVector3{
+        return SCNVector3(lhr.x + rhr.x, lhr.y + rhr.y, lhr.z + rhr.z)
     }
 }

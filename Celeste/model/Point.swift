@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SceneKit
 
 class Point{
     internal init(x: CGFloat?, y: CGFloat?, z: CGFloat?) {
