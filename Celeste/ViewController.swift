@@ -10,7 +10,11 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate {
+    func onTriggered() {
+        print("Saca so deu boa o gesto!!!!!!!!!!!")
+    }
+    
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -54,6 +58,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        let gesture = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
+        gesture.delegate = self
+        self.view.addGestureRecognizer(gesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -130,18 +137,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func onEndDrag(endPosition: CGPoint){
         self.currentSelectedStar = nil
     }
+//
+//    @IBAction func onLongPress(_ sender: Any) {
+//        print("Sender is", sender)
+//
+//        let gesture =  sender as! UILongPressGestureRecognizer
+//
+//        switch gesture.state {
+//        case .began:
+//            self.onStartDrag(at: gesture.location(in: self.view))
+//        case .changed: break
+//        default:
+//            self.onEndDrag(endPosition: gesture.location(in: self.view))
+//        }
+//    }
     
-    @IBAction func onLongPress(_ sender: Any) {
-        print("Sender is", sender)
-        
-        let gesture =  sender as! UILongPressGestureRecognizer
-        
-        switch gesture.state {
-        case .began:
-            self.onStartDrag(at: gesture.location(in: self.view))
-        case .changed: break
-        default:
-            self.onEndDrag(endPosition: gesture.location(in: self.view))
-        }
+    @objc func onContextMenu(_ sender: UIGestureRecognizer){
+        print("Gesture state: " , sender.state.rawValue)
     }
+    
 }

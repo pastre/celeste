@@ -18,4 +18,12 @@ protocol ContextMenuDelegate {
 
 class ContextMenu{
     
+    static let instance = ContextMenu()
+    var isHidden: Bool!
+    
+    private init(){
+        self.isHidden = true
+    }
+    
+    
 }
