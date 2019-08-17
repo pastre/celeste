@@ -11,14 +11,13 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate {
-    func onTriggered() {
-        print("Saca so deu boa o gesto!!!!!!!!!!!")
-    }
-    
     
     @IBOutlet var sceneView: ARSCNView!
     
     var currentSelectedStar: SCNNode?
+    var contextMenuNode: SCNNode?
+    let contextMenu = ContextMenu.instance
+    
     let galaxy: Galaxy = Galaxy(stars: [
         Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), child: [
             Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.5771069097, green: 0.3387015595, blue: 0.5715773573, alpha: 1), child: nil),
@@ -59,6 +58,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         sceneView.scene = scene
         
         let gesture = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
+        
         gesture.delegate = self
         self.view.addGestureRecognizer(gesture)
     }
@@ -118,6 +118,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let selectedStar = self.currentSelectedStar{
             selectedStar.position = SCNVector3((cameraPos.x) + (self.startDragPosition.x), selectedStar.position.y, (cameraPos.z) + self.startDragPosition.z)
         }
+        
+        if let contextMenu = self.contextMenuNode, let orientation = self.getCameraOrientation(){
+//            contextMenu.eulerAngles.x = orientation.normalized().x
+            var or = orientation.normalized() * 0.5
+            or.z = 0
+//            or.y = 0
+            contextMenu.eulerAngles = or
+        }
     }
     
     var startDragPosition: SCNVector3!
@@ -137,23 +145,107 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func onEndDrag(endPosition: CGPoint){
         self.currentSelectedStar = nil
     }
-//
-//    @IBAction func onLongPress(_ sender: Any) {
-//        print("Sender is", sender)
-//
-//        let gesture =  sender as! UILongPressGestureRecognizer
-//
-//        switch gesture.state {
-//        case .began:
-//            self.onStartDrag(at: gesture.location(in: self.view))
-//        case .changed: break
-//        default:
-//            self.onEndDrag(endPosition: gesture.location(in: self.view))
-//        }
-//    }
     
-    @objc func onContextMenu(_ sender: UIGestureRecognizer){
-        print("Gesture state: " , sender.state.rawValue)
+    // Chamado pelo menu de contexto
+    @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
+        if !sender.hasTriggered { return }
+//        if self.lastTranslation == nil { self.lastTranslation =  }
+        
+//        print("Gesture state: " , sender.state.rawValue)
+
     }
     
+    // MARK: - ContextMenu  gesture delegate
+    
+    // Chamada quando da o tempo minimo para abrir o menu de contexto
+    func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
+        print("Saca so deu boa o gesto!!!!!!!!!!!")
+        let vib = UIImpactFeedbackGenerator()
+        vib.impactOccurred()
+        
+        let position = gesture.location(in: self.view)
+        self.displayContextMenu(at: position)
+    }
+    
+    
+    // MARK: - ContextMenu related functions
+    
+    func displayContextMenu(at position: CGPoint){
+        let hitTest =  self.sceneView.hitTest(position, options: [:])
+        
+        if let contextMenuNode = self.contextMenuNode{
+            contextMenuNode.removeFromParentNode()
+            self.contextMenuNode = nil
+        }
+        
+        if hitTest.count == 0{
+            // Nao achou nada, mostrar menu de contexto do espaco
+            self.contextMenu.openContextMenu(mode: .galaxy)
+            
+            let ctxMenuNode = self.contextMenu.getNode()
+            guard let position = self.getLookingCameraPosition() else { return }
+            ctxMenuNode.position = position
+                
+            self.sceneView.scene.rootNode.addChildNode(ctxMenuNode)
+            self.contextMenuNode = ctxMenuNode
+            
+        } else if let hit = hitTest.first{
+            // Encontrou em alguma coisa, mostrar o menu a partir disso
+            self.contextMenu.openContextMenu(mode: .planet)
+        }
+    }
+    
+    func getLookingCameraPosition(withOffset: Float? = nil) -> SCNVector3? {
+        guard let orientation = self.getCameraOrientation() else { return nil }
+        guard var pos = self.getCameraPosition() else { return nil }
+        
+        if let offset = withOffset{
+            pos.x += offset
+            pos.y += offset
+            pos.z += offset
+        }
+        return pos + orientation.normalized() * 0.5
+//        return pos + SCNVector3(0,-0.07,0) + orientation.normalized() * 0.5
+    }
+    
+    func getCameraOrientation() -> SCNVector3?{
+        guard let frame = self.sceneView.session.currentFrame else { return nil }
+        
+        let mat = SCNMatrix4(frame.camera.transform)
+        
+        return SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+    }
+    
+    func getCameraPosition() -> SCNVector3? {
+        guard let frame = self.sceneView.session.currentFrame else { return nil }
+        let mat = SCNMatrix4(frame.camera.transform)
+        
+        return SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+        
+    }
+}
+
+extension SCNVector3{
+    static func +(_ a: SCNVector3, _ b: SCNVector3) -> SCNVector3{
+        return SCNVector3(a.x + b.x, a.y + b.y, a.z + b.z)
+    }
+    
+    func length() -> Float {
+        return sqrtf(x * x + y * y + z * z)
+    }
+    
+    func normalized() -> SCNVector3 {
+        if self.length() == 0 {
+            return self
+        }
+        
+        return self / self.length()
+    }
+}
+
+func / (left: SCNVector3, right: Float) -> SCNVector3 {
+    return SCNVector3Make(left.x / right, left.y / right, left.z / right)
+}
+func * (left: SCNVector3, right: Float) -> SCNVector3 {
+    return SCNVector3Make(left.x * right, left.y * right, left.z * right)
 }

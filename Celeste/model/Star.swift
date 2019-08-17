@@ -12,7 +12,7 @@ import SceneKit
 protocol SCNNodeTransformer{
     func getPosition() -> SCNVector3
     func getNode() -> SCNNode
-    func contains(point: CGPoint) -> Bool
+//    func contains(point: CGPoint) -> Bool
     
 }
 
