@@ -25,10 +25,24 @@
                                     <outletCollection property="gestureRecognizers" destination="vJT-aL-Kqf" appends="YES" id="tpe-NE-55Z"/>
                                 </connections>
                             </arscnView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jYd-zQ-fn0">
+                                <rect key="frame" x="365" y="856" width="39" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="39" id="HqO-tE-tPZ"/>
+                                    <constraint firstAttribute="height" constant="30" id="f4T-tq-uQm"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="2D"/>
+                                <connections>
+                                    <segue destination="R7J-vl-EDs" kind="show" animates="NO" id="7KP-e1-K1z"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="jYd-zQ-fn0" secondAttribute="trailing" constant="10" id="RoP-4a-coE"/>
+                            <constraint firstAttribute="bottom" secondItem="jYd-zQ-fn0" secondAttribute="bottom" constant="10" id="Tag-Cp-9S3"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
@@ -46,6 +60,46 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="UnF-b8-ZV1">
+            <objects>
+                <viewController id="R7J-vl-EDs" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zcO-RF-RdK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z96-VJ-eOA">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </skView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oDc-Bv-kqV">
+                                <rect key="frame" x="365" y="856" width="39" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="7th-qt-SI0"/>
+                                    <constraint firstAttribute="width" constant="39" id="AlX-pW-t41"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="3D"/>
+                                <connections>
+                                    <segue destination="BV1-FR-VrT" kind="show" animates="NO" id="rJq-02-6WH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerX" secondItem="zcO-RF-RdK" secondAttribute="centerX" id="36l-yG-rbw"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="width" secondItem="zcO-RF-RdK" secondAttribute="width" id="3DT-Di-spT"/>
+                            <constraint firstAttribute="bottom" secondItem="oDc-Bv-kqV" secondAttribute="bottom" constant="10" id="5fu-W8-hwx"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerY" secondItem="zcO-RF-RdK" secondAttribute="centerY" id="7bt-WE-csQ"/>
+                            <constraint firstAttribute="trailing" secondItem="oDc-Bv-kqV" secondAttribute="trailing" constant="10" id="Io9-ew-Tmt"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="height" secondItem="zcO-RF-RdK" secondAttribute="height" id="kQt-iR-weO"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="POZ-x9-gz6"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UT0-3r-FbF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1080" y="21"/>
         </scene>
     </scenes>
 </document>
