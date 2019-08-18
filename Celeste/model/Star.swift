@@ -82,6 +82,21 @@ class NesteableStar: Star {
         return ret
     }
     
+    
+    func getChild() -> [Star] {
+        var ret: [Star] = [Star]()
+        
+        ret.append(self)
+        
+        for i in self.child ?? []{
+            if let c = i as? NesteableStar{
+                ret.append(contentsOf: c.getChild())
+            }
+        }
+        
+        return ret
+    }
+    
 }
 
 // TODO: Mover essas classes para outros arquivos

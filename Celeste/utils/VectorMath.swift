@@ -14,6 +14,21 @@ extension SCNVector3{
         return SCNVector3(a.x + b.x, a.y + b.y, a.z + b.z)
     }
     
+    static func -(_ a: SCNVector3, _ b: SCNVector3) -> SCNVector3{
+        return SCNVector3(a.x - b.x, a.y - b.y, a.z - b.z)
+    }
+    
+    static func *(_ a: SCNVector3, _ b: SCNVector3) -> SCNVector3{
+        return SCNVector3(a.x * b.x, a.y * b.y, a.z * b.z)
+    }
+    
+    
+    static func ==(_ a: SCNVector3, _ b: SCNVector3) -> Bool{
+        return (a.x == b.x && a.y == b.y && a.z == b.z)
+    }
+    
+    
+    
     func length() -> Float {
         return sqrtf(x * x + y * y + z * z)
     }
@@ -34,3 +49,13 @@ func / (left: SCNVector3, right: Float) -> SCNVector3 {
 func * (left: SCNVector3, right: Float) -> SCNVector3 {
     return SCNVector3Make(left.x * right, left.y * right, left.z * right)
 }
+
+func + (left: Point, right: SCNVector3) -> SCNVector3{
+    return SCNVector3(left.x + right.x, left.y + right.y, (left.z ?? 0.0) +  right.z)
+}
+
+func + (left: CGFloat, right: Float) -> Float{
+    return Float(left) + right
+}
+
+

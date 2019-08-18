@@ -150,12 +150,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.currentSelectedStar = nil
     }
     
-    // Chamado pelo menu de contexto
-    @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
-        if !sender.hasTriggered { return }
-        
-    }
-    
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -187,21 +181,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.contextMenuNode = nil
         }
         
+        var position: SCNVector3!
+        var rootNode: SCNNode!
+        
         if hitTest.count == 0{
             // Nao achou nada, mostrar menu de contexto do espaco
             self.contextMenu.openContextMenu(mode: .galaxy)
             
-            let ctxMenuNode = self.contextMenu.getNode()
-            guard let position = self.getLookingCameraPosition() else { return }
-            ctxMenuNode.position = position
-                
-            self.sceneView.scene.rootNode.addChildNode(ctxMenuNode)
-            self.contextMenuNode = ctxMenuNode
-            
+            guard let pos = self.getLookingCameraPosition() else { return }
+            position = pos
+            rootNode = self.sceneView.scene.rootNode
         } else if let hit = hitTest.first{
             // Encontrou em alguma coisa, mostrar o menu a partir disso
             self.contextMenu.openContextMenu(mode: .planet)
+            guard let star = self.galaxy.getStar(by: hit.node.position) else {
+                print("Olha so ta dando ruim")
+                return
+            }
+            
+            position = SCNVector3(0, 0.25 + star.radius, 0)
+            rootNode = hit.node
         }
+        
+        
+        let ctxMenuNode = self.contextMenu.getNode()
+        ctxMenuNode.position = position
+        
+        rootNode.addChildNode(ctxMenuNode)
+        self.contextMenuNode = ctxMenuNode
+
     }
     
     func hideContextMenu(){
@@ -238,6 +246,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let mat = SCNMatrix4(frame.camera.transform)
         
         return SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+        
+    }
+    
+    // MARK: - Callbacks
+    
+    @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
+        if !sender.hasTriggered { return }
         
     }
     
