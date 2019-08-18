@@ -14,9 +14,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     @IBOutlet var sceneView: ARSCNView!
     
+    let contextMenu = ContextMenu.instance
+    
+    lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
+    lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
+    
+    
     var currentSelectedStar: SCNNode?
     var contextMenuNode: SCNNode?
-    let contextMenu = ContextMenu.instance
     
     let galaxy: Galaxy = Galaxy(stars: [
         Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), child: [
@@ -51,16 +56,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         let galaxyNode = self.galaxy.getScene()
-        
+        galaxyNode.position = SCNVector3(1, 0, -3)
         scene.rootNode.addChildNode(galaxyNode)
         
         // Set the scene to the view
         sceneView.scene = scene
         
-        let gesture = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
+        contextMenuGesture.delegate = self
+        tapGesture.delegate = self
         
-        gesture.delegate = self
-        self.view.addGestureRecognizer(gesture)
+//        contextMenuGesture.shouldRequireFailure(of: tapGesture)
+        
+        self.view.addGestureRecognizer(contextMenuGesture)
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -119,12 +127,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             selectedStar.position = SCNVector3((cameraPos.x) + (self.startDragPosition.x), selectedStar.position.y, (cameraPos.z) + self.startDragPosition.z)
         }
         
-        if let contextMenu = self.contextMenuNode, let orientation = self.getCameraOrientation(){
-//            contextMenu.eulerAngles.x = orientation.normalized().x
-            var or = orientation.normalized() * 0.5
-            or.z = 0
-//            or.y = 0
-            contextMenu.eulerAngles = or
+        if let contextMenu = self.contextMenuNode, let orientation = self.getCameraPosition(){
+            contextMenu.look(at: orientation)
         }
     }
     
@@ -149,17 +153,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Chamado pelo menu de contexto
     @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
         if !sender.hasTriggered { return }
-//        if self.lastTranslation == nil { self.lastTranslation =  }
         
-//        print("Gesture state: " , sender.state.rawValue)
-
     }
     
-    // MARK: - ContextMenu  gesture delegate
+    // MARK: - UIGestureRecognizer delegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        print(gestureRecognizer.state.rawValue, otherGestureRecognizer.state.rawValue)
+        
+        return true
+    }
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         print("Saca so deu boa o gesto!!!!!!!!!!!")
+        self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
         
@@ -195,6 +204,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
+    func hideContextMenu(){
+        self.contextMenuNode?.removeFromParentNode()
+        self.contextMenuNode = nil
+        print("Hidden context menu")
+    }
+    
+    // MARK: - Camera and world position related methods
+    
     func getLookingCameraPosition(withOffset: Float? = nil) -> SCNVector3? {
         guard let orientation = self.getCameraOrientation() else { return nil }
         guard var pos = self.getCameraPosition() else { return nil }
@@ -223,29 +240,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
         
     }
-}
-
-extension SCNVector3{
-    static func +(_ a: SCNVector3, _ b: SCNVector3) -> SCNVector3{
-        return SCNVector3(a.x + b.x, a.y + b.y, a.z + b.z)
-    }
     
-    func length() -> Float {
-        return sqrtf(x * x + y * y + z * z)
+    @objc func onTap(_ sender: UITapGestureRecognizer){
+        self.hideContextMenu()
     }
-    
-    func normalized() -> SCNVector3 {
-        if self.length() == 0 {
-            return self
-        }
-        
-        return self / self.length()
-    }
-}
-
-func / (left: SCNVector3, right: Float) -> SCNVector3 {
-    return SCNVector3Make(left.x / right, left.y / right, left.z / right)
-}
-func * (left: SCNVector3, right: Float) -> SCNVector3 {
-    return SCNVector3Make(left.x * right, left.y * right, left.z * right)
 }
