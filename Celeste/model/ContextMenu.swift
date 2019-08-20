@@ -27,13 +27,17 @@ class ContextMenu: SCNNodeTransformer{
         return SCNVector3Zero
     }
     
+    var color: UIColor!
+    
     func getNode() -> SCNNode {
         let planeGeometry = SCNPlane(width: 0.2, height: 0.2)
 //        let planeGeometry = SCNCone(topRadius: 0.1, bottomRadius: 0.3, height: 0.5)
         let material = SCNMaterial()
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        
-        view.backgroundColor = #colorLiteral(red: 0.01427965704, green: 0.1817361116, blue: 0.9321318269, alpha: 1)
+    
+    
+        view.isUserInteractionEnabled = false
+        view.backgroundColor = self.color
         
         material.diffuse.contents = view
         
@@ -60,11 +64,16 @@ class ContextMenu: SCNNodeTransformer{
         switch mode {
         case .galaxy:
             //TODO
-            break
+            self.color = #colorLiteral(red: 0.02779892646, green: 0.4870637059, blue: 0.4917319417, alpha: 1)
+            
         case .planet:
             // TODO
-            break
+            self.color = #colorLiteral(red: 0.4971322417, green: 0.1406211555, blue: 0.4916602969, alpha: 1)
+            
         }
     }
     
+    func onSelected(option: SCNNode, target: SCNNode){
+        
+    }
 }

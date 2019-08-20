@@ -24,7 +24,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     var contextMenuNode: SCNNode?
     
     let galaxy: Galaxy = Galaxy(stars: [
-        Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), child: [
+        Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.1581135321), child: [
             Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.5771069097, green: 0.3387015595, blue: 0.5715773573, alpha: 1), child: nil),
             Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 0), color: #colorLiteral(red: 0.05881351963, green: 0.180391161, blue: 0.1470588137, alpha: 1), child: nil),
             Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 0.3098039319, green: 0.1039115714, blue: 0.03911568766, alpha: 1), child: nil),
@@ -119,12 +119,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
+    var distanceToSelectedPlanet: Float?
+    
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        let cameraTransform = SCNMatrix4(frame.camera.transform)
-        let cameraPos = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
-        
-        if let selectedStar = self.currentSelectedStar{
-            selectedStar.position = SCNVector3((cameraPos.x) + (self.startDragPosition.x), selectedStar.position.y, (cameraPos.z) + self.startDragPosition.z)
+//        frame.camera.transform
+        if let selectedStar = self.currentSelectedStar {
+            let matrix = SCNMatrix4(frame.camera.transform)
+            selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
         }
         
         if let contextMenu = self.contextMenuNode, let orientation = self.getCameraPosition(){
@@ -132,14 +133,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    var startDragPosition: SCNVector3!
     
     func onStartDrag(at position: CGPoint){
         let hitResults = self.sceneView.hitTest(position, options: [:])
-        if let result = hitResults.first{
-            print("DEU  BOMMM SO ALEGRIA")
-            self.startDragPosition = result.node.position
+        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
+            self.currentSelectedStar!.removeFromParentNode()
+            pov.addChildNode(self.currentSelectedStar!)
             
         }  else {
             print("AIII NAO PEGOU NADA")
@@ -147,21 +147,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onEndDrag(endPosition: CGPoint){
+        if let selectedStar = self.currentSelectedStar{
+//            print("selectedStar.transform", selectedStar.transform)
+            let transform = selectedStar.worldTransform
+            selectedStar.removeFromParentNode()
+//            print("selectedStar.transform", selectedStar.transform)
+            self.sceneView.scene.rootNode.addChildNode(selectedStar)
+            selectedStar.setWorldTransform(transform)
+        }
+        
         self.currentSelectedStar = nil
+        self.distanceToSelectedPlanet = nil
+        
     }
     
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        print(gestureRecognizer.state.rawValue, otherGestureRecognizer.state.rawValue)
-        
         return true
     }
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
-        print("Saca so deu boa o gesto!!!!!!!!!!!")
+        
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
@@ -193,6 +202,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             rootNode = self.sceneView.scene.rootNode
         } else if let hit = hitTest.first{
             // Encontrou em alguma coisa, mostrar o menu a partir disso
+            
             self.contextMenu.openContextMenu(mode: .planet)
             guard let star = self.galaxy.getStar(by: hit.node.position) else {
                 print("Olha so ta dando ruim")
@@ -202,7 +212,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             position = SCNVector3(0, 0.25 + star.radius, 0)
             rootNode = hit.node
         }
-        
         
         let ctxMenuNode = self.contextMenu.getNode()
         ctxMenuNode.position = position
@@ -229,8 +238,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             pos.y += offset
             pos.z += offset
         }
+//        return pos * orientation.versor() * 0.5
         return pos + orientation.normalized() * 0.5
-//        return pos + SCNVector3(0,-0.07,0) + orientation.normalized() * 0.5
     }
     
     func getCameraOrientation() -> SCNVector3?{
@@ -252,11 +261,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Callbacks
     
     @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
-        if !sender.hasTriggered { return }
+        switch sender.state {
+        case .began:
+            self.onStartDrag(at: sender.location(in: self.view))
+        case .ended:
+            self.onEndDrag(endPosition: sender.location(in: self.view))
+        default:
+            break
+        }
         
     }
     
     @objc func onTap(_ sender: UITapGestureRecognizer){
+        let position = sender.location(in: self.view)
+        
+        if let hit = self.sceneView.hitTest(position, options: [:]).first{
+            if hit.node == self.contextMenuNode{
+                print("Node!!")
+            }
+        }
+        
         self.hideContextMenu()
     }
 }

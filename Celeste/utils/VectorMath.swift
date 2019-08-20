@@ -27,7 +27,9 @@ extension SCNVector3{
         return (a.x == b.x && a.y == b.y && a.z == b.z)
     }
     
-    
+    func versor() -> SCNVector3{
+        return SCNVector3(self.x > 0 ? 1 : -1, self.y > 0 ? 1 : -1, self.z > 0 ? 1 : -1)
+    }
     
     func length() -> Float {
         return sqrtf(x * x + y * y + z * z)
@@ -41,6 +43,27 @@ extension SCNVector3{
         return self / self.length()
     }
     
+    func absolute() -> SCNVector3{
+        return SCNVector3(self.x * self.x > 0 ? 1 : -1, self.y * self.y > 0 ? 1 : -1, self.z * self.z > 0 ? 1 : -1)
+    }
+    
+    func pointing(at direction: SCNVector3) -> SCNVector3{
+        return SCNVector3(self.x * (direction.x > 0 ? 1 : -1), self.y * (direction.y > 0 ? 1 : -1), self.z * (direction.z > 0 ? 1 : -1))
+    }
+    
+    func distance(to position: SCNVector3) -> Float{
+        let dist = self - position
+        return dist.length()
+    }
+    
+    func angle(with vector: SCNVector3) -> Float{
+        let dotProduct = (self.x * vector.x) + (self.y * vector.y) + (self.z * vector.z)
+        let denominador = self.length() * vector.length()
+        
+        print(dotProduct, denominador)
+        
+        return dotProduct / denominador
+    }
 }
 
 func / (left: SCNVector3, right: Float) -> SCNVector3 {
