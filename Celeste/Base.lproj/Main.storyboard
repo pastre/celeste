@@ -21,9 +21,6 @@
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                                 <gestureRecognizers/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="vJT-aL-Kqf" appends="YES" id="tpe-NE-55Z"/>
-                                </connections>
                             </arscnView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -40,11 +37,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="1000" minimumPressDuration="0.5" id="vJT-aL-Kqf">
-                    <connections>
-                        <action selector="onLongPress:" destination="BV1-FR-VrT" id="dht-rx-22Y"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
         </scene>
     </scenes>

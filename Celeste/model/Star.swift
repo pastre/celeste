@@ -12,7 +12,7 @@ import SceneKit
 protocol SCNNodeTransformer{
     func getPosition() -> SCNVector3
     func getNode() -> SCNNode
-    func contains(point: CGPoint) -> Bool
+//    func contains(point: CGPoint) -> Bool
     
 }
 
@@ -22,6 +22,11 @@ protocol SceneNodeInteractable{
 }
 
 class Orbit{
+    internal init(radius: CGFloat?, star: Moon?) {
+        self.radius = radius
+        self.star = star
+    }
+    
     var radius: CGFloat!
     var star: Moon!
 }
@@ -82,11 +87,30 @@ class NesteableStar: Star {
         return ret
     }
     
+    
+    func getChild() -> [Star] {
+        var ret: [Star] = [Star]()
+        
+        ret.append(self)
+        
+        for i in self.child ?? []{
+            if let c = i as? NesteableStar{
+                ret.append(contentsOf: c.getChild())
+            }
+        }
+        
+        return ret
+    }
+    
 }
 
 // TODO: Mover essas classes para outros arquivos
 class Planet: NesteableStar{
-    var orbits: [Orbit]!
+    init(radius: CGFloat?, center: Point?, color: UIColor?, child: [Star]?, orbits: [Orbit]){
+        super.init(radius: radius, center: center, color: color, child: child)
+        self.orbits = [Orbit]()
+    }
+    var orbits: [Orbit]?
 }
 
 class Moon: NesteableStar{

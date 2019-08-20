@@ -25,9 +25,40 @@ class Galaxy{
         return ret
     }
     
-    func getStar(by node: SCNNode) -> Star?{
+    func getStars() -> [Star]{
+        
+        var stars: [Star] = [Star]()
+        
         for star in self.stars{
-            if star.getNode() == node{
+            if let nest = star as? NesteableStar{
+                stars.append(contentsOf: nest.getChild())
+            }
+        }
+        
+        return stars
+
+    }
+    
+    func getStar(by position: SCNVector3) -> Star?{
+        
+        let stars = self.getStars()
+        for star in stars{
+            print(star.getPosition(), position)
+            if star.getPosition() == position {
+                return star
+            }
+        }
+        
+        return nil
+    }
+
+    
+    
+    func getStar(by node: SCNNode) -> Star?{
+        let stars = self.getStars()
+        for star in stars{
+            print(star.getNode(), node)
+            if star.getNode() == node {
                 return star
             }
         }
