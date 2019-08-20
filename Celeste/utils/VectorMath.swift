@@ -9,6 +9,17 @@
 import Foundation
 import SceneKit
 
+
+extension CGPoint{
+    func distance(_ b: CGPoint) -> CGFloat {
+        let a = self
+        let xDist = a.x - b.x
+        let yDist = a.y - b.y
+        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
+    }
+    
+}
+
 extension SCNVector3{
     static func +(_ a: SCNVector3, _ b: SCNVector3) -> SCNVector3{
         return SCNVector3(a.x + b.x, a.y + b.y, a.z + b.z)

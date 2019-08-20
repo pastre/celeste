@@ -22,6 +22,11 @@ protocol SceneNodeInteractable{
 }
 
 class Orbit{
+    internal init(radius: CGFloat?, star: Moon?) {
+        self.radius = radius
+        self.star = star
+    }
+    
     var radius: CGFloat!
     var star: Moon!
 }
@@ -101,7 +106,11 @@ class NesteableStar: Star {
 
 // TODO: Mover essas classes para outros arquivos
 class Planet: NesteableStar{
-    var orbits: [Orbit]!
+    init(radius: CGFloat?, center: Point?, color: UIColor?, child: [Star]?, orbits: [Orbit]){
+        super.init(radius: radius, center: center, color: color, child: child)
+        self.orbits = [Orbit]()
+    }
+    var orbits: [Orbit]?
 }
 
 class Moon: NesteableStar{

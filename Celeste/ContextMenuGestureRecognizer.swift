@@ -20,7 +20,8 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
     var hasTriggered: Bool! = false
     var parentView: UIView!
     var startLocation: CGPoint!
-        
+    
+    
     func startTimer(){
         self.timer = Timer.scheduledTimer(withTimeInterval: CONTEXT_MENU_TIMER_THRESHOLD, repeats: false, block: { (_) in
 //            self.state = .tri
@@ -43,7 +44,7 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
         
         let distance = newLocation.distance(self.startLocation)
         
-        if distance > 20{
+        if distance > 50{
             self.startTimer()
         }
         
@@ -79,12 +80,3 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
 //    override var delegate: ContextMenuGestureDelegate?
 }
 
-extension CGPoint{
-    func distance(_ b: CGPoint) -> CGFloat {
-        let a = self
-        let xDist = a.x - b.x
-        let yDist = a.y - b.y
-        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
-    }
-
-}
