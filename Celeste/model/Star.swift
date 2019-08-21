@@ -21,16 +21,6 @@ protocol SceneNodeInteractable{
     func didRelease(in location: CGPoint)
 }
 
-class Orbit{
-    internal init(radius: CGFloat?, orbiter: Star?) {
-        self.radius = radius
-        self.orbiter = orbiter
-    }
-    
-    var radius: CGFloat!
-    var orbiter: Star!
-}
-
 class Star: SCNNodeTransformer{
     
     func contains(point: CGPoint) -> Bool {

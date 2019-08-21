@@ -16,6 +16,7 @@
 		D734B87423071E0B00EFA0AD /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87323071E0B00EFA0AD /* Point.swift */; };
 		D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87623071EC500EFA0AD /* Galaxy.swift */; };
 		D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742F0CC2309C0C90041F46F /* VectorMath.swift */; };
+		D7BA9ACE230D8D54003ECAAD /* Orbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BA9ACD230D8D54003ECAAD /* Orbit.swift */; };
 		D7D651612307553C00815B15 /* ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D651602307553C00815B15 /* ContextMenu.swift */; };
 		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
@@ -33,6 +34,7 @@
 		D734B87323071E0B00EFA0AD /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		D734B87623071EC500EFA0AD /* Galaxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Galaxy.swift; sourceTree = "<group>"; };
 		D742F0CC2309C0C90041F46F /* VectorMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorMath.swift; sourceTree = "<group>"; };
+		D7BA9ACD230D8D54003ECAAD /* Orbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orbit.swift; sourceTree = "<group>"; };
 		D7D651602307553C00815B15 /* ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenu.swift; sourceTree = "<group>"; };
 		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
 				D7D651602307553C00815B15 /* ContextMenu.swift */,
+				D7BA9ACD230D8D54003ECAAD /* Orbit.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -175,6 +178,7 @@
 			files = (
 				D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */,
 				D734B87423071E0B00EFA0AD /* Point.swift in Sources */,
+				D7BA9ACE230D8D54003ECAAD /* Orbit.swift in Sources */,
 				D707F57D2305F82500B0A726 /* ViewController.swift in Sources */,
 				D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */,
 				D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */,
