@@ -25,9 +25,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
     func getDebugGalaxy() -> Galaxy{
-        let moon = Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.5771069097, green: 0.3387015595, blue: 0.5715773573, alpha: 1), child: nil)
+        let moon = Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.5771069097, green: 0.3387015595, blue: 0.5715773573, alpha: 1))
         return Galaxy(stars: [
-            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.1581135321), child: [
+            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: [
                 moon
 //                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 0), color: #colorLiteral(red: 0.05881351963, green: 0.180391161, blue: 0.1470588137, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 0.3098039319, green: 0.1039115714, blue: 0.03911568766, alpha: 1), child: nil),
@@ -41,7 +41,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 0), color: #colorLiteral(red: 0.1764705916, green: 0.4980391158, blue: 0.7568617596, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1), child: nil),
                 ],
-                   orbits: [Orbit(radius: 0.3, star: moon)]
+                   orbits: [Orbit(radius: 0.3, orbiter: moon)]
             )
             ]
         )
@@ -86,6 +86,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         // Run the view's session
         sceneView.session.run(configuration)
+        
+        self.enableAllOrbits()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -135,6 +137,54 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
         
         self.currentSelectedStar = nil
+    }
+    
+    // MARK: - Orbit helper methods
+    func createOrbit(around center: SCNNode, child: SCNNode, radius: CGFloat){
+        let orbitingNode = SCNNode()
+        orbitingNode.position = SCNVector3(radius, 0, 0)
+        child.removeFromParentNode()
+        orbitingNode.addChildNode(child)
+        let action = SCNAction.rotate(by: 3.1415, around: SCNVector3Zero, duration: 1)
+        center.addChildNode(orbitingNode)
+        orbitingNode.runAction(action)
+        
+    }
+    
+    func disableOrbit(of node: SCNNode){
+        node.removeAllActions()
+    }
+    
+    func enableAllOrbits(){
+        for star in self.galaxy.stars{
+            if let planet = star as? Planet{
+                guard let planetNode = self.getNode(star: planet) else {
+                    print("Oia so deu ruim cuzao")
+                    continue
+                }
+                
+                for orbit in planet.orbits ?? []{
+                    guard let child = self.getNode(star: orbit.orbiter) else {
+                        print("Na trave bro")
+                        continue
+                    }
+                    let action = SCNAction.rotateBy(x: 3, y: 3, z: 3, duration: 5)
+                    let worldTransform = child.worldTransform
+                    let rotator = SCNNode()
+                    
+                    child.removeFromParentNode()
+                    rotator.addChildNode(child)
+
+                    child.setWorldTransform(worldTransform)
+                    
+                    planetNode.addChildNode(rotator)
+                    rotator.position = SCNVector3Zero
+                    rotator.runAction(SCNAction.repeatForever(action))
+//                    self.createOrbit(around: planetNode, child: child, radius: planet.radius + orbit.radius)
+                    print("AEEEEEE")
+                }
+            }
+        }
     }
     
     // MARK: - UIGestureRecognizer delegate
@@ -275,5 +325,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
+    }
+    
+    func getNode(star named: Star) -> SCNNode?{
+        return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
 }

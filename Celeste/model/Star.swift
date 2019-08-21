@@ -22,13 +22,13 @@ protocol SceneNodeInteractable{
 }
 
 class Orbit{
-    internal init(radius: CGFloat?, star: Moon?) {
+    internal init(radius: CGFloat?, orbiter: Star?) {
         self.radius = radius
-        self.star = star
+        self.orbiter = orbiter
     }
     
     var radius: CGFloat!
-    var star: Moon!
+    var orbiter: Star!
 }
 
 class Star: SCNNodeTransformer{
@@ -41,6 +41,7 @@ class Star: SCNNodeTransformer{
         self.radius = radius
         self.center = center
         self.color = color
+        self.id = String.random()
     }
     
     func getPosition() -> SCNVector3 {
@@ -48,23 +49,33 @@ class Star: SCNNodeTransformer{
         return SCNVector3(self.center.x, self.center.y, self.center.z!)
     }
     
-    func getNode() -> SCNNode{
+    func getRawNode() -> SCNNode{
+        
         let sphere = SCNSphere(radius: self.radius)
         sphere.materials.first?.diffuse.contents = self.color
         
         let node  =  SCNNode(geometry: sphere)
-        
+        node.name = self.id
+    
+        return node
+
+    }
+    
+    func getNode() -> SCNNode{
+        let node = self.getRawNode()
         node.position = self.getPosition()
-        
         return node
     }
     
-    
+    static func == (_ a: Star, _ b: Star) -> Bool{
+        return a.center == b.center
+    }
     
     // Classe abstrata pra nois
     var radius: CGFloat!
     var center: Point!
     var color: UIColor!
+    var id: String!
     
 }
 
@@ -77,6 +88,7 @@ class NesteableStar: Star {
         self.child = child
     }
     
+    
     override func getNode() -> SCNNode {
         let ret = super.getNode()
         
@@ -86,7 +98,6 @@ class NesteableStar: Star {
         
         return ret
     }
-    
     
     func getChild() -> [Star] {
         var ret: [Star] = [Star]()
@@ -108,9 +119,22 @@ class NesteableStar: Star {
 class Planet: NesteableStar{
     init(radius: CGFloat?, center: Point?, color: UIColor?, child: [Star]?, orbits: [Orbit]){
         super.init(radius: radius, center: center, color: color, child: child)
-        self.orbits = [Orbit]()
+        self.orbits = orbits
     }
+    
+    override init(radius: CGFloat?, center: Point?, color: UIColor?, child: [Star]?){
+        super.init(radius: radius, center: center, color: color, child: child)
+        self.orbits = nil
+    }
+    
     var orbits: [Orbit]?
+    
+    func getOrbiters() -> [Star]?  {
+        return self.orbits?.map({ (orbit) -> Star in
+            return orbit.orbiter
+        })
+    }
+    
 }
 
 class Moon: NesteableStar{
@@ -121,4 +145,18 @@ class Moon: NesteableStar{
 
 class Asteroid: Star{
     
+}
+
+extension String {
+    
+    static func random(length: Int = 20) -> String {
+        let base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        var randomString: String = ""
+        
+        for _ in 0..<length {
+            let randomValue = arc4random_uniform(UInt32(base.count))
+            randomString += "\(base[base.index(base.startIndex, offsetBy: Int(randomValue))])"
+        }
+        return randomString
+    }
 }
