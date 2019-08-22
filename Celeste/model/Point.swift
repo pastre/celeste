@@ -10,7 +10,11 @@ import Foundation
 import SceneKit
 
 
-class Point{
+class Point: Equatable{
+    static func == (lhs: Point, rhs: Point) -> Bool {
+        return lhs.x == rhs.x  && lhs.y == rhs.y  && lhs.z == rhs.z
+    }
+    
     internal init(x: CGFloat?, y: CGFloat?, z: CGFloat?) {
         self.x = x
         self.y = y
