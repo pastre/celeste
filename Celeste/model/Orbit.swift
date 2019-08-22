@@ -9,7 +9,19 @@
 import Foundation
 import SceneKit
 
-class Orbit{
+class Orbit: SCNNodeTransformer{
+    func getPosition() -> SCNVector3 {
+        return SCNVector3Zero
+    }
+    
+    func getNode() -> SCNNode {
+        let rotationNode = SCNNode()
+        let child = self.orbiter.getNode()
+        
+        
+        return rotationNode
+    }
+    
     internal init(radius: CGFloat?, orbiter: Star?) {
         self.radius = radius
         self.orbiter = orbiter

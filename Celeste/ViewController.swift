@@ -25,10 +25,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
     func getDebugGalaxy() -> Galaxy{
-        let moon = Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.5771069097, green: 0.3387015595, blue: 0.5715773573, alpha: 1))
+        
+        let moons = [
+             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 1, green: 1, blue: 0, alpha: 1)),
+             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)),
+             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1)),
+             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1)),
+             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: -1), color: #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1)),
+             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: -1), color: #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)),
+        ]
+        
+        let orbits = moons.map { (star) -> Orbit in
+            return Orbit(radius: CGFloat.random(in: 0.001...0.2), orbiter: star)
+        }
+        
         return Galaxy(stars: [
-            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: [
-                moon
+            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: moons,
+//                [
+                
 //                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 0), color: #colorLiteral(red: 0.05881351963, green: 0.180391161, blue: 0.1470588137, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 0.3098039319, green: 0.1039115714, blue: 0.03911568766, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 0), color: #colorLiteral(red: 0.1194117719, green: 0.1156861766, blue: 0.06666667014, alpha: 1), child: nil),
@@ -40,8 +54,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 0), color: #colorLiteral(red: 0.1194117719, green: 0.1156861766, blue: 0.06666667014, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 0), color: #colorLiteral(red: 0.1764705916, green: 0.4980391158, blue: 0.7568617596, alpha: 1), child: nil),
 //                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1), child: nil),
-                ],
-                   orbits: [Orbit(radius: 0.3, orbiter: moon)]
+//                ],
+                   orbits: orbits
             )
             ]
         )
@@ -126,7 +140,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    func onEndDrag(endPosition: CGPoint){
+    func onEndDrag(){
         if let selectedStar = self.currentSelectedStar{
 //            print("selectedStar.transform", selectedStar.transform)
             let transform = selectedStar.worldTransform
@@ -158,7 +172,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func enableAllOrbits(){
         for star in self.galaxy.stars{
             if let planet = star as? Planet{
-                guard let planetNode = self.getNode(star: planet) else {
+                guard let parentNode = self.getNode(star: planet) else {
                     print("Oia so deu ruim cuzao")
                     continue
                 }
@@ -168,18 +182,41 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                         print("Na trave bro")
                         continue
                     }
-                    let action = SCNAction.rotateBy(x: 3, y: 3, z: 3, duration: 5)
+                    var x: CGFloat = 0, y: CGFloat = 0, z: CGFloat = 0
+                    let r = Int.random(in: 0...1)
+                    if r == 0{
+                        x = CGFloat.random(in: -0.5...0.5)
+                        x = 1
+                    } else if r == 1{
+                        y = CGFloat.random(in: -0.5...0.5)
+                        y = 1
+                    }else{
+                        z = CGFloat.random(in: -0.5...0.5)
+                    }
+                    
                     let worldTransform = child.worldTransform
                     let rotator = SCNNode()
+                    let inclinator = SCNNode()
+                    
                     
                     child.removeFromParentNode()
+                    
                     rotator.addChildNode(child)
 
                     child.setWorldTransform(worldTransform)
                     
-                    planetNode.addChildNode(rotator)
                     rotator.position = SCNVector3Zero
-                    rotator.runAction(SCNAction.repeatForever(action))
+                    inclinator.addChildNode(rotator)
+                    
+                    inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
+                    
+                    parentNode.addChildNode(inclinator)
+                    
+                    let rotateAction = SCNAction.rotate(by: CGFloat.pi, around: inclinator.position, duration: 3)
+                    let foreverAction = SCNAction.repeatForever(rotateAction)
+                    
+                    rotator.runAction(foreverAction)
+                    
 //                    self.createOrbit(around: planetNode, child: child, radius: planet.radius + orbit.radius)
                     print("AEEEEEE")
                 }
@@ -197,12 +234,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         
+        self.onEndDrag()
+        
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
         
         let position = gesture.location(in: self.view)
         self.displayContextMenu(at: position)
+        
     }
     
     
@@ -243,6 +283,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         ctxMenuNode.position = position
         
         rootNode.addChildNode(ctxMenuNode)
+        
+        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
+        it.isGimbalLockEnabled = true
+        
+        rootNode.constraints = [it]
+        return
+            
         self.contextMenuNode = ctxMenuNode
 
     }
@@ -291,7 +338,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         case .began:
             self.onStartDrag(at: sender.location(in: self.view))
         case .ended:
-            self.onEndDrag(endPosition: sender.location(in: self.view))
+            self.onEndDrag()
         default:
             break
         }
@@ -329,5 +376,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
+    }
+}
+
+
+extension UIColor {
+    
+    class func randomColor(randomAlpha randomApha:Bool = false)->UIColor{
+        
+        let redValue = CGFloat(arc4random_uniform(255)) / 255.0;
+        let greenValue = CGFloat(arc4random_uniform(255)) / 255.0;
+        let blueValue = CGFloat(arc4random_uniform(255)) / 255.0;
+        let alphaValue = randomApha ? CGFloat(arc4random_uniform(255)) / 255.0 : 1;
+        
+        return UIColor(red: redValue, green: greenValue, blue: blueValue, alpha: alphaValue)
+        
     }
 }
