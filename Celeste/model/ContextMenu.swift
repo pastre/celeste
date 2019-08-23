@@ -25,8 +25,6 @@ protocol ContextMenuDelegate {
 }
 
 class ContextMenu: SCNNodeTransformer{
-
-    
     
     static let instance = ContextMenu()
     var mode: ContextMenuMode!
@@ -92,6 +90,8 @@ class ContextMenu: SCNNodeTransformer{
         bgMaterial.writesToDepthBuffer = false
         bgMaterial.diffuse.contents = UIColor.black
         
+        
+        
         background.cornerRadius = 50
         background.firstMaterial = bgMaterial
         
@@ -99,8 +99,14 @@ class ContextMenu: SCNNodeTransformer{
         ret.addChildNode(labelNode)
         
         labelNode.scale = SCNVector3(0.008, 0.008, 0.008)
-        labelNode.position = SCNVector3(0.2, 0, 0)
+        
+        let textHeight = (text.boundingBox.max - text.boundingBox.min).y * 0.008
+        print("textHeight", textHeight)
+        labelNode.position = SCNVector3(0.01, 0, 0)
+        backgroundNode.position = SCNVector3(0, -textHeight, 0)
         backgroundNode.transform = SCNMatrix4Rotate(backgroundNode.transform, -Float.pi/2, 0, 0, 1)
+        
+        
         
         ret.name = "Opcao: \(option.rawValue)"
         return ret
@@ -133,6 +139,7 @@ class ContextMenu: SCNNodeTransformer{
         return SCNVector3Zero
     }
     
+    
     func getNode() -> SCNNode {
         return self.buildGalaxyMenu()
         
@@ -151,5 +158,133 @@ class ContextMenu: SCNNodeTransformer{
         
         
         return planeNode
+    }
+}
+
+extension ContextMenu{
+    
+    func getSelector() -> UIView{
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let imageView: UIImageView = {
+            let img = UIImage(named: "planetContextMenuBg")
+            let view = UIImageView(image: img)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            return view
+        }()
+        
+        let picker1: WheelPicker = {
+            let picker = WheelPicker()
+            
+            picker.translatesAutoresizingMaskIntoConstraints = false
+            picker.delegate = self
+            picker.dataSource = self
+            
+            return picker
+        }()
+        
+        
+        let picker2: WheelPicker = {
+            let picker = WheelPicker()
+            
+            picker.translatesAutoresizingMaskIntoConstraints = false
+            picker.delegate = self
+            picker.dataSource = self
+            
+            return picker
+        }()
+        
+        
+        let picker3: WheelPicker = {
+            let picker = WheelPicker()
+            
+            picker.translatesAutoresizingMaskIntoConstraints = false
+            picker.delegate = self
+            picker.dataSource = self
+            
+            return picker
+        }()
+        
+        
+        view.addSubview(imageView)
+        view.addSubview(picker1)
+        view.addSubview(picker2)
+        view.addSubview(picker3)
+        
+        imageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        imageView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        imageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 293/414).isActive = true
+        
+        picker1.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        picker1.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        picker1.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
+        picker1.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1).isActive = true
+
+        
+        picker2.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        picker2.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        picker2.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
+        picker2.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1).isActive = true
+
+        
+        picker3.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        picker3.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        picker3.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        picker3.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1).isActive = true
+
+        
+        return view
+    }
+    
+    func getView() -> UIView{
+        let view = UIView()
+        
+//        let firstLayer = self.
+        
+        return self.getSelector()
+    }
+    
+}
+
+extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
+    func numberOfItems(_ wheelPicker: WheelPicker) -> Int {
+        return 100
+    }
+    
+    func imageFor(_ wheelPicker: WheelPicker, at index: Int) -> UIImage {
+        let rand = Int.random(in: 0...5)
+        let img = UIImage(named: "planet\(rand)") ?? UIImage(named: "planet0")!
+        return resizeImage(image: img, newWidth: 50) ?? UIImage(named: "planet1")!
+    }
+    
+    func wheelPicker(_ wheelPicker: WheelPicker, configureLabel label: UILabel, at index: Int) {
+        label.textColor = UIColor.cyan
+    }
+   
+}
+
+
+
+func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
+    
+    let scale = newWidth / image.size.width
+    let newHeight = image.size.height * scale
+    
+    UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+    image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    
+    return newImage
+}
+
+extension UIView {
+    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
     }
 }

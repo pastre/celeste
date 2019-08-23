@@ -21,6 +21,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     var currentSelectedStar: SCNNode?
     var contextMenuNode: SCNNode?
+    var contextMenuView: UIView?
     
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
@@ -234,19 +235,39 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         
-        self.onEndDrag()
+        
         
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
         
         let position = gesture.location(in: self.view)
-        self.displayContextMenu(at: position)
+        self.displayUIContextMenu(at: position)
         
     }
     
     
     // MARK: - ContextMenu related functions
+    
+    func displayUIContextMenu(at position: CGPoint){
+        let menu = self.contextMenu.getView()
+        
+        self.view.addSubview(menu)
+        
+        
+        menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
+        
+        self.view.bringSubviewToFront(menu)
+        
+        
+//        menu.roundCorners(corners: [.topLeft, .topRight], radius: 8)
+        
+        self.contextMenuView = menu
+        
+    }
     
     func displayContextMenu(at position: CGPoint){
         let hitTest =  self.sceneView.hitTest(position, options: [:])
@@ -297,6 +318,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func hideContextMenu(){
         self.contextMenuNode?.removeFromParentNode()
         self.contextMenuNode = nil
+        
+        self.contextMenuView?.removeFromSuperview()
+        self.contextMenuView = nil
         print("Hidden context menu")
     }
     
