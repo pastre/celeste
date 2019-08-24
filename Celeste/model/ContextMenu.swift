@@ -27,7 +27,7 @@ protocol ContextMenuDelegate {
 class ContextMenu: SCNNodeTransformer{
     
     
-    lazy var picker3: WheelPicker = {
+    lazy var planetPicker: WheelPicker = {
         let picker = WheelPicker()
         
         picker.translatesAutoresizingMaskIntoConstraints = false
@@ -38,7 +38,7 @@ class ContextMenu: SCNNodeTransformer{
     }()
     
     
-    lazy var picker1: WheelPicker = {
+    lazy var colorPicker: WheelPicker = {
         let picker = WheelPicker()
         
         picker.translatesAutoresizingMaskIntoConstraints = false
@@ -226,19 +226,19 @@ extension ContextMenu{
         
         
         view.addSubview(imageView)
-        view.addSubview(picker1)
+        view.addSubview(colorPicker)
         view.addSubview(slider)
-        view.addSubview(picker3)
+        view.addSubview(planetPicker)
         
         imageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         imageView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         imageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 293/414).isActive = true
         
-        picker3.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        picker3.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        picker3.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
-        picker3.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25).isActive = true
+        planetPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        planetPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        planetPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
+        planetPicker.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25).isActive = true
 
 //
         slider.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -247,10 +247,10 @@ extension ContextMenu{
         slider.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25).isActive = true
 //        slider.widthAnchor.cons
         
-        picker1.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        picker1.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        picker1.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
-        picker1.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25).isActive = true
+        colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        colorPicker.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25).isActive = true
         
         gesture.name =  "ContextMenuGesture"
         view.addGestureRecognizer(gesture)
@@ -274,7 +274,7 @@ extension ContextMenu{
 
 extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
     func numberOfItems(_ wheelPicker: WheelPicker) -> Int {
-        if wheelPicker == self.picker1{
+        if wheelPicker == self.colorPicker{
             return 100
         }
         
@@ -283,7 +283,7 @@ extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
     
     
     func imageFor(_ wheelPicker: WheelPicker, at index: Int) -> UIImage {
-        if wheelPicker == self.picker1{
+        if wheelPicker == self.colorPicker{
             let rand = Int.random(in: 0...5)
             let img = UIImage(named: "planet\(rand)") ?? UIImage(named: "planet0")!
             
