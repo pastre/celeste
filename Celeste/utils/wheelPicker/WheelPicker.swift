@@ -35,6 +35,10 @@ public class WheelPicker: UIView {
     weak open var delegate: WheelPickerDelegate?
     weak open var dataSource: WheelPickerDataSource?
     
+    static let DEFAULT_ICON_SIZE: CGFloat = 40
+    static let SELECTED_ICON_SIZE: CGFloat = 55
+    static let ITEM_SPACING: CGFloat = 30
+    
     /// font item
     open var font = UIFont.systemFont(ofSize: 20.0)
     
@@ -398,11 +402,10 @@ extension WheelPicker: UICollectionViewDataSource {
             cell.imageView.isHidden = false
             
             if selectedItem == indexPath.item{
-                image = resizeImage(image: image, newWidth: 80)!
+                image = resizeImage(image: image, newWidth: WheelPicker.SELECTED_ICON_SIZE)!
                 
-                print("OITENTA")
             } else {
-                image = resizeImage(image: image, newWidth: 50)!
+                image = resizeImage(image: image, newWidth: WheelPicker.DEFAULT_ICON_SIZE)!
             }
             
             cell.imageView.image = image
@@ -489,14 +492,14 @@ extension WheelPicker: UICollectionViewDelegateFlowLayout {
         }
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, cx section: Int) -> CGFloat {
         
-        return 10.0
+        return WheelPicker.ITEM_SPACING
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         
-        return 10.0
+        return WheelPicker.ITEM_SPACING
     }
 }
 
@@ -552,14 +555,14 @@ extension WheelPicker: UIScrollViewDelegate {
                     
                     guard let imageCell = cell as? WheelPickerCell else { return }
                     
-                    imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: 80)
+                    imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: WheelPicker.SELECTED_ICON_SIZE)
                     
                     prevIndex = indexPath.row
                     
                     for cell in cells{
                         guard let imageCell = cell as? WheelPickerCell else { continue }
                         if self.collectionView.indexPath(for: imageCell) == indexPath { continue }
-                        imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: 50)
+                        imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: WheelPicker.DEFAULT_ICON_SIZE)
                     
                     }
                 }

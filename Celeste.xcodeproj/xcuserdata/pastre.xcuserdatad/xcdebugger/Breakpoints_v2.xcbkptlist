@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Celeste/ViewController.swift"
-            timestampString = "588291758.483546"
+            timestampString = "588378935.2648129"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
+            startingLineNumber = "282"
+            endingLineNumber = "282"
             landmarkName = "displayContextMenu(at:)"
             landmarkType = "7">
          </BreakpointContent>

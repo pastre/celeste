@@ -91,6 +91,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.view.addGestureRecognizer(contextMenuGesture)
         self.view.addGestureRecognizer(tapGesture)
+        
+        self.contextMenuGesture.cancelsTouchesInView = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -228,9 +230,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
+        if otherGestureRecognizer.name == "ContextMenuGesture"{
+           return false
+        }
+//        if (self.contextMenuView?.frame.contains(gestureRecognizer.location(in: self.view))) ?? false{
+//            return false
+//        }
         return true
     }
+    
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
@@ -377,8 +385,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 print("Node!!")
             }
         }
+//        let isInView = self.contextMenuView?.frame.contains(position) ?? false
+//        print("isInView", isInView, self.contextMenuView?.frame.contains(position), self.contextMenuView?.frame, position, self.contextMenuView?.bounds)
+//        if !(isInView ?? true) {
+            self.hideContextMenu()
+//        }
         
-        self.hideContextMenu()
     }
     
     // Mark: - ARSceneView interruption delegates
