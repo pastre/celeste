@@ -199,8 +199,6 @@ class ContextMenu: SCNNodeTransformer{
 
 extension ContextMenu{
     
-    
-    
     func getSelector() -> UIView{
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -208,9 +206,10 @@ extension ContextMenu{
         let gesture = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
         
         let bgImageView: UIImageView = {
-            let img = UIImage(named: "planetContextMenuBg")
-            let view = UIImageView(image: img)
+            let view = UIImageView(image: UIImage(named: "planetContextMenuBg"))
+            
             view.translatesAutoresizingMaskIntoConstraints = false
+            
             return view
         }()
         
@@ -220,7 +219,6 @@ extension ContextMenu{
             label.translatesAutoresizingMaskIntoConstraints = false
             label.text = "+"
             label.textColor = UIColor.white
-            
             
             return label
         }()
@@ -347,27 +345,4 @@ extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
    
 }
 
-
-
-func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
-    
-    let scale = newWidth / image.size.width
-    let newHeight = image.size.height * scale
-    
-    UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
-    image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
-    let newImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    return newImage
-}
-
-extension UIView {
-    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        layer.mask = mask
-    }
-}
 

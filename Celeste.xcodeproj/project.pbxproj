@@ -18,6 +18,7 @@
 		D7332424231073FB00493865 /* WheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7332423231073FB00493865 /* WheelPicker.swift */; };
 		D73324262310741A00493865 /* WheelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324252310741A00493865 /* WheelPickerCell.swift */; };
 		D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */; };
+		D733242A23123A0800493865 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242923123A0800493865 /* Extensions.swift */; };
 		D734B87423071E0B00EFA0AD /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87323071E0B00EFA0AD /* Point.swift */; };
 		D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87623071EC500EFA0AD /* Galaxy.swift */; };
 		D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742F0CC2309C0C90041F46F /* VectorMath.swift */; };
@@ -42,6 +43,7 @@
 		D7332423231073FB00493865 /* WheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPicker.swift; sourceTree = "<group>"; };
 		D73324252310741A00493865 /* WheelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCell.swift; sourceTree = "<group>"; };
 		D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCollectionViewLayout.swift; sourceTree = "<group>"; };
+		D733242923123A0800493865 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D734B87323071E0B00EFA0AD /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		D734B87623071EC500EFA0AD /* Galaxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Galaxy.swift; sourceTree = "<group>"; };
 		D742F0CC2309C0C90041F46F /* VectorMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorMath.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 			children = (
 				D7332422231073E900493865 /* wheelPicker */,
 				D742F0CC2309C0C90041F46F /* VectorMath.swift */,
+				D733242923123A0800493865 /* Extensions.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 				D7D651612307553C00815B15 /* ContextMenu.swift in Sources */,
 				D7332424231073FB00493865 /* WheelPicker.swift in Sources */,
 				D73324262310741A00493865 /* WheelPickerCell.swift in Sources */,
+				D733242A23123A0800493865 /* Extensions.swift in Sources */,
 				D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */,
 				D733242123106EC300493865 /* PlanetContextMenu.swift in Sources */,
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
