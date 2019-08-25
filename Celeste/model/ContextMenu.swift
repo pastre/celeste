@@ -21,11 +21,29 @@ enum ContextMenuOption:String, CaseIterable{
 }
 
 protocol ContextMenuDelegate {
-    func onOption(option: ContextMenuOption)
+    func onNewPlanetUpdated(planetNode: SCNNode)
 }
 
 class ContextMenu: SCNNodeTransformer{
     
+    
+    var currentModel: SCNNode? {
+        didSet{
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+        }
+    }
+    
+    var currentColor: UIColor? {
+        didSet{
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+        }
+    }
+    
+    var currentRadius: Float? {
+        didSet{
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+        }
+    }
     
     lazy var planetPicker: WheelPicker = {
         let picker = WheelPicker()
@@ -52,17 +70,21 @@ class ContextMenu: SCNNodeTransformer{
     
     lazy var slider: UISlider = {
         let ret = UISlider()
+        
         ret.translatesAutoresizingMaskIntoConstraints = false
         ret.minimumValue = 1
         ret.maximumValue = 5
         ret.value = 3
+        ret.addTarget(self, action: #selector(self.onSliderChanged(_:)), for: .valueChanged)
+        
         return ret
     }()
 
     
     let colors: [UIColor] = [#colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1), #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1), #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1), #colorLiteral(red: 0.3176470697, green: 0.07450980693, blue: 0.02745098062, alpha: 1), #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1), #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1), #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), ]
-    
     static let instance = ContextMenu()
+    
+    var delegate: ContextMenuDelegate?
     var mode: ContextMenuMode!
     var isHidden: Bool!
     var color: UIColor!
@@ -106,10 +128,6 @@ class ContextMenu: SCNNodeTransformer{
             self.color = #colorLiteral(red: 0.4971322417, green: 0.1406211555, blue: 0.4916602969, alpha: 1)
             
         }
-    }
-    
-    func onSelected(option: SCNNode, target: SCNNode){
-        
     }
     
     func buildOption(option: ContextMenuOption) -> SCNNode{
@@ -175,8 +193,21 @@ class ContextMenu: SCNNodeTransformer{
         return SCNVector3Zero
     }
     
+    func getNewPlanetNode() -> SCNNode{
+        let node = SCNNode()
+        
+        let model = SCNSphere(radius: CGFloat(0.1 * (self.currentRadius ?? 1)))
+//        let texture =  // todo
+        let modelNode = SCNNode(geometry: model)
+        print("The color im setting is", self.currentColor  )
+        modelNode.geometry?.firstMaterial?.diffuse.contents = self.currentColor
+        
+        node.addChildNode(modelNode)
+        return node
+    }
     
     func getNode() -> SCNNode {
+        return getNewPlanetNode()
         return self.buildGalaxyMenu()
         
         //        let planeGeometry = SCNPlane(width: 0.2, height: 0.2)
@@ -194,6 +225,10 @@ class ContextMenu: SCNNodeTransformer{
         
         
         return planeNode
+    }
+    
+    @objc func onSliderChanged(_ sender: UISlider){
+        self.currentRadius = sender.value
     }
 }
 
@@ -245,20 +280,20 @@ extension ContextMenu{
         bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         bgImageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 293/414).isActive = true
         
-        self.planetPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        self.planetPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        self.planetPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
-        self.planetPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
+        self.colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
+        self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
 
         self.slider.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         self.slider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
         self.slider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
         self.slider.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
         
-        self.colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
-        self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
+        self.planetPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        self.planetPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        self.planetPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        self.planetPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
         
         plusHintLabel.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
         plusHintLabel.leftAnchor.constraint(equalTo: slider.rightAnchor, constant: 10).isActive = true
@@ -296,17 +331,28 @@ extension ContextMenu{
 }
 
 extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
+    
+    
     func numberOfItems(_ wheelPicker: WheelPicker) -> Int {
-        if wheelPicker == self.colorPicker{
+        if wheelPicker == self.planetPicker{
             return 100
         }
         
         return self.colors.count
     }
     
+    func wheelPicker(_ wheelPicker: WheelPicker, didSelectItemAt index: Int) {
+        if wheelPicker == self.colorPicker{
+            self.currentColor = self.colors[index]
+            print("new color is", self.currentColor?.cgColor)
+        }else{
+            self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
+        }
+    }
+    
     
     func imageFor(_ wheelPicker: WheelPicker, at index: Int) -> UIImage {
-        if wheelPicker == self.colorPicker{
+        if wheelPicker == self.planetPicker{
             let rand = Int.random(in: 0...5)
             let img = UIImage(named: "planet\(rand)") ?? UIImage(named: "planet0")!
             

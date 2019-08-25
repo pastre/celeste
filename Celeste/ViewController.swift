@@ -10,7 +10,17 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate {
+   
+    
+    func onNewPlanetUpdated(planetNode: SCNNode) {
+        print("Setting planet node", planetNode.geometry)
+        
+        self.contextMenuNode?.removeFromParentNode()
+        self.contextMenuNode = planetNode
+        self.sceneView.pointOfView?.addChildNode(self.contextMenuNode!)
+
+    }
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -63,13 +73,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         let galaxyNode = self.galaxy.getScene()
-        galaxyNode.position = SCNVector3(1, 0, -3)
+        galaxyNode.position = SCNVector3(0, 0, -4)
         scene.rootNode.addChildNode(galaxyNode)
         
         // Set the scene to the view
         sceneView.scene = scene
         
         contextMenuGesture.delegate = self
+        self.contextMenu.delegate = self
         tapGesture.delegate = self
         
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
@@ -108,8 +119,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
         }
         
-        if let contextMenu = self.contextMenuNode, let orientation = self.getCameraPosition(){
-            contextMenu.look(at: orientation)
+        if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
+        
+            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -2)
         }
     }
     
@@ -309,6 +321,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func hideContextMenu(){
+        print("self.contextMenuNode", self.contextMenuNode)
         self.contextMenuNode?.removeFromParentNode()
         self.contextMenuNode = nil
         
