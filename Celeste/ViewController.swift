@@ -15,7 +15,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func onNewPlanetUpdated(planetNode: SCNNode) {
         print("Setting planet node", planetNode.geometry)
-        
+        planetNode.removeFromParentNode()
         self.contextMenuNode?.removeFromParentNode()
         self.contextMenuNode = planetNode
         self.sceneView.pointOfView?.addChildNode(self.contextMenuNode!)
@@ -73,7 +73,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         let galaxyNode = self.galaxy.getScene()
-        galaxyNode.position = SCNVector3(0, 0, -4)
+        galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
         scene.rootNode.addChildNode(galaxyNode)
         
         // Set the scene to the view
@@ -120,8 +120,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
         
         if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
-        
-            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -2)
+//            contextMenu.setWorldTransform(SCNMatrix4Translate(orientation.worldTransform, 0, 0, -3))
+            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -3)
         }
     }
     
@@ -248,6 +248,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         let position = gesture.location(in: self.view)
         self.displayUIContextMenu(at: position)
+        displaySceneContextMenu(at: position )
         
     }
     
@@ -255,6 +256,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - ContextMenu related functions
     
     func displayUIContextMenu(at position: CGPoint){
+        self.hideContextMenu()
         let menu = self.contextMenu.getView()
         
         self.view.addSubview(menu)
@@ -274,49 +276,51 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    func displayContextMenu(at position: CGPoint){
+    func displaySceneContextMenu(at position: CGPoint){
         let hitTest =  self.sceneView.hitTest(position, options: [:])
-        
-        if let contextMenuNode = self.contextMenuNode{
-            contextMenuNode.removeFromParentNode()
-            self.contextMenuNode = nil
-        }
-        
-        var position: SCNVector3!
-        var rootNode: SCNNode!
-        
+//
+//        if let contextMenuNode = self.contextMenuNode{
+//            contextMenuNode.removeFromParentNode()
+//            self.contextMenuNode = nil
+//        }
+//
+//        var position: SCNVector3!
+//        var rootNode: SCNNode!
+//
         if hitTest.count == 0{
             // Nao achou nada, mostrar menu de contexto do espaco
-            self.contextMenu.openContextMenu(mode: .galaxy)
-            
-            guard let pos = self.getLookingCameraPosition() else { return }
-            position = pos
-            rootNode = self.sceneView.scene.rootNode
+//            self.contextMenu.openContextMenu(mode: .galaxy)
+//
+//            guard let pos = self.getLookingCameraPosition() else { return }
+//            position = pos
+//            rootNode = self.sceneView.scene.rootNode
         } else if let hit = hitTest.first{
             // Encontrou em alguma coisa, mostrar o menu a partir disso
-            
+
+            let node = self.contextMenu.getNode()
+            self.onNewPlanetUpdated(planetNode: node)
             self.contextMenu.openContextMenu(mode: .planet)
-            guard let star = self.galaxy.getStar(by: hit.node.position) else {
-                print("Olha so ta dando ruim")
-                return
-            }
-            
-            position = SCNVector3(0, 0.25 + star.radius, 0)
-            rootNode = hit.node
+//            guard let star = self.galaxy.getStar(by: hit.node.position) else {
+//                print("Olha so ta dando ruim")
+//                return
+//            }
+//
+//            position = SCNVector3(0, 0.25 + star.radius, 0)
+//            rootNode = hit.node
         }
-        
-        let ctxMenuNode = self.contextMenu.getNode()
-        ctxMenuNode.position = position
-        
-        rootNode.addChildNode(ctxMenuNode)
-        
-        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
-        it.isGimbalLockEnabled = true
-        
-        rootNode.constraints = [it]
-        return
-            
-        self.contextMenuNode = ctxMenuNode
+//
+//        let ctxMenuNode = self.contextMenu.getNode()
+//        ctxMenuNode.position = position
+//
+//        rootNode.addChildNode(ctxMenuNode)
+//
+//        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
+//        it.isGimbalLockEnabled = true
+//
+//        rootNode.constraints = [it]
+//        return
+//
+//        self.contextMenuNode = ctxMenuNode
 
     }
     
@@ -386,7 +390,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        let isInView = self.contextMenuView?.frame.contains(position) ?? false
 //        print("isInView", isInView, self.contextMenuView?.frame.contains(position), self.contextMenuView?.frame, position, self.contextMenuView?.bounds)
 //        if !(isInView ?? true) {
+        if !((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
             self.hideContextMenu()
+        }
 //        }
         
     }
@@ -411,5 +417,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
+    
+    
 }
 

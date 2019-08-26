@@ -33,7 +33,7 @@ class ContextMenu: SCNNodeTransformer{
         }
     }
     
-    var currentColor: UIColor? {
+    var currentColor: Color? = .purple {
         didSet{
             self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
         }
@@ -81,7 +81,7 @@ class ContextMenu: SCNNodeTransformer{
     }()
 
     
-    let colors: [UIColor] = [#colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1), #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1), #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1), #colorLiteral(red: 0.3176470697, green: 0.07450980693, blue: 0.02745098062, alpha: 1), #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1), #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1), #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), ]
+    let colors: [UIColor] = [#colorLiteral(red: 0.1725490196, green: 0.6039215686, blue: 1, alpha: 1), #colorLiteral(red: 0.4392156863, green: 0.7529411765, blue: 0.3098039216, alpha: 1), #colorLiteral(red: 0.9921568627, green: 0.7960784314, blue: 0.3568627451, alpha: 1), #colorLiteral(red: 0.9882352941, green: 0.5490196078, blue: 0.1960784314, alpha: 1), #colorLiteral(red: 0.9333333333, green: 0.2862745098, blue: 0.3411764706, alpha: 1), #colorLiteral(red: 0.7882352941, green: 0.03529411765, blue: 0.4352941176, alpha: 1), #colorLiteral(red: 0.631372549, green: 0.03921568627, blue: 0.7294117647, alpha: 1) ]
     static let instance = ContextMenu()
     
     var delegate: ContextMenuDelegate?
@@ -193,21 +193,24 @@ class ContextMenu: SCNNodeTransformer{
         return SCNVector3Zero
     }
     
-    func getNewPlanetNode() -> SCNNode{
+    func getNewPlanetNode() -> SCNNode? {
         let node = SCNNode()
+//        let scene = SCNScene(named: "art.scnassets/models.scn")!
+//        let modelName = "gasGiant"
+       
         
-        let model = SCNSphere(radius: CGFloat(0.1 * (self.currentRadius ?? 1)))
-//        let texture =  // todo
-        let modelNode = SCNNode(geometry: model)
-        print("The color im setting is", self.currentColor  )
-        modelNode.geometry?.firstMaterial?.diffuse.contents = self.currentColor
         
-        node.addChildNode(modelNode)
-        return node
+        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
+        
+//        model.transform = node.tra
+        node.addChildNode(model)
+        model.worldPosition = SCNVector3(0, 0, 0 )
+        
+        return model
     }
     
     func getNode() -> SCNNode {
-        return getNewPlanetNode()
+        return getNewPlanetNode() ?? SCNNode()
         return self.buildGalaxyMenu()
         
         //        let planeGeometry = SCNPlane(width: 0.2, height: 0.2)
@@ -343,8 +346,8 @@ extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
     
     func wheelPicker(_ wheelPicker: WheelPicker, didSelectItemAt index: Int) {
         if wheelPicker == self.colorPicker{
-            self.currentColor = self.colors[index]
-            print("new color is", self.currentColor?.cgColor)
+            self.currentColor = Color.allCases[index]
+            
         }else{
             self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
         }

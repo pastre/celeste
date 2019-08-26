@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Celeste/ViewController.swift"
-            timestampString = "588381714.2905951"
+            filePath = "Celeste/PlanetProvider.swift"
+            timestampString = "588545337.58319"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
-            landmarkName = "displayContextMenu(at:)"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "getPlanet(named:color:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Celeste/PlanetProvider.swift"
+            timestampString = "588545337.583485"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "getPlanet(named:color:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

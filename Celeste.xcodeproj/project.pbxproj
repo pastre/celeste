@@ -28,7 +28,12 @@
 		D7D651612307553C00815B15 /* ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D651602307553C00815B15 /* ContextMenu.swift */; };
 		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
 		D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DABAAC2312FE970015A0F4 /* ModelOption.swift */; };
+		D7DABAB4231447FF0015A0F4 /* melom.mtl in Resources */ = {isa = PBXBuildFile; fileRef = D7DABAB2231447FE0015A0F4 /* melom.mtl */; };
+		D7DABAB623144A180015A0F4 /* melomEixotrocado.dae in Resources */ = {isa = PBXBuildFile; fileRef = D7DABAB523144A180015A0F4 /* melomEixotrocado.dae */; };
+		D7DB12C423146FE60060E202 /* output-onlinepngtools-1.png in Resources */ = {isa = PBXBuildFile; fileRef = D7DB12C323146FE60060E202 /* output-onlinepngtools-1.png */; };
+		D7DB12C6231475A80060E202 /* rosquinha.dae in Resources */ = {isa = PBXBuildFile; fileRef = D7DB12C5231475A80060E202 /* rosquinha.dae */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
+		D7FE3B2323145E8900532024 /* PlanetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3B2223145E8900532024 /* PlanetProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,8 +60,12 @@
 		D7D651602307553C00815B15 /* ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenu.swift; sourceTree = "<group>"; };
 		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
 		D7DABAAC2312FE970015A0F4 /* ModelOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOption.swift; sourceTree = "<group>"; };
-		D7DABAB02312FFB30015A0F4 /* AllPlanets.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = AllPlanets.scn; sourceTree = "<group>"; };
+		D7DABAB2231447FE0015A0F4 /* melom.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = melom.mtl; sourceTree = "<group>"; };
+		D7DABAB523144A180015A0F4 /* melomEixotrocado.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = melomEixotrocado.dae; sourceTree = "<group>"; };
+		D7DB12C323146FE60060E202 /* output-onlinepngtools-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "output-onlinepngtools-1.png"; path = "Assets.xcassets/gasGiant.imageset/output-onlinepngtools-1.png"; sourceTree = "<group>"; };
+		D7DB12C5231475A80060E202 /* rosquinha.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = rosquinha.dae; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
+		D7FE3B2223145E8900532024 /* PlanetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,8 +101,13 @@
 				D7D651642309C09700815B15 /* utils */,
 				D7E91D8323061A1C00FC88B8 /* model */,
 				D707F5782305F82500B0A726 /* AppDelegate.swift */,
+				D7DB12C5231475A80060E202 /* rosquinha.dae */,
+				D7DB12C323146FE60060E202 /* output-onlinepngtools-1.png */,
 				D707F57A2305F82500B0A726 /* art.scnassets */,
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
+				D7FE3B2223145E8900532024 /* PlanetProvider.swift */,
+				D7DABAB523144A180015A0F4 /* melomEixotrocado.dae */,
+				D7DABAB2231447FE0015A0F4 /* melom.mtl */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
 				D707F5812305F82700B0A726 /* Assets.xcassets */,
 				D707F5832305F82700B0A726 /* LaunchScreen.storyboard */,
@@ -129,7 +143,6 @@
 			isa = PBXGroup;
 			children = (
 				D7E91D8423061A9700FC88B8 /* Star.swift */,
-				D7DABAB02312FFB30015A0F4 /* AllPlanets.scn */,
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
 				D7D651602307553C00815B15 /* ContextMenu.swift */,
@@ -199,11 +212,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7DB12C423146FE60060E202 /* output-onlinepngtools-1.png in Resources */,
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
+				D7DB12C6231475A80060E202 /* rosquinha.dae in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,
+				D7DABAB4231447FF0015A0F4 /* melom.mtl in Resources */,
 				D707F5802305F82500B0A726 /* Main.storyboard in Resources */,
 				D733241F23106C6B00493865 /* 1PlanetContextMenu.xib in Resources */,
+				D7DABAB623144A180015A0F4 /* melomEixotrocado.dae in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +237,7 @@
 				D707F57D2305F82500B0A726 /* ViewController.swift in Sources */,
 				D733242C2312FD0D00493865 /* Provider.swift in Sources */,
 				D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */,
+				D7FE3B2323145E8900532024 /* PlanetProvider.swift in Sources */,
 				D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */,
 				D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */,
 				D7D651612307553C00815B15 /* ContextMenu.swift in Sources */,

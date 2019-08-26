@@ -36,7 +36,7 @@ public class WheelPicker: UIView {
     weak open var dataSource: WheelPickerDataSource?
     
     static let DEFAULT_ICON_SIZE: CGFloat = 40
-    static let SELECTED_ICON_SIZE: CGFloat = 55
+    static let SELECTED_ICON_SIZE: CGFloat = 40
     static let ITEM_SPACING: CGFloat = 30
     
     /// font item
