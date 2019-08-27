@@ -14,11 +14,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
    
     
     func onNewPlanetUpdated(planetNode: SCNNode) {
-        print("Setting planet node", planetNode.geometry)
+//        print("Setting planet node")
+        
         planetNode.removeFromParentNode()
-        self.contextMenuNode?.removeFromParentNode()
+        if self.contextMenuNode == nil{
+            self.sceneView.pointOfView?.addChildNode(planetNode)
+        }else{
+            self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
+        }
+//        self.contextMenuNode?.removeFromParentNode()
         self.contextMenuNode = planetNode
-        self.sceneView.pointOfView?.addChildNode(self.contextMenuNode!)
+//        self.sceneView.pointOfView?.addChildNode(self.contextMenuNode!)
 
     }
     
@@ -127,17 +133,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
 //        frame.camera.transform
         if let selectedStar = self.currentSelectedStar {
-//            let matrix = SCNMatrix4(frame.camera.transform)
-//            selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
             selectedStar.position = SCNVector3(x: 0, y: 0, z: -3)
         }
         
         if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
-//            contextMenu.setWorldTransform(SCNMatrix4Translate(orientation.worldTransform, 0, 0, -3))
-//            SCNMatrixRot
-//            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -3)
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
-            
         }
     }
     
@@ -164,18 +164,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func onEndDrag(){
         if let selectedStar = self.currentSelectedStar{
-            print("selectedStar.transform", selectedStar.transform)
+
             let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
             
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
-//            let a = sceneView.scene.rootNode
-//            selectedStar.convert
-////            selectedStar.setWorldTransform(transform)
-//            selectedStar.simdWorldTransform = simd_float4x4(transform)
-            print("selectedStar.transform", selectedStar.worldTransform)
+            
         }
         
         self.currentSelectedStar = nil

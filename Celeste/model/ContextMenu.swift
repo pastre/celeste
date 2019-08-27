@@ -195,16 +195,14 @@ class ContextMenu: SCNNodeTransformer{
     
     func getNewPlanetNode() -> SCNNode? {
         let node = SCNNode()
-//        let scene = SCNScene(named: "art.scnassets/models.scn")!
-//        let modelName = "gasGiant"
-       
-        
         
         guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
         
-//        model.transform = node.tra
         node.addChildNode(model)
         model.worldPosition = SCNVector3(0, 0, 0 )
+        
+        let mult = (self.currentRadius ?? 1) * 0.1
+        model.scale = SCNVector3(x: mult, y: mult, z: mult)
         
         return model
     }
