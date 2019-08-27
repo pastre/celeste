@@ -29,9 +29,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
     
-    var currentSelectedStar: SCNNode?
+    var currentSelectedStar: SCNNode?{
+        didSet{
+            if self.currentSelectedStar == nil{
+                self.isMovingNode = false
+            } else {
+                self.isMovingNode = true
+            }
+        }
+    }
     var contextMenuNode: SCNNode?
     var contextMenuView: UIView?
+    
+    var isMovingNode: Bool! = false
+    var isDisplayingUIContextMenu: Bool = false
     
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
@@ -74,6 +85,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         let galaxyNode = self.galaxy.getScene()
         galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
+        galaxyNode.name = "galaxy"
         scene.rootNode.addChildNode(galaxyNode)
         
         // Set the scene to the view
@@ -115,13 +127,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
 //        frame.camera.transform
         if let selectedStar = self.currentSelectedStar {
-            let matrix = SCNMatrix4(frame.camera.transform)
-            selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
+//            let matrix = SCNMatrix4(frame.camera.transform)
+//            selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
+            selectedStar.position = SCNVector3(x: 0, y: 0, z: -3)
         }
         
         if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
 //            contextMenu.setWorldTransform(SCNMatrix4Translate(orientation.worldTransform, 0, 0, -3))
-            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -3)
+//            SCNMatrixRot
+//            contextMenu.transform = SCNMatrix4Translate(orientation.transform, 0, 0, -3)
+            contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
+            
         }
     }
     
@@ -135,6 +151,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.currentSelectedStar!.removeFromParentNode()
             pov.addChildNode(self.currentSelectedStar!)
             
+            if self.isDisplayingUIContextMenu{
+                self.hideUIContextMenu()
+            } else {
+                self.hideContextMenu()
+            }
+            
         }  else {
             print("AIII NAO PEGOU NADA")
         }
@@ -142,12 +164,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func onEndDrag(){
         if let selectedStar = self.currentSelectedStar{
-//            print("selectedStar.transform", selectedStar.transform)
+            print("selectedStar.transform", selectedStar.transform)
+            let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
-//            print("selectedStar.transform", selectedStar.transform)
-            self.sceneView.scene.rootNode.addChildNode(selectedStar)
-            selectedStar.setWorldTransform(transform)
+            
+            self.sceneView.scene.rootNode.addChildNode(newStar)
+            newStar.setWorldTransform(transform)
+//            let a = sceneView.scene.rootNode
+//            selectedStar.convert
+////            selectedStar.setWorldTransform(transform)
+//            selectedStar.simdWorldTransform = simd_float4x4(transform)
+            print("selectedStar.transform", selectedStar.worldTransform)
         }
         
         self.currentSelectedStar = nil
@@ -240,7 +268,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         
-        
+        if self.isMovingNode { return }
         
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
@@ -273,6 +301,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        menu.roundCorners(corners: [.topLeft, .topRight], radius: 8)
         
         self.contextMenuView = menu
+        self.isDisplayingUIContextMenu = true
         
     }
     
@@ -324,13 +353,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
     }
     
-    func hideContextMenu(){
-        print("self.contextMenuNode", self.contextMenuNode)
-        self.contextMenuNode?.removeFromParentNode()
-        self.contextMenuNode = nil
-        
+    func hideUIContextMenu(){
         self.contextMenuView?.removeFromSuperview()
         self.contextMenuView = nil
+        self.isDisplayingUIContextMenu = false
+    }
+    
+    func hideSCNNodeMenu(){
+        self.contextMenuNode?.removeFromParentNode()
+        self.contextMenuNode = nil
+    }
+    
+    func hideContextMenu(){
+        self.hideUIContextMenu()
+        self.hideSCNNodeMenu()
         print("Hidden context menu")
     }
     
