@@ -150,27 +150,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Planet dragging helper functions
     
     func onStartDrag(at position: CGPoint){
-        print("Saca soppp")
-        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
-            return
-        }
         
-        self.hideContextMenu()
-        let hitResults = self.sceneView.hitTest(position, options: [:])
-        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
-            self.currentSelectedStar = result.node
-            self.currentSelectedStar!.removeFromParentNode()
-            pov.addChildNode(self.currentSelectedStar!)
-            
-            if self.isDisplayingUIContextMenu{
-                self.hideUIContextMenu()
-            } else {
-                self.hideContextMenu()
-            }
-            
-        }  else {
-            // not a hittest result, move scene, maybe?
-        }
     }
     
     func onEndDrag(){
@@ -275,6 +255,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         
+        
+        let position = gesture.location(in: self.view)
+        
+        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+            return
+        }
+        
+        self.hideContextMenu()
+        let hitResults = self.sceneView.hitTest(position, options: [:])
+        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
+            self.currentSelectedStar = result.node
+            self.currentSelectedStar!.removeFromParentNode()
+            pov.addChildNode(self.currentSelectedStar!)
+            
+            if self.isDisplayingUIContextMenu{
+                self.hideUIContextMenu()
+            } else {
+                self.hideContextMenu()
+            }
+        }
+    }
+    
+    func displayAddPlanetMenu(_ gesture: UIGestureRecognizer){
+        
+        
         if self.isMovingNode { return }
         
         self.tapGesture.state = .failed
@@ -284,9 +289,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let position = gesture.location(in: self.view)
         self.displayUIContextMenu(at: position)
         displaySceneContextMenu(at: position )
-        
+
     }
-    
     
     // MARK: - ContextMenu related functions
     
