@@ -11,6 +11,12 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate {
+    
+    func onNewPlanetScaleChanged(to scale: Float) {
+        if contextMenuNode == nil { return }
+        self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
+    }
+    
    
     
     func onNewPlanetUpdated(planetNode: SCNNode) {
@@ -22,9 +28,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }else{
             self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
         }
-//        self.contextMenuNode?.removeFromParentNode()
+        
         self.contextMenuNode = planetNode
-//        self.sceneView.pointOfView?.addChildNode(self.contextMenuNode!)
 
     }
     
@@ -145,6 +150,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Planet dragging helper functions
     
     func onStartDrag(at position: CGPoint){
+        print("Saca soppp")
+        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+            return
+        }
+        
+        self.hideContextMenu()
         let hitResults = self.sceneView.hitTest(position, options: [:])
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
@@ -158,7 +169,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             }
             
         }  else {
-            print("AIII NAO PEGOU NADA")
+            // not a hittest result, move scene, maybe?
         }
     }
     

@@ -90,7 +90,7 @@ open class WheelPickerCollectionViewLayout : UICollectionViewFlowLayout {
     }
     
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        
+        // BUGFIX: https://stackoverflow.com/questions/31508153/warning-uicollectionviewflowlayout-has-cached-frame-mismatch-for-index-path-ab
         if let style = delegate?.pickerViewStyle(for: self) {
             
             switch style {

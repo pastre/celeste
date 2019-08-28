@@ -35,8 +35,8 @@ public class WheelPicker: UIView {
     weak open var delegate: WheelPickerDelegate?
     weak open var dataSource: WheelPickerDataSource?
     
-    static let DEFAULT_ICON_SIZE: CGFloat = 40
-    static let SELECTED_ICON_SIZE: CGFloat = 40
+//    static let DEFAULT_ICON_SIZE: CGFloat = 40
+//    static let SELECTED_ICON_SIZE: CGFloat = 40
     static let ITEM_SPACING: CGFloat = 30
     
     /// font item
@@ -401,12 +401,12 @@ extension WheelPicker: UICollectionViewDataSource {
             cell.label.isHidden = true
             cell.imageView.isHidden = false
             
-            if selectedItem == indexPath.item{
-                image = resizeImage(image: image, newWidth: WheelPicker.SELECTED_ICON_SIZE)!
-                
-            } else {
-                image = resizeImage(image: image, newWidth: WheelPicker.DEFAULT_ICON_SIZE)!
-            }
+//            if selectedItem == indexPath.item{
+//                image = resizeImage(image: image, newWidth: WheelPicker.SELECTED_ICON_SIZE)!
+//
+//            } else {
+//                image = resizeImage(image: image, newWidth: WheelPicker.DEFAULT_ICON_SIZE)!
+//            }
             
             cell.imageView.image = image
             
@@ -551,20 +551,8 @@ extension WheelPicker: UIScrollViewDelegate {
                 if indexPath.row != prevIndex {
                     
                     generateFeedback()
-                    
-                    
-                    guard let imageCell = cell as? WheelPickerCell else { return }
-                    
-                    imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: WheelPicker.SELECTED_ICON_SIZE)
-                    
                     prevIndex = indexPath.row
                     
-                    for cell in cells{
-                        guard let imageCell = cell as? WheelPickerCell else { continue }
-                        if self.collectionView.indexPath(for: imageCell) == indexPath { continue }
-                        imageCell.imageView.image = resizeImage(image: imageCell.imageView.image!, newWidth: WheelPicker.DEFAULT_ICON_SIZE)
-                    
-                    }
                 }
                 
             }
