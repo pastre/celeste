@@ -10,17 +10,51 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate {
+    
+    func onNewPlanetScaleChanged(to scale: Float) {
+        if contextMenuNode == nil { return }
+        self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
+    }
+    
+   
+    
+    func onNewPlanetUpdated(planetNode: SCNNode) {
+//        print("Setting planet node")
+        
+        planetNode.removeFromParentNode()
+        if self.contextMenuNode == nil{
+            self.sceneView.pointOfView?.addChildNode(planetNode)
+        }else{
+            self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
+        }
+        
+        self.contextMenuNode = planetNode
+
+    }
     
     @IBOutlet var sceneView: ARSCNView!
     
-    let contextMenu = ContextMenu.instance
+    let contextMenu = CreatePlanetContextMenu.instance
     
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
     
-    var currentSelectedStar: SCNNode?
+    var currentSelectedStar: SCNNode?{
+        didSet{
+            if self.currentSelectedStar == nil{
+                self.isMovingNode = false
+            } else {
+                self.isMovingNode = true
+            }
+        }
+    }
+    
     var contextMenuNode: SCNNode?
+    var contextMenuView: UIView?
+    
+    var isMovingNode: Bool! = false
+    var isDisplayingUIContextMenu: Bool = false
     
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
@@ -41,22 +75,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         return Galaxy(stars: [
             Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: moons,
-//                [
-                
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 0), color: #colorLiteral(red: 0.05881351963, green: 0.180391161, blue: 0.1470588137, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 0.3098039319, green: 0.1039115714, blue: 0.03911568766, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 0), color: #colorLiteral(red: 0.1194117719, green: 0.1156861766, blue: 0.06666667014, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 0, y: 1, z: 0), color: #colorLiteral(red: 0.06174510175, green: 0, blue: 0.1911568661, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 0, y: 1, z: 1), color: #colorLiteral(red: 0.1911568661, green: 0.007843137719, blue: 0.09019608051, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 0, y: -1, z: 0), color: #colorLiteral(red: 0.1764705916, green: 0.4980391158, blue: 0.7568617596, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: 0, y: -1, z: 1), color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.3098039319, green: 0.1039115714, blue: 0.03911568766, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 0), color: #colorLiteral(red: 0.1194117719, green: 0.1156861766, blue: 0.06666667014, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 0), color: #colorLiteral(red: 0.1764705916, green: 0.4980391158, blue: 0.7568617596, alpha: 1), child: nil),
-//                Moon(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1), child: nil),
-//                ],
-                   orbits: orbits
-            )
+                   orbits: orbits)
             ]
         )
     }
@@ -77,19 +96,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         let galaxyNode = self.galaxy.getScene()
-        galaxyNode.position = SCNVector3(1, 0, -3)
+        galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
+        galaxyNode.name = "galaxy"
         scene.rootNode.addChildNode(galaxyNode)
         
         // Set the scene to the view
         sceneView.scene = scene
         
         contextMenuGesture.delegate = self
+        self.contextMenu.delegate = self
         tapGesture.delegate = self
         
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
         self.view.addGestureRecognizer(contextMenuGesture)
         self.view.addGestureRecognizer(tapGesture)
+        
+        self.contextMenuGesture.cancelsTouchesInView = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -116,12 +139,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
 //        frame.camera.transform
         if let selectedStar = self.currentSelectedStar {
-            let matrix = SCNMatrix4(frame.camera.transform)
-            selectedStar.transform = SCNMatrix4Translate(matrix, 0, 0, -2)
+            selectedStar.position = SCNVector3(x: 0, y: 0, z: -3)
         }
         
-        if let contextMenu = self.contextMenuNode, let orientation = self.getCameraPosition(){
-            contextMenu.look(at: orientation)
+        if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
+            contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
     }
     
@@ -129,25 +151,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Planet dragging helper functions
     
     func onStartDrag(at position: CGPoint){
-        let hitResults = self.sceneView.hitTest(position, options: [:])
-        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
-            self.currentSelectedStar = result.node
-            self.currentSelectedStar!.removeFromParentNode()
-            pov.addChildNode(self.currentSelectedStar!)
-            
-        }  else {
-            print("AIII NAO PEGOU NADA")
-        }
+        
     }
     
     func onEndDrag(){
         if let selectedStar = self.currentSelectedStar{
-//            print("selectedStar.transform", selectedStar.transform)
+
+            let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
-//            print("selectedStar.transform", selectedStar.transform)
-            self.sceneView.scene.rootNode.addChildNode(selectedStar)
-            selectedStar.setWorldTransform(transform)
+            
+            self.sceneView.scene.rootNode.addChildNode(newStar)
+            newStar.setWorldTransform(transform)
+            
         }
         
         self.currentSelectedStar = nil
@@ -227,76 +243,142 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
+        if otherGestureRecognizer.name == "ContextMenuGesture"{
+           return false
+        }
+//        if (self.contextMenuView?.frame.contains(gestureRecognizer.location(in: self.view))) ?? false{
+//            return false
+//        }
         return true
     }
+    
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
         
-        self.onEndDrag()
+        
+        let position = gesture.location(in: self.view)
+        
+        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+            return
+        }
+        
+        self.hideContextMenu()
+        let hitResults = self.sceneView.hitTest(position, options: [:])
+        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
+            self.currentSelectedStar = result.node
+            self.currentSelectedStar!.removeFromParentNode()
+            pov.addChildNode(self.currentSelectedStar!)
+            
+            if self.isDisplayingUIContextMenu{
+                self.hideUIContextMenu()
+            } else {
+                self.hideContextMenu()
+            }
+        }
+    }
+    
+    func displayAddPlanetMenu(_ gesture: UIGestureRecognizer){
+        
+        
+        if self.isMovingNode { return }
         
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
         
         let position = gesture.location(in: self.view)
-        self.displayContextMenu(at: position)
-        
-    }
-    
-    
-    // MARK: - ContextMenu related functions
-    
-    func displayContextMenu(at position: CGPoint){
-        let hitTest =  self.sceneView.hitTest(position, options: [:])
-        
-        if let contextMenuNode = self.contextMenuNode{
-            contextMenuNode.removeFromParentNode()
-            self.contextMenuNode = nil
-        }
-        
-        var position: SCNVector3!
-        var rootNode: SCNNode!
-        
-        if hitTest.count == 0{
-            // Nao achou nada, mostrar menu de contexto do espaco
-            self.contextMenu.openContextMenu(mode: .galaxy)
-            
-            guard let pos = self.getLookingCameraPosition() else { return }
-            position = pos
-            rootNode = self.sceneView.scene.rootNode
-        } else if let hit = hitTest.first{
-            // Encontrou em alguma coisa, mostrar o menu a partir disso
-            
-            self.contextMenu.openContextMenu(mode: .planet)
-            guard let star = self.galaxy.getStar(by: hit.node.position) else {
-                print("Olha so ta dando ruim")
-                return
-            }
-            
-            position = SCNVector3(0, 0.25 + star.radius, 0)
-            rootNode = hit.node
-        }
-        
-        let ctxMenuNode = self.contextMenu.getNode()
-        ctxMenuNode.position = position
-        
-        rootNode.addChildNode(ctxMenuNode)
-        
-        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
-        it.isGimbalLockEnabled = true
-        
-        rootNode.constraints = [it]
-        return
-            
-        self.contextMenuNode = ctxMenuNode
+        self.displayUIContextMenu(at: position)
+        displaySceneContextMenu(at: position )
 
     }
     
-    func hideContextMenu(){
+    // MARK: - ContextMenu related functions
+    
+    func displayUIContextMenu(at position: CGPoint){
+        self.hideContextMenu()
+        let menu = self.contextMenu.getView()
+        
+        self.view.addSubview(menu)
+        
+        
+        menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
+        
+        self.view.bringSubviewToFront(menu)
+        
+        
+//        menu.roundCorners(corners: [.topLeft, .topRight], radius: 8)
+        
+        self.contextMenuView = menu
+        self.isDisplayingUIContextMenu = true
+        
+    }
+    
+    func displaySceneContextMenu(at position: CGPoint){
+        let hitTest =  self.sceneView.hitTest(position, options: [:])
+//
+//        if let contextMenuNode = self.contextMenuNode{
+//            contextMenuNode.removeFromParentNode()
+//            self.contextMenuNode = nil
+//        }
+//
+//        var position: SCNVector3!
+//        var rootNode: SCNNode!
+//
+        if hitTest.count == 0{
+            // Nao achou nada, mostrar menu de contexto do espaco
+//            self.contextMenu.openContextMenu(mode: .galaxy)
+//
+//            guard let pos = self.getLookingCameraPosition() else { return }
+//            position = pos
+//            rootNode = self.sceneView.scene.rootNode
+        } else if let hit = hitTest.first{
+            // Encontrou em alguma coisa, mostrar o menu a partir disso
+
+            let node = self.contextMenu.getNode()
+            self.onNewPlanetUpdated(planetNode: node)
+            self.contextMenu.openContextMenu(mode: .planet)
+//            guard let star = self.galaxy.getStar(by: hit.node.position) else {
+//                print("Olha so ta dando ruim")
+//                return
+//            }
+//
+//            position = SCNVector3(0, 0.25 + star.radius, 0)
+//            rootNode = hit.node
+        }
+//
+//        let ctxMenuNode = self.contextMenu.getNode()
+//        ctxMenuNode.position = position
+//
+//        rootNode.addChildNode(ctxMenuNode)
+//
+//        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
+//        it.isGimbalLockEnabled = true
+//
+//        rootNode.constraints = [it]
+//        return
+//
+//        self.contextMenuNode = ctxMenuNode
+
+    }
+    
+    func hideUIContextMenu(){
+        self.contextMenuView?.removeFromSuperview()
+        self.contextMenuView = nil
+        self.isDisplayingUIContextMenu = false
+    }
+    
+    func hideSCNNodeMenu(){
         self.contextMenuNode?.removeFromParentNode()
         self.contextMenuNode = nil
+    }
+    
+    func hideContextMenu(){
+        self.hideUIContextMenu()
+        self.hideSCNNodeMenu()
         print("Hidden context menu")
     }
     
@@ -353,8 +435,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 print("Node!!")
             }
         }
+//        let isInView = self.contextMenuView?.frame.contains(position) ?? false
+//        print("isInView", isInView, self.contextMenuView?.frame.contains(position), self.contextMenuView?.frame, position, self.contextMenuView?.bounds)
+//        if !(isInView ?? true) {
+        if !((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+            self.hideContextMenu()
+        }
+//        }
         
-        self.hideContextMenu()
     }
     
     // Mark: - ARSceneView interruption delegates
@@ -377,19 +465,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
-}
-
-
-extension UIColor {
     
-    class func randomColor(randomAlpha randomApha:Bool = false)->UIColor{
-        
-        let redValue = CGFloat(arc4random_uniform(255)) / 255.0;
-        let greenValue = CGFloat(arc4random_uniform(255)) / 255.0;
-        let blueValue = CGFloat(arc4random_uniform(255)) / 255.0;
-        let alphaValue = randomApha ? CGFloat(arc4random_uniform(255)) / 255.0 : 1;
-        
-        return UIColor(red: redValue, green: greenValue, blue: blueValue, alpha: alphaValue)
-        
-    }
+    
 }
+
