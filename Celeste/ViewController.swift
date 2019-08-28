@@ -35,7 +35,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     @IBOutlet var sceneView: ARSCNView!
     
-    let contextMenu = ContextMenu.instance
+    let contextMenu = CreatePlanetContextMenu.instance
     
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
@@ -49,6 +49,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             }
         }
     }
+    
     var contextMenuNode: SCNNode?
     var contextMenuView: UIView?
     

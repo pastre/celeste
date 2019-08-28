@@ -25,7 +25,7 @@ protocol ContextMenuDelegate {
     func onNewPlanetScaleChanged(to scale: Float)
 }
 
-class ContextMenu: SCNNodeTransformer{
+class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPickerDataSource{
     
     
     var currentModel: SCNNode? {
@@ -91,7 +91,7 @@ class ContextMenu: SCNNodeTransformer{
     }()
 
     
-    static let instance = ContextMenu()
+    static let instance = CreatePlanetContextMenu()
     
     var delegate: ContextMenuDelegate?
     var mode: ContextMenuMode!
@@ -249,9 +249,7 @@ class ContextMenu: SCNNodeTransformer{
     @objc func onSliderChanged(_ sender: UISlider){
         self.currentRadius = sender.value
     }
-}
-
-extension ContextMenu{
+    
     
     func getCircularView() -> UIView{
         let view = UIView()
@@ -273,7 +271,6 @@ extension ContextMenu{
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
         
         let bgImageView: UIImageView = {
             let view = UIImageView(image: UIImage(named: "planetContextMenuBg"))
@@ -324,7 +321,7 @@ extension ContextMenu{
         self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
         self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
-
+        
         self.slider.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         self.slider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
         self.slider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
@@ -352,9 +349,6 @@ extension ContextMenu{
         colorPickerSelectedIndicator.centerYAnchor.constraint(equalTo: colorPicker.centerYAnchor).isActive = true
         
         
-        gesture.name =  "ContextMenuGesture"
-        view.addGestureRecognizer(gesture)
-        
         view.bringSubviewToFront(planetPicker)
         view.bringSubviewToFront(colorPicker)
         
@@ -363,18 +357,7 @@ extension ContextMenu{
         
         return view
     }
-    
-    
-    @objc func onTap(_ sender: UITapGestureRecognizer){
-            print("caixa")
-    }
-    
-    
-    
-}
 
-extension ContextMenu: WheelPickerDelegate, WheelPickerDataSource{
-    
     
     
     func numberOfItems(_ wheelPicker: WheelPicker) -> Int {
