@@ -27,6 +27,7 @@
 		D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */; };
 		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
 		D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DABAAC2312FE970015A0F4 /* ModelOption.swift */; };
+		D7DD58C123186FDA003F0F26 /* brainnovo.dae in Resources */ = {isa = PBXBuildFile; fileRef = D7DD58C023186FDA003F0F26 /* brainnovo.dae */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
 		D7FE3B2323145E8900532024 /* PlanetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3B2223145E8900532024 /* PlanetProvider.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +55,7 @@
 		D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePlanetContextMenu.swift; sourceTree = "<group>"; };
 		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
 		D7DABAAC2312FE970015A0F4 /* ModelOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOption.swift; sourceTree = "<group>"; };
+		D7DD58C023186FDA003F0F26 /* brainnovo.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = brainnovo.dae; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
 		D7FE3B2223145E8900532024 /* PlanetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,6 +94,7 @@
 				D7E91D8323061A1C00FC88B8 /* model */,
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
 				D733242023106EC300493865 /* PlanetContextMenu.swift */,
+				D7DD58C023186FDA003F0F26 /* brainnovo.dae */,
 				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7FE3B2223145E8900532024 /* PlanetProvider.swift */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
@@ -198,6 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
+				D7DD58C123186FDA003F0F26 /* brainnovo.dae in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,
 				D707F5802305F82500B0A726 /* Main.storyboard in Resources */,

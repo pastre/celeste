@@ -11,9 +11,10 @@ import SceneKit
 
 protocol PlanetContextMenuDelegate{
     func onEdit()
-    func onDelete()
+    func onDelete(node: SCNNode)
     func onOrbit()
     func onCopy()
+    func onEnded()
 }
 
 class PlanetContextMenu: SCNNodeTransformer {
@@ -115,53 +116,63 @@ class PlanetContextMenu: SCNNodeTransformer {
         
     }
     
-    func updateHighlightedIcon(at point: CGPoint){
-        
-
-        
-        let prev = self.latestSelection
-        
-        if point.x >= 0{
-            if point.y >= 0{
-                // Bottom Right
-                self.latestSelection = copyView
+    func updateHighlightedIcon(at location: CGPoint?){
+        if let point = location{
+            let prev = self.latestSelection
+            
+            if point.x >= 0{
+                if point.y >= 0{
+                    // Bottom Right
+                    self.latestSelection = copyView
+                } else {
+                    //  Top Right
+                    self.latestSelection = editView
+                }
             } else {
-                //  Top Right
-                self.latestSelection = editView
+                if point.y >= 0{
+                    // BL
+                    self.latestSelection = deleteView
+                } else {
+                    // TL
+                    self.latestSelection = orbitView
+                }
+            }
+            
+            if prev != latestSelection {
+                 if let lastView = prev{
+                    UIView.animate(withDuration: 0.3, animations: {
+                        lastView.transform = .identity
+                    }) { (_) in
+                        lastView.transform = .identity
+                    }
+                    
+                }
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.latestSelection!.transform  = self.latestSelection!.transform.scaledBy(x: 1.5, y: 1.5)
+                }) { (_) in
+                    
+                    let vib = UIImpactFeedbackGenerator()
+                    vib.impactOccurred()
+
+    //                self.latestSelection!.transform  = self.latestSelection!.transform.scaledBy(x: 1.5, y: 1.5)
+                }
             }
         } else {
-            if point.y >= 0{
-                // BL
-                self.latestSelection = deleteView
-            } else {
-                // TL
-                self.latestSelection = orbitView
-            }
-        }
-        
-        if prev != latestSelection {
-             if let lastView = prev{
+            
+            if let lastView = self.latestSelection{
                 UIView.animate(withDuration: 0.3, animations: {
                     lastView.transform = .identity
                 }) { (_) in
                     lastView.transform = .identity
+                    self.latestSelection = nil
                 }
                 
-            }
-            
-            UIView.animate(withDuration: 0.3, animations: {
-                self.latestSelection!.transform  = self.latestSelection!.transform.scaledBy(x: 1.5, y: 1.5)
-            }) { (_) in
-                
-                let vib = UIImpactFeedbackGenerator()
-                vib.impactOccurred()
-
-//                self.latestSelection!.transform  = self.latestSelection!.transform.scaledBy(x: 1.5, y: 1.5)
             }
         }
     }
     
-    func onPanEnded(canceled: Bool){
+    func onPanEnded(canceled: Bool, lastNode node: SCNNode){
         
         switch self.latestSelection{
             case self.editView:
@@ -171,12 +182,13 @@ class PlanetContextMenu: SCNNodeTransformer {
             case self.orbitView:
                 self.delegate?.onOrbit()
             case self.deleteView:
-                self.delegate?.onDelete()
-            default: break
+                self.delegate?.onDelete(node: node)
+            default:
+                self.delegate?.onEnded()
         }
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.latestSelection?.alpha = 0.5
+            self.latestSelection?.alpha = 0.1
             self.latestSelection?.transform = (self.latestSelection?.transform.scaledBy(x: 3, y: 3))!
         }) { (_) in
             self.latestSelection?.alpha = 1

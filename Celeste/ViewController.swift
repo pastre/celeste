@@ -14,23 +14,49 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
    
     // MARK: - PlanetContextMenuDelegate methods
     func onEdit() {
-        self.hideContextMenu()
-        print("Edit!")
-        self.displayAddPlanetMenu()
+        defer { self.hideUIContextMenu()}
+        print("Mostrei!")
     }
-    
-    func onDelete() {
-        print("Delete!")
-        self.currentSelectedStar?.removeFromParentNode()
-    }
-    
+
     func onOrbit() {
+        defer { self.hideUIContextMenu()}
         print("Orbit!")
     }
     
     func onCopy() {
+        defer { self.hideUIContextMenu()}
         print("Copy!")
     }
+    
+    func onDelete(node: SCNNode) {
+        defer { self.hideUIContextMenu()}
+        print("Delete!")
+//        self.hideContextMenu()
+//        assert(self.currentSelectedStar != nil)
+        
+        node.removeFromParentNode()
+//         = nil
+    }
+    
+    func onEnded() {
+        defer { self.hideUIContextMenu()}
+        print("Ended!")
+    }
+    
+
+    var addPlanetButton: UIButton = {
+       let button = UIButton()
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "add_icon"), for: .normal)
+        button.layer.cornerRadius = button.frame.height / 2
+        button.layer.borderWidth = 1
+        button.layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.01176470611, blue: 0.5607843399, alpha: 1)
+        button.backgroundColor = #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1)
+        
+        
+        return button
+    }()
     
     
     
@@ -72,28 +98,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
-    func getDebugGalaxy() -> Galaxy{
-        
-        let moons = [
-             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 1, green: 1, blue: 0, alpha: 1)),
-             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)),
-             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1)),
-             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1)),
-             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: -1), color: #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1)),
-             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: -1), color: #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)),
-        ]
-        
-        let orbits = moons.map { (star) -> Orbit in
-            return Orbit(radius: CGFloat.random(in: 0.001...0.2), orbiter: star)
-        }
-        
-        return Galaxy(stars: [
-            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: moons,
-                   orbits: orbits)
-            ]
-        )
-    }
-    
     // MARK: - UIViewController overrides
     
     override func viewDidLoad() {
@@ -127,6 +131,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
+        self.setupAddPlanetButton()
+    }
+    
+    func setupAddPlanetButton(){
+        self.addPlanetButton.addTarget(self, action: #selector(self.displayAddPlanetMenu), for: .touchDown)
+        
+        self.view.addSubview(self.addPlanetButton)
+        
+        self.addPlanetButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 40).isActive = true
+        self.addPlanetButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20).isActive = true
+        
+        self.addPlanetButton.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.1).isActive = true
+        self.addPlanetButton.heightAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.1).isActive = true
+        
+        self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.width / 2
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -187,8 +206,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onEndDrag(at location: CGPoint){
+        print("Selected star on drag", self.currentSelectedStar)
         if let selectedStar = self.currentSelectedStar{
-
+            print("Tem estrela boa")
             let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
@@ -196,12 +216,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
             
-            self.currentSelectedStar = nil
-            self.planetContextMenu.onPanEnded(canceled: location.y < 100)
-            
-        } else {
-            self.currentSelectedStar = nil
+            self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
+        
         }
+        
+        self.currentSelectedStar = nil
+        
     }
     
     // MARK: - Orbit helper methods
@@ -340,10 +360,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
 
     
-    func displayAddPlanetMenu(){
-        
-        
-        if self.isMovingNode { return }
+    @objc func displayAddPlanetMenu(){
         
         self.tapGesture.state = .failed
         let vib = UIImpactFeedbackGenerator()
@@ -436,9 +453,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func onPanChanged(_ gesture: ContextMenuGestureRecognizer){
         let position = gesture.location(in: self.view)
         let center = CGPoint(x: self.view.frame.maxX  / 2, y: self.view.frame.maxY / 2)
-        let diff = position - center
-        
-        self.planetContextMenu.updateHighlightedIcon(at: diff)
+        let diff =  position - center
+        let dist = (diff.x * diff.x + diff.y * diff.y).squareRoot()
+        print("Dist is", dist)
+        self.planetContextMenu.updateHighlightedIcon(at: dist > 50 ? diff : nil)
 //        gesture
 //        print("Position is", diff)
     }
@@ -519,5 +537,27 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     
+    func getDebugGalaxy() -> Galaxy{
+        
+        let moons = [
+            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 1, green: 1, blue: 0, alpha: 1)),
+            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)),
+            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1)),
+            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1)),
+            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: -1), color: #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1)),
+            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: -1), color: #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)),
+        ]
+        
+        let orbits = moons.map { (star) -> Orbit in
+            return Orbit(radius: CGFloat.random(in: 0.001...0.2), orbiter: star)
+        }
+        
+        return Galaxy(stars: [
+            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: moons,
+                   orbits: orbits)
+            ]
+        )
+    }
+
 }
 
