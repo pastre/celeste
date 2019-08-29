@@ -34,6 +34,7 @@ enum ShapeName: String, CaseIterable{
     case saturn = "saturn"
     case sun = "sun"
     case venus = "venus"
+    case brain = "brain"
 }
 
 let kTEXTURE_TO_SHAPE = [
@@ -49,6 +50,7 @@ let kTEXTURE_TO_SHAPE = [
     ShapeName.saturn : "sphere",
     ShapeName.sun : "sphere",
     ShapeName.venus : "sphere",
+    ShapeName.brain: "brain"
 //    ShapeName.venus : "sphere",
 ]
 
@@ -65,11 +67,26 @@ class PlanetProvider{
         
         let scene = SCNScene(named: "art.scnassets/models.scn")!
         let modelShape = kTEXTURE_TO_SHAPE[shape]!
+        var diffuse: Any!
         
         guard let modelNode = scene.rootNode.childNode(withName: modelShape, recursively: true)?.clone() else { return nil }
-        guard let texture = UIImage(named: "\(shape.rawValue)_\(modelShape)_\(color.rawValue)") else { return nil }
-        modelNode.geometry?.firstMaterial?.diffuse.contents = texture
-
+        
+        if let image = UIImage(named: "\(shape.rawValue)_\(modelShape)_\(color.rawValue)"){
+            diffuse = image
+        } else {
+            
+            let colors: [UIColor] = [#colorLiteral(red: 0.1725490196, green: 0.6039215686, blue: 1, alpha: 1), #colorLiteral(red: 0.4392156863, green: 0.7529411765, blue: 0.3098039216, alpha: 1), #colorLiteral(red: 0.9921568627, green: 0.7960784314, blue: 0.3568627451, alpha: 1), #colorLiteral(red: 0.9882352941, green: 0.5490196078, blue: 0.1960784314, alpha: 1), #colorLiteral(red: 0.9333333333, green: 0.2862745098, blue: 0.3411764706, alpha: 1), #colorLiteral(red: 0.7882352941, green: 0.03529411765, blue: 0.4352941176, alpha: 1), #colorLiteral(red: 0.631372549, green: 0.03921568627, blue: 0.7294117647, alpha: 1) ]
+            diffuse = colors[ShapeColor.allCases.firstIndex(of: color)!]
+        }
+        
+        let material = SCNMaterial()
+        material.diffuse.contents = diffuse
+        
+        modelNode.geometry?.firstMaterial = material
+        
+        for i in modelNode.childNodes{
+            i.geometry?.firstMaterial = material
+        }
         modelNode.position = SCNVector3Zero
         modelNode.name = "newPlanet"
         

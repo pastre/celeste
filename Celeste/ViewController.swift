@@ -10,32 +10,38 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate {
-    
-    func onNewPlanetScaleChanged(to scale: Float) {
-        if contextMenuNode == nil { return }
-        self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
-    }
-    
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate {
    
-    
-    func onNewPlanetUpdated(planetNode: SCNNode) {
-//        print("Setting planet node")
-        
-        planetNode.removeFromParentNode()
-        if self.contextMenuNode == nil{
-            self.sceneView.pointOfView?.addChildNode(planetNode)
-        }else{
-            self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
-        }
-        
-        self.contextMenuNode = planetNode
-
+    // MARK: - PlanetContextMenuDelegate methods
+    func onEdit() {
+        self.hideContextMenu()
+        print("Edit!")
+        self.displayAddPlanetMenu()
     }
+    
+    func onDelete() {
+        print("Delete!")
+        self.currentSelectedStar?.removeFromParentNode()
+    }
+    
+    func onOrbit() {
+        print("Orbit!")
+    }
+    
+    func onCopy() {
+        print("Copy!")
+    }
+    
+    
     
     @IBOutlet var sceneView: ARSCNView!
     
-    let contextMenu = CreatePlanetContextMenu.instance
+    let createPlanetContextMenu = CreatePlanetContextMenu.instance
+    var planetContextMenuView: UIView = {
+        let view = UIView()
+        
+        return view
+    }()
     
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
@@ -51,7 +57,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     var contextMenuNode: SCNNode?
-    var contextMenuView: UIView?
+    var contextMenuView: UIView? {
+        didSet{
+            if let _ = self.contextMenuView{
+                self.isDisplayingUIContextMenu = true
+            } else {
+                self.isDisplayingUIContextMenu = false
+            }
+        }
+    }
     
     var isMovingNode: Bool! = false
     var isDisplayingUIContextMenu: Bool = false
@@ -103,10 +117,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         // Set the scene to the view
         sceneView.scene = scene
         
-        contextMenuGesture.delegate = self
-        self.contextMenu.delegate = self
-        tapGesture.delegate = self
-        
+        self.contextMenuGesture.delegate = self
+        self.createPlanetContextMenu.delegate = self
+        self.tapGesture.delegate = self
+        self.planetContextMenu.delegate = self
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
         self.view.addGestureRecognizer(contextMenuGesture)
@@ -151,10 +165,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Planet dragging helper functions
     
     func onStartDrag(at position: CGPoint){
-        
+//        let position = gesture.location(in: self.view)
+//
+//        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+//            return
+//        }
+//
+//        self.hideContextMenu()
+//        let hitResults = self.sceneView.hitTest(position, options: [:])
+//        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
+//            self.currentSelectedStar = result.node
+//            self.currentSelectedStar!.removeFromParentNode()
+//            pov.addChildNode(self.currentSelectedStar!)
+//
+//            if self.isDisplayingUIContextMenu{
+//                self.hideUIContextMenu()
+//            } else {
+//                self.hideContextMenu()
+//            }
+//        }
     }
     
-    func onEndDrag(){
+    func onEndDrag(at location: CGPoint){
         if let selectedStar = self.currentSelectedStar{
 
             let newStar = selectedStar.clone()
@@ -164,9 +196,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
             
+            self.currentSelectedStar = nil
+            self.planetContextMenu.onPanEnded(canceled: location.y < 100)
+            
+        } else {
+            self.currentSelectedStar = nil
         }
-        
-        self.currentSelectedStar = nil
     }
     
     // MARK: - Orbit helper methods
@@ -223,7 +258,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                     
                     rotator.position = SCNVector3Zero
                     inclinator.addChildNode(rotator)
-                    
+//                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
+//                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
                     inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
                     
                     parentNode.addChildNode(inclinator)
@@ -253,15 +289,37 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     
+    let planetContextMenu = PlanetContextMenu.instance
+    
+    func displayPlanetMenu(){
+
+        let displayMenuView = self.planetContextMenu.getView()
+        
+        self.view.addSubview(displayMenuView)
+        
+        displayMenuView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        displayMenuView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        
+        displayMenuView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.5).isActive = true
+        displayMenuView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
+        
+        self.contextMenuView = displayMenuView
+        
+        self.contextMenuGesture.state = .possible
+    }
+    
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
-        
         
         let position = gesture.location(in: self.view)
         
         if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
             return
         }
+        
+        let vib = UIImpactFeedbackGenerator()
+        vib.impactOccurred()
+
         
         self.hideContextMenu()
         let hitResults = self.sceneView.hitTest(position, options: [:])
@@ -275,10 +333,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             } else {
                 self.hideContextMenu()
             }
+            
+            self.displayPlanetMenu()
         }
+        
     }
+
     
-    func displayAddPlanetMenu(_ gesture: UIGestureRecognizer){
+    func displayAddPlanetMenu(){
         
         
         if self.isMovingNode { return }
@@ -287,17 +349,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
         
-        let position = gesture.location(in: self.view)
-        self.displayUIContextMenu(at: position)
-        displaySceneContextMenu(at: position )
+        self.displayUIContextMenu()
+        displaySceneContextMenu( )
 
     }
     
     // MARK: - ContextMenu related functions
     
-    func displayUIContextMenu(at position: CGPoint){
+    func displayUIContextMenu(){
         self.hideContextMenu()
-        let menu = self.contextMenu.getView()
+        let menu = self.createPlanetContextMenu.getView()
         
         self.view.addSubview(menu)
         
@@ -309,60 +370,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.view.bringSubviewToFront(menu)
         
-        
-//        menu.roundCorners(corners: [.topLeft, .topRight], radius: 8)
-        
         self.contextMenuView = menu
         self.isDisplayingUIContextMenu = true
         
+        print("Added menu!", self.contextMenuView)
+        
     }
     
-    func displaySceneContextMenu(at position: CGPoint){
-        let hitTest =  self.sceneView.hitTest(position, options: [:])
-//
-//        if let contextMenuNode = self.contextMenuNode{
-//            contextMenuNode.removeFromParentNode()
-//            self.contextMenuNode = nil
-//        }
-//
-//        var position: SCNVector3!
-//        var rootNode: SCNNode!
-//
-        if hitTest.count == 0{
-            // Nao achou nada, mostrar menu de contexto do espaco
-//            self.contextMenu.openContextMenu(mode: .galaxy)
-//
-//            guard let pos = self.getLookingCameraPosition() else { return }
-//            position = pos
-//            rootNode = self.sceneView.scene.rootNode
-        } else if let hit = hitTest.first{
-            // Encontrou em alguma coisa, mostrar o menu a partir disso
-
-            let node = self.contextMenu.getNode()
-            self.onNewPlanetUpdated(planetNode: node)
-            self.contextMenu.openContextMenu(mode: .planet)
-//            guard let star = self.galaxy.getStar(by: hit.node.position) else {
-//                print("Olha so ta dando ruim")
-//                return
-//            }
-//
-//            position = SCNVector3(0, 0.25 + star.radius, 0)
-//            rootNode = hit.node
-        }
-//
-//        let ctxMenuNode = self.contextMenu.getNode()
-//        ctxMenuNode.position = position
-//
-//        rootNode.addChildNode(ctxMenuNode)
-//
-//        let it = SCNLookAtConstraint(target: self.sceneView.pointOfView)
-//        it.isGimbalLockEnabled = true
-//
-//        rootNode.constraints = [it]
-//        return
-//
-//        self.contextMenuNode = ctxMenuNode
-
+    func displaySceneContextMenu(){
+        
+        let node = self.createPlanetContextMenu.getNode()
+        self.onNewPlanetUpdated(planetNode: node)
+        self.createPlanetContextMenu.openContextMenu(mode: .planet)
+        
     }
     
     func hideUIContextMenu(){
@@ -413,14 +433,46 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
+    func onPanChanged(_ gesture: ContextMenuGestureRecognizer){
+        let position = gesture.location(in: self.view)
+        let center = CGPoint(x: self.view.frame.maxX  / 2, y: self.view.frame.maxY / 2)
+        let diff = position - center
+        
+        self.planetContextMenu.updateHighlightedIcon(at: diff)
+//        gesture
+//        print("Position is", diff)
+    }
+    
+    // MARK: - ContextMenuDelegate methods
+    func onNewPlanetScaleChanged(to scale: Float) {
+        if contextMenuNode == nil { return }
+        self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
+    }
+    
+    func onNewPlanetUpdated(planetNode: SCNNode) {
+        
+        planetNode.removeFromParentNode()
+        if self.contextMenuNode == nil{
+            self.sceneView.pointOfView?.addChildNode(planetNode)
+        }else{
+            self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
+        }
+        
+        self.contextMenuNode = planetNode
+        
+    }
+
+    
     // MARK: - Callbacks
     
     @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
         switch sender.state {
         case .began:
             self.onStartDrag(at: sender.location(in: self.view))
+        case .changed:
+            self.onPanChanged(sender)
         case .ended:
-            self.onEndDrag()
+            self.onEndDrag(at: sender.location(in: self.view))
         default:
             break
         }
