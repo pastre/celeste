@@ -59,7 +59,9 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
             if self.state == .began{
                 self.startTimer()
             } else if self.state == .changed{
-//                self.restartTimer()
+//                if self.hasTriggered {
+//                    self.restartTimer()
+//                }
             } else if self.state != .possible{
                 self.stopTimer()
                 self.hasTriggered = false

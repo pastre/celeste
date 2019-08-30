@@ -13,7 +13,6 @@
 		D707F5802305F82500B0A726 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D707F57E2305F82500B0A726 /* Main.storyboard */; };
 		D707F5822305F82700B0A726 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D707F5812305F82700B0A726 /* Assets.xcassets */; };
 		D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D707F5832305F82700B0A726 /* LaunchScreen.storyboard */; };
-		D733241F23106C6B00493865 /* 1PlanetContextMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D733241E23106C6B00493865 /* 1PlanetContextMenu.xib */; };
 		D733242123106EC300493865 /* PlanetContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242023106EC300493865 /* PlanetContextMenu.swift */; };
 		D7332424231073FB00493865 /* WheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7332423231073FB00493865 /* WheelPicker.swift */; };
 		D73324262310741A00493865 /* WheelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324252310741A00493865 /* WheelPickerCell.swift */; };
@@ -28,6 +27,7 @@
 		D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */; };
 		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
 		D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DABAAC2312FE970015A0F4 /* ModelOption.swift */; };
+		D7DD58C123186FDA003F0F26 /* brainnovo.dae in Resources */ = {isa = PBXBuildFile; fileRef = D7DD58C023186FDA003F0F26 /* brainnovo.dae */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
 		D7FE3B2323145E8900532024 /* PlanetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3B2223145E8900532024 /* PlanetProvider.swift */; };
 /* End PBXBuildFile section */
@@ -41,7 +41,6 @@
 		D707F5812305F82700B0A726 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D707F5842305F82700B0A726 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D707F5862305F82700B0A726 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D733241E23106C6B00493865 /* 1PlanetContextMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = 1PlanetContextMenu.xib; sourceTree = "<group>"; };
 		D733242023106EC300493865 /* PlanetContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetContextMenu.swift; sourceTree = "<group>"; };
 		D7332423231073FB00493865 /* WheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPicker.swift; sourceTree = "<group>"; };
 		D73324252310741A00493865 /* WheelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCell.swift; sourceTree = "<group>"; };
@@ -56,6 +55,7 @@
 		D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePlanetContextMenu.swift; sourceTree = "<group>"; };
 		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
 		D7DABAAC2312FE970015A0F4 /* ModelOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOption.swift; sourceTree = "<group>"; };
+		D7DD58C023186FDA003F0F26 /* brainnovo.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = brainnovo.dae; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
 		D7FE3B2223145E8900532024 /* PlanetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,16 +93,17 @@
 				D7D651642309C09700815B15 /* utils */,
 				D7E91D8323061A1C00FC88B8 /* model */,
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
+				D733242023106EC300493865 /* PlanetContextMenu.swift */,
+				D7DD58C023186FDA003F0F26 /* brainnovo.dae */,
+				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7FE3B2223145E8900532024 /* PlanetProvider.swift */,
-				D707F5782305F82500B0A726 /* AppDelegate.swift */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
 				D707F5812305F82700B0A726 /* Assets.xcassets */,
 				D707F57A2305F82500B0A726 /* art.scnassets */,
 				D707F5832305F82700B0A726 /* LaunchScreen.storyboard */,
+				D707F5782305F82500B0A726 /* AppDelegate.swift */,
 				D707F5862305F82700B0A726 /* Info.plist */,
 				D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */,
-				D733241E23106C6B00493865 /* 1PlanetContextMenu.xib */,
-				D733242023106EC300493865 /* PlanetContextMenu.swift */,
 			);
 			path = Celeste;
 			sourceTree = "<group>";
@@ -133,7 +134,6 @@
 				D7E91D8423061A9700FC88B8 /* Star.swift */,
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
-				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7BA9ACD230D8D54003ECAAD /* Orbit.swift */,
 				D7BA9ACF230D8D9C003ECAAD /* Planet.swift */,
 				D733242B2312FD0D00493865 /* Provider.swift */,
@@ -201,10 +201,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
+				D7DD58C123186FDA003F0F26 /* brainnovo.dae in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,
 				D707F5802305F82500B0A726 /* Main.storyboard in Resources */,
-				D733241F23106C6B00493865 /* 1PlanetContextMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
