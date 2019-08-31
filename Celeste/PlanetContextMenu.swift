@@ -12,7 +12,7 @@ import SceneKit
 protocol PlanetContextMenuDelegate{
     func onEdit()
     func onDelete(node: SCNNode)
-    func onOrbit()
+    func onOrbit(source node: SCNNode)
     func onCopy()
     func onEnded()
 }
@@ -180,7 +180,7 @@ class PlanetContextMenu: SCNNodeTransformer {
             case self.copyView:
                 self.delegate?.onCopy()
             case self.orbitView:
-                self.delegate?.onOrbit()
+                self.delegate?.onOrbit(source: node)
             case self.deleteView:
                 self.delegate?.onDelete(node: node)
             default:
