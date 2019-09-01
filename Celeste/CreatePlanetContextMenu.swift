@@ -65,17 +65,22 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     }()
     
     
-    lazy var colorPicker: WheelPicker = {
-        let picker = WheelPicker()
-        
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.delegate = self
-        picker.dataSource = self
-        picker.style = .styleFlat
-        
-        return picker
+    lazy var colorPicker: ColorSlider = {
+        let slider = ColorSlider(orientation: .horizontal, previewSide: .top)
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        return slider
     }()
-    
+//    lazy var colorPicker: WheelPicker = {
+//        let picker = WheelPicker()
+//
+//        picker.translatesAutoresizingMaskIntoConstraints = false
+//        picker.delegate = self
+//        picker.dataSource = self
+//        picker.style = .styleFlat
+//
+//        return picker
+//    }()
+//
     
     
     lazy var slider: UISlider = {
