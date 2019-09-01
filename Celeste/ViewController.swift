@@ -87,7 +87,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return button
     }()
     
-    var orbitIndicator: SCNNode?
+    var highlighterNode: SCNNode?
+    
     var contextMenuNode: SCNNode?
     var contextMenuView: UIView? {
         didSet{
@@ -180,25 +181,68 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
         if let selectedStar = self.currentSelectedStar {
             selectedStar.position = SCNVector3(x: 0, y: 0, z: -3)
+            self.updateHighlightedNode()
         }
         
-        if let orbitIndicator = self.orbitIndicator {
-            orbitIndicator.position = SCNVector3(x: 0, y: 0, z: -3)
-        }
-        
-        if let contextMenu = self.contextMenuNode, let orientation = self.sceneView.pointOfView{
+        if let contextMenu = self.contextMenuNode{
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
     
-        if self.orbitContextMenu.needsDrawing {
-            
-            let lineNode = self.orbitContextMenu.getNode()
-            self.sceneView.scene.rootNode.addChildNode(lineNode)
-            self.orbitContextMenu.lineNode = lineNode
-        }
+        
         
     }
     
+    func updateHighlightedNode(){
+        
+        let centerPoint = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height / 2)
+        let hitTest = self.sceneView.hitTest(centerPoint, options: [:])
+//        print("HOT TEST", hitTest.count)
+//        if hitTest.count < 2 {
+//            self.clearHighlight()
+//            return
+//        }
+        for test in hitTest{
+            if test.node == self.currentSelectedStar{ continue }
+            self.highlight(node: test.node)
+            return
+            
+        }
+    }
+    
+    func getHighlighterNode() -> SCNNode{
+        let geometry = SCNPyramid(width: 0.6, height: 0.8, length: 0.6)
+        let node = SCNNode(geometry: geometry)
+        
+        geometry.firstMaterial?.diffuse.contents = UIColor.purple
+        
+        return node
+    }
+    
+    func highlight(node: SCNNode){
+        
+        if let n = self.highlighterNode{
+            n.removeFromParentNode()
+        }
+        
+        let highlighter = self.getHighlighterNode()
+        self.highlighterNode = highlighter
+        node.addChildNode(highlighter)
+        guard let radius = node.geometry?.boundingSphere.radius else { return }
+        
+        let rotate = SCNAction.rotateBy(x: 0, y: CGFloat.pi, z: 0, duration: 1)
+        let foreverAction = SCNAction.repeatForever(rotate)
+        
+        highlighterNode?.runAction(foreverAction)
+        
+        highlighterNode?.eulerAngles.x = Float.pi
+        highlighterNode?.position = SCNVector3(x: 0, y: (radius + 0.85), z: 0)
+        
+    }
+    
+    func clearHighlight(){
+        self.highlighterNode?.removeFromParentNode()
+        self.highlighterNode = nil
+    }
     
     // MARK: - Planet dragging helper functions
     
@@ -239,6 +283,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
         
             self.updatedOrbit(newStar)
+            self.clearHighlight()
         }
         
         self.currentSelectedStar = nil
@@ -315,30 +360,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                         continue
                     }
                     
-                    
-                    let worldTransform = child.worldTransform
-                    let rotator = SCNNode()
-                    let inclinator = SCNNode()
-                    
-                    
-                    child.removeFromParentNode()
-                    
-                    rotator.addChildNode(child)
-
-                    child.setWorldTransform(worldTransform)
-                    
-                    rotator.position = SCNVector3Zero
-                    inclinator.addChildNode(rotator)
-//                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
-//                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
-                    inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
-                    
-                    parentNode.addChildNode(inclinator)
-                    
-                    let rotateAction = SCNAction.rotate(by: CGFloat.pi, around: inclinator.position, duration: 3)
-                    let foreverAction = SCNAction.repeatForever(rotateAction)
-                    
-                    rotator.runAction(foreverAction)
+                    self.createOrbit(around: parentNode, child: child, radius: CGFloat.random(in: 0...0.5))
+//                    let worldTransform = child.worldTransform
+//                    let rotator = SCNNode()
+//                    let inclinator = SCNNode()
+//
+//
+//                    child.removeFromParentNode()
+//
+//                    rotator.addChildNode(child)
+//
+//                    child.setWorldTransform(worldTransform)
+//
+//                    rotator.position = SCNVector3Zero
+//                    inclinator.addChildNode(rotator)
+////                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
+////                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
+//                    inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
+//
+//                    parentNode.addChildNode(inclinator)
+//
+//                    let rotateAction = SCNAction.rotate(by: CGFloat.pi, around: inclinator.position, duration: 3)
+//                    let foreverAction = SCNAction.repeatForever(rotateAction)
+//
+//                    rotator.runAction(foreverAction)
                     
 //                    self.createOrbit(around: planetNode, child: child, radius: planet.radius + orbit.radius)
                     print("AEEEEEE")
