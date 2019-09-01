@@ -188,19 +188,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
     
-        
-        
     }
+    
+    
+    // MARK: - Node highlight related methods
     
     func updateHighlightedNode(){
         
         let centerPoint = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height / 2)
         let hitTest = self.sceneView.hitTest(centerPoint, options: [:])
-//        print("HOT TEST", hitTest.count)
-//        if hitTest.count < 2 {
-//            self.clearHighlight()
-//            return
-//        }
+        
         for test in hitTest{
             if test.node == self.currentSelectedStar{ continue }
             self.highlight(node: test.node)
