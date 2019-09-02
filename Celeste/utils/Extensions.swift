@@ -25,14 +25,54 @@ extension UIColor {
 }
 
 extension UIImage {
+    func resizeImage(size: CGSize) -> UIImage? {
+        
+        UIGraphicsBeginImageContext(CGSize(width: size.width, height: size.height))
+        self.draw(in: CGRect(x: 0, y: 5, width: size.width, height: size.height-5))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
     
-    func tint(_ tintColor: UIColor?) -> UIImage {
-        guard let tintColor = tintColor else { return self }
+    
+    //by lynfogeek on github
+    func tint(tintColor: UIColor) -> UIImage {
+        
         return modifiedImage { context, rect in
+            // draw black background - workaround to preserve color of partially transparent pixels
+            context.setBlendMode(.normal)
+            UIColor.black.setFill()
+            context.fill(rect)
+            
+            // draw original image
+            context.setBlendMode(.normal)
+            context.draw(self.cgImage!, in: rect)
+            
+            // tint image (loosing alpha) - the luminosity of the original image is preserved
             context.setBlendMode(.multiply)
-            context.clip(to: rect, mask: self.cgImage!)
             tintColor.setFill()
             context.fill(rect)
+            
+            // mask by alpha values of original image
+            context.setBlendMode(.destinationIn)
+            context.draw(self.cgImage!, in: rect)
+        }
+    }
+    
+    
+    func fillAlpha(fillColor: UIColor) -> UIImage {
+        
+        return modifiedImage { context, rect in
+            // draw tint color
+            context.setBlendMode(.normal)
+            fillColor.setFill()
+            context.fill(rect)
+            //            context.fillCGContextFillRect(context, rect)
+            
+            // mask by alpha values of original image
+            context.setBlendMode(.destinationIn)
+            context.draw(self.cgImage!, in: rect)
         }
     }
     
@@ -40,8 +80,8 @@ extension UIImage {
         
         // using scale correctly preserves retina images
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        defer { UIGraphicsEndImageContext() }
-        guard let context = UIGraphicsGetCurrentContext() else { return self }
+        let context: CGContext! = UIGraphicsGetCurrentContext()
+        assert(context != nil)
         
         // correctly rotate image
         context.translateBy(x: 0, y: size.height)
@@ -51,37 +91,9 @@ extension UIImage {
         
         draw(context, rect)
         
-        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else { return self }
-        return newImage
-    }
-    
-}
-extension UIImage {
-    
-    func tinted(color: UIColor) -> UIImage {
-        
-        UIGraphicsBeginImageContext(self.size)
-        guard let context = UIGraphicsGetCurrentContext() else { return self }
-        guard let cgImage = cgImage else { return self }
-        
-        // flip the image
-        context.scaleBy(x: 1.0, y: -1.0)
-        context.translateBy(x: 0.0, y: -size.height)
-        
-        // multiply blend mode
-        context.setBlendMode(.multiply)
-        
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        context.clip(to: rect, mask: cgImage)
-        color.setFill()
-        context.fill(rect)
-        
-        // create uiimage
-        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else { return self }
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
-        return newImage
-        
+        return image!
     }
     
 }

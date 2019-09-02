@@ -22,6 +22,7 @@ enum ContextMenuOption:String, CaseIterable{
 
 protocol ContextMenuDelegate {
     func onNewPlanetUpdated(planetNode: SCNNode)
+    func onNewPlanetTextureChanged(to texture: UIImage?)
     func onNewPlanetScaleChanged(to scale: Float)
 }
 
@@ -41,13 +42,8 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         }
     }
     
-    var currentColor: ShapeColor? = .blue {
-        didSet{
-            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
-        }
-    }
+    var currentColor: UIColor?
     
-    var currentHue: CGFloat?
     
     
     var currentRadius: Float? {
@@ -220,8 +216,8 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     func getNewPlanetNode() -> SCNNode? {
         let node = SCNNode()
         var model: SCNNode?
-        if let hue = self.currentHue{
-            model = PlanetProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: hue)
+        if let color = self.currentColor{
+            model = PlanetProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: color)
         }
         
 //        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
@@ -334,6 +330,8 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
             slider.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
             slider.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
             
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+            
             return view
         }()
         
@@ -399,13 +397,12 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     
     @objc func onColorChanged(_ slider: ColorSlider){
         let color = slider.color
-        var hue: CGFloat = 1
-        
-        if color.getHue(&hue, saturation: nil, brightness: nil, alpha: nil){
-            
-            self.currentHue = hue
-            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
-        }
+        let texture = kTEXTURE_TO_IMAGE[self.currentShape.rawValue]
+        let maskedTexture = texture?.tint(tintColor: color)
+        self.delegate?.onNewPlanetTextureChanged(to: maskedTexture)
+        self.currentColor = color
+//        self.del
+       
     }
     
     
@@ -436,12 +433,9 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     }
     
     func wheelPicker(_ wheelPicker: WheelPicker, didSelectItemAt index: Int) {
-        if wheelPicker == self.colorPicker{
-            self.currentColor = ShapeColor.allCases[index]
-        }else{
-            self.currentShape = ShapeName.allCases[index]
-            self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
-        }
+        
+        self.currentShape = ShapeName.allCases[index]
+        self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
     }
 
     
