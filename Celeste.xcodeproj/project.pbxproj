@@ -19,6 +19,12 @@
 		D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */; };
 		D733242A23123A0800493865 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242923123A0800493865 /* Extensions.swift */; };
 		D733242C2312FD0D00493865 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242B2312FD0D00493865 /* Provider.swift */; };
+		D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB1231C530E00403018 /* ColorSlider.swift */; };
+		D7337DB4231C534100403018 /* HSBColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB3231C534100403018 /* HSBColor.swift */; };
+		D7337DB6231C536500403018 /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB5231C536500403018 /* Gradient.swift */; };
+		D7337DB8231C53A200403018 /* DefaultPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB7231C53A200403018 /* DefaultPreviewView.swift */; };
+		D7337DBA231C53C200403018 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB9231C53C200403018 /* GradientView.swift */; };
+		D7337DBC231C53D400403018 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DBB231C53D400403018 /* PreviewView.swift */; };
 		D734B87423071E0B00EFA0AD /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87323071E0B00EFA0AD /* Point.swift */; };
 		D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87623071EC500EFA0AD /* Galaxy.swift */; };
 		D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742F0CC2309C0C90041F46F /* VectorMath.swift */; };
@@ -47,6 +53,12 @@
 		D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCollectionViewLayout.swift; sourceTree = "<group>"; };
 		D733242923123A0800493865 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D733242B2312FD0D00493865 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		D7337DB1231C530E00403018 /* ColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSlider.swift; sourceTree = "<group>"; };
+		D7337DB3231C534100403018 /* HSBColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSBColor.swift; sourceTree = "<group>"; };
+		D7337DB5231C536500403018 /* Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
+		D7337DB7231C53A200403018 /* DefaultPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPreviewView.swift; sourceTree = "<group>"; };
+		D7337DB9231C53C200403018 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		D7337DBB231C53D400403018 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		D734B87323071E0B00EFA0AD /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		D734B87623071EC500EFA0AD /* Galaxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Galaxy.swift; sourceTree = "<group>"; };
 		D742F0CC2309C0C90041F46F /* VectorMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorMath.swift; sourceTree = "<group>"; };
@@ -118,9 +130,23 @@
 			path = wheelPicker;
 			sourceTree = "<group>";
 		};
+		D7337DB0231C52F900403018 /* colorSlider */ = {
+			isa = PBXGroup;
+			children = (
+				D7337DB1231C530E00403018 /* ColorSlider.swift */,
+				D7337DB3231C534100403018 /* HSBColor.swift */,
+				D7337DB5231C536500403018 /* Gradient.swift */,
+				D7337DB7231C53A200403018 /* DefaultPreviewView.swift */,
+				D7337DB9231C53C200403018 /* GradientView.swift */,
+				D7337DBB231C53D400403018 /* PreviewView.swift */,
+			);
+			path = colorSlider;
+			sourceTree = "<group>";
+		};
 		D7D651642309C09700815B15 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				D7337DB0231C52F900403018 /* colorSlider */,
 				D7332422231073E900493865 /* wheelPicker */,
 				D742F0CC2309C0C90041F46F /* VectorMath.swift */,
 				D733242923123A0800493865 /* Extensions.swift */,
@@ -220,17 +246,23 @@
 				D707F57D2305F82500B0A726 /* ViewController.swift in Sources */,
 				D733242C2312FD0D00493865 /* Provider.swift in Sources */,
 				D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */,
+				D7337DB8231C53A200403018 /* DefaultPreviewView.swift in Sources */,
+				D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */,
 				D7FE3B2323145E8900532024 /* PlanetProvider.swift in Sources */,
 				D7DD58C32318A8B1003F0F26 /* OribitContextMenu.swift in Sources */,
 				D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */,
 				D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */,
 				D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */,
 				D7332424231073FB00493865 /* WheelPicker.swift in Sources */,
+				D7337DBA231C53C200403018 /* GradientView.swift in Sources */,
 				D73324262310741A00493865 /* WheelPickerCell.swift in Sources */,
 				D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */,
 				D733242A23123A0800493865 /* Extensions.swift in Sources */,
+				D7337DB4231C534100403018 /* HSBColor.swift in Sources */,
 				D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */,
+				D7337DBC231C53D400403018 /* PreviewView.swift in Sources */,
 				D733242123106EC300493865 /* PlanetContextMenu.swift in Sources */,
+				D7337DB6231C536500403018 /* Gradient.swift in Sources */,
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
 				D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */,
 			);

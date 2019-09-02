@@ -22,6 +22,7 @@ enum ContextMenuOption:String, CaseIterable{
 
 protocol ContextMenuDelegate {
     func onNewPlanetUpdated(planetNode: SCNNode)
+    func onNewPlanetTextureChanged(to texture: UIImage?)
     func onNewPlanetScaleChanged(to scale: Float)
 }
 
@@ -41,11 +42,9 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         }
     }
     
-    var currentColor: ShapeColor? = .blue {
-        didSet{
-            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
-        }
-    }
+    var currentColor: UIColor?
+    
+    
     
     var currentRadius: Float? {
         didSet{
@@ -65,17 +64,25 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     }()
     
     
-    lazy var colorPicker: WheelPicker = {
-        let picker = WheelPicker()
+    lazy var colorPicker: ColorSlider = {
+        let slider = ColorSlider(orientation: .horizontal, previewSide: .top)
         
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.delegate = self
-        picker.dataSource = self
-        picker.style = .styleFlat
-        
-        return picker
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.layer.borderColor = UIColor.clear.cgColor
+        slider.addTarget(self, action: #selector(self.onColorChanged(_:)), for: .valueChanged)
+        return slider
     }()
-    
+//    lazy var colorPicker: WheelPicker = {
+//        let picker = WheelPicker()
+//
+//        picker.translatesAutoresizingMaskIntoConstraints = false
+//        picker.delegate = self
+//        picker.dataSource = self
+//        picker.style = .styleFlat
+//
+//        return picker
+//    }()
+//
     
     
     lazy var slider: UISlider = {
@@ -208,12 +215,15 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     
     func getNewPlanetNode() -> SCNNode? {
         let node = SCNNode()
+        var model: SCNNode?
+        if let color = self.currentColor{
+            model = PlanetProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: color)
+        }
         
-        guard let model = PlanetProvider.instance.getPlanet(with: self.currentShape, color: self.currentColor ?? .purple) else { return nil  }
 //        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
-        
-        node.addChildNode(model)
-        model.worldPosition = SCNVector3(0, 0, 0 )
+        guard let aModel = model else { return nil}
+        node.addChildNode(aModel)
+        aModel.worldPosition = SCNVector3(0, 0, 0 )
         
 //        let mult = (self.currentRadius ?? 1) * 0.1
 //        model.scale = SCNVector3(x: mult, y: mult, z: mult)
@@ -271,6 +281,7 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
+
         
         let bgImageView: UIImageView = {
             let view = UIImageView(image: UIImage(named: "planetContextMenuBg"))
@@ -300,54 +311,78 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
             return label
         }()
         
+        let sliderView: UIView = {
+            let view = UIView()
+            
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(slider)
+            view.addSubview(plusHintLabel)
+            view.addSubview(minusHintLabel)
+            
+            minusHintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            minusHintLabel.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            
+            plusHintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            plusHintLabel.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            
+            slider.leftAnchor.constraint(equalTo: minusHintLabel.rightAnchor, constant: 20).isActive  = true
+            slider.rightAnchor.constraint(equalTo: plusHintLabel.leftAnchor, constant: -20).isActive = true
+            slider.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            slider.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+            
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+            
+            return view
+        }()
+        
         let planetPickerSelectedIndicator = self.getCircularView()
-        let colorPickerSelectedIndicator = self.getCircularView()
+//        let colorPickerSelectedIndicator = self.getCircularView()
         
         view.addSubview(bgImageView)
         view.addSubview(colorPicker)
-        view.addSubview(slider)
+//        view.addSubview(slider)
         view.addSubview(planetPicker)
-        view.addSubview(plusHintLabel)
-        view.addSubview(minusHintLabel)
+        view.addSubview(sliderView)
+//        view.addSubview(plusHintLabel)
+//        view.addSubview(minusHintLabel)
         view.addSubview(planetPickerSelectedIndicator)
-        view.addSubview(colorPickerSelectedIndicator)
+//        view.addSubview(colorPickerSelectedIndicator)
         
         bgImageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         bgImageView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         bgImageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 293/414).isActive = true
         
-        self.colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
-        self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
+//        self.colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: margin).isActive = true
+//        self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -margin).isActive = true
+//        self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
+//        self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.05).isActive = true
+//
+        self.colorPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        self.colorPicker.bottomAnchor.constraint(equalTo: sliderView.topAnchor, constant: -40).isActive = true
+        self.colorPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
+        self.colorPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.05).isActive = true
+
+        sliderView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40).isActive = true
+        sliderView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        sliderView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
+        sliderView.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.2).isActive = true
         
-        self.slider.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        self.slider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
-        self.slider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-        self.slider.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
-        
-        self.planetPicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        self.planetPicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        self.planetPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        self.planetPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        self.planetPicker.bottomAnchor.constraint(equalTo: self.colorPicker.topAnchor, constant: -40).isActive = true
+        self.planetPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
         self.planetPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
         
-        plusHintLabel.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
-        plusHintLabel.leftAnchor.constraint(equalTo: slider.rightAnchor, constant: 10).isActive = true
-        plusHintLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.05).isActive = true
-        plusHintLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.05 ).isActive = true
-        
-        minusHintLabel.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
-        minusHintLabel.rightAnchor.constraint(equalTo: slider.leftAnchor, constant: -10).isActive = true
-        minusHintLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.05).isActive = true
-        minusHintLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.05 ).isActive = true
+//        self.planetPicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: margin).isActive = true
+//        self.planetPicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -margin).isActive = true
+//        self.planetPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+//        self.planetPicker.heightAnchor.constraint(equalTo: bgImageView.heightAnchor, multiplier: 0.25).isActive = true
+//
         
         planetPickerSelectedIndicator.centerXAnchor.constraint(equalTo: planetPicker.centerXAnchor).isActive = true
         planetPickerSelectedIndicator.centerYAnchor.constraint(equalTo: planetPicker.centerYAnchor).isActive = true
         
-        colorPickerSelectedIndicator.centerXAnchor.constraint(equalTo: colorPicker.centerXAnchor).isActive = true
-        colorPickerSelectedIndicator.centerYAnchor.constraint(equalTo: colorPicker.centerYAnchor).isActive = true
-        
+//
         
         view.bringSubviewToFront(planetPicker)
         view.bringSubviewToFront(colorPicker)
@@ -358,6 +393,17 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         return view
     }
 
+    
+    
+    @objc func onColorChanged(_ slider: ColorSlider){
+        let color = slider.color
+        let texture = kTEXTURE_TO_IMAGE[self.currentShape.rawValue]
+        let maskedTexture = texture?.tint(tintColor: color)
+        self.delegate?.onNewPlanetTextureChanged(to: maskedTexture)
+        self.currentColor = color
+//        self.del
+       
+    }
     
     
     func numberOfItems(_ wheelPicker: WheelPicker) -> Int {
@@ -387,12 +433,9 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     }
     
     func wheelPicker(_ wheelPicker: WheelPicker, didSelectItemAt index: Int) {
-        if wheelPicker == self.colorPicker{
-            self.currentColor = ShapeColor.allCases[index]
-        }else{
-            self.currentShape = ShapeName.allCases[index]
-            self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
-        }
+        
+        self.currentShape = ShapeName.allCases[index]
+        self.currentModel = SCNNode(geometry: SCNSphere(radius: 0.2))
     }
 
     

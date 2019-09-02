@@ -11,6 +11,8 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate {
+
+    
    
     // MARK: - PlanetContextMenuDelegate methods
     func onEdit() {
@@ -560,6 +562,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func onNewPlanetScaleChanged(to scale: Float) {
         if contextMenuNode == nil { return }
         self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
+    }
+    
+    func onNewPlanetTextureChanged(to texture: UIImage?){
+        self.contextMenuNode?.geometry?.firstMaterial?.diffuse.contents = texture
     }
     
     func onNewPlanetUpdated(planetNode: SCNNode) {

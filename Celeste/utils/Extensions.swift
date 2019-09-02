@@ -25,14 +25,54 @@ extension UIColor {
 }
 
 extension UIImage {
+    func resizeImage(size: CGSize) -> UIImage? {
+        
+        UIGraphicsBeginImageContext(CGSize(width: size.width, height: size.height))
+        self.draw(in: CGRect(x: 0, y: 5, width: size.width, height: size.height-5))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
     
-    func tint(_ tintColor: UIColor?) -> UIImage {
-        guard let tintColor = tintColor else { return self }
+    
+    //by lynfogeek on github
+    func tint(tintColor: UIColor) -> UIImage {
+        
         return modifiedImage { context, rect in
+            // draw black background - workaround to preserve color of partially transparent pixels
+            context.setBlendMode(.normal)
+            UIColor.black.setFill()
+            context.fill(rect)
+            
+            // draw original image
+            context.setBlendMode(.normal)
+            context.draw(self.cgImage!, in: rect)
+            
+            // tint image (loosing alpha) - the luminosity of the original image is preserved
             context.setBlendMode(.multiply)
-            context.clip(to: rect, mask: self.cgImage!)
             tintColor.setFill()
             context.fill(rect)
+            
+            // mask by alpha values of original image
+            context.setBlendMode(.destinationIn)
+            context.draw(self.cgImage!, in: rect)
+        }
+    }
+    
+    
+    func fillAlpha(fillColor: UIColor) -> UIImage {
+        
+        return modifiedImage { context, rect in
+            // draw tint color
+            context.setBlendMode(.normal)
+            fillColor.setFill()
+            context.fill(rect)
+            //            context.fillCGContextFillRect(context, rect)
+            
+            // mask by alpha values of original image
+            context.setBlendMode(.destinationIn)
+            context.draw(self.cgImage!, in: rect)
         }
     }
     
@@ -40,8 +80,8 @@ extension UIImage {
         
         // using scale correctly preserves retina images
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        defer { UIGraphicsEndImageContext() }
-        guard let context = UIGraphicsGetCurrentContext() else { return self }
+        let context: CGContext! = UIGraphicsGetCurrentContext()
+        assert(context != nil)
         
         // correctly rotate image
         context.translateBy(x: 0, y: size.height)
@@ -51,41 +91,31 @@ extension UIImage {
         
         draw(context, rect)
         
-        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else { return self }
-        return newImage
-    }
-    
-}
-extension UIImage {
-    
-    func tinted(color: UIColor) -> UIImage {
-        
-        UIGraphicsBeginImageContext(self.size)
-        guard let context = UIGraphicsGetCurrentContext() else { return self }
-        guard let cgImage = cgImage else { return self }
-        
-        // flip the image
-        context.scaleBy(x: 1.0, y: -1.0)
-        context.translateBy(x: 0.0, y: -size.height)
-        
-        // multiply blend mode
-        context.setBlendMode(.multiply)
-        
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        context.clip(to: rect, mask: cgImage)
-        color.setFill()
-        context.fill(rect)
-        
-        // create uiimage
-        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else { return self }
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
-        return newImage
-        
+        return image!
     }
     
 }
 
+func rotateHue(with sourceCore: UIImage, rotatedByHue deltaHueRadians: CGFloat) -> UIImage {
+    
+    let rawImage = sourceCore
+    let sourceCore = CIImage(cgImage: rawImage.cgImage!)
+    
+    // Apply a CIHueAdjust filter
+    let hueAdjust = CIFilter(name: "CIHueAdjust")
+    hueAdjust?.setDefaults()
+    hueAdjust?.setValue(sourceCore, forKey: "inputImage")
+    hueAdjust?.setValue(deltaHueRadians, forKey: "inputAngle")
+    let resultCore = hueAdjust?.value(forKey: "outputImage") as? CIImage
+    // Convert the filter output back into a UIImage.
+    let context = CIContext(options: nil)
+    let resultRef = context.createCGImage(resultCore!, from: (resultCore?.extent)!)
+    let result = UIImage(cgImage: resultRef!)
+    //CGImageRelease(resultRef)
+    return result
+}
 
 func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
     
@@ -122,5 +152,61 @@ extension SCNGeometry {
         let source = SCNGeometrySource(vertices: [vector1, vector2])
         let element = SCNGeometryElement(indices: indices, primitiveType: .line)
         return SCNGeometry(sources: [source], elements: [element])
+    }
+}
+
+
+extension UITouch {
+    /// Calculate the "progress" of a touch in a view with respect to an orientation.
+    /// - parameter view: The view to be used as a frame of reference.
+    /// - parameter orientation: The orientation with which to determine the return value.
+    /// - returns: The percent across the `view` that the receiver's location is, relative to the `orientation`. Constrained to (0, 1).
+    func progress(in view: UIView, withOrientation orientation: Orientation) -> CGFloat {
+        let touchLocation = self.location(in: view)
+        var progress: CGFloat = 0
+        
+        switch orientation {
+        case .vertical:
+            progress = touchLocation.y / view.bounds.height
+        case .horizontal:
+            progress = touchLocation.x / view.bounds.width
+        }
+        
+        return (0.0..<1.0).clamp(progress)
+    }
+}
+
+
+extension Range {
+    /// Constrain a `Bound` value by `self`.
+    /// Equivalent to max(lowerBound, min(upperBound, value)).
+    /// - parameter value: The value to be clamped.
+    func clamp(_ value: Bound) -> Bound {
+        return lowerBound > value ? lowerBound
+            : upperBound < value ? upperBound
+            : value
+    }
+}
+
+extension UIImage {
+    func maskWithColor(color: UIColor) -> UIImage {
+        
+        let maskImage = self.cgImage
+        let width = self.size.width
+        let height = self.size.height
+        let bounds = CGRect(x: 0, y: 0, width: width, height: height)
+        
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+        let bitmapContext = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
+        bitmapContext?.clip(to: bounds, mask: maskImage!)
+//        CGContextClipToMask(bitmapContext!, bounds, maskImage!)
+        bitmapContext!.setFillColor(color.cgColor)
+        bitmapContext!.fill(bounds)
+        
+        let cImage = bitmapContext!.makeImage()
+        let coloredImage = UIImage(cgImage: cImage!)
+        
+        return coloredImage
     }
 }
