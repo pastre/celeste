@@ -47,6 +47,9 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         }
     }
     
+    var currentHue: CGFloat?
+    
+    
     var currentRadius: Float? {
         didSet{
             self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
@@ -70,7 +73,7 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.layer.borderColor = UIColor.clear.cgColor
-        
+        slider.addTarget(self, action: #selector(self.onColorChanged(_:)), for: .valueChanged)
         return slider
     }()
 //    lazy var colorPicker: WheelPicker = {
@@ -216,12 +219,15 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     
     func getNewPlanetNode() -> SCNNode? {
         let node = SCNNode()
+        var model: SCNNode?
+        if let hue = self.currentHue{
+            model = PlanetProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: hue)
+        }
         
-        guard let model = PlanetProvider.instance.getPlanet(with: self.currentShape, color: self.currentColor ?? .purple) else { return nil  }
 //        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
-        
-        node.addChildNode(model)
-        model.worldPosition = SCNVector3(0, 0, 0 )
+        guard let aModel = model else { return nil}
+        node.addChildNode(aModel)
+        aModel.worldPosition = SCNVector3(0, 0, 0 )
         
 //        let mult = (self.currentRadius ?? 1) * 0.1
 //        model.scale = SCNVector3(x: mult, y: mult, z: mult)
@@ -349,10 +355,6 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         bgImageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 293/414).isActive = true
         
-        
-        let margin: CGFloat = 20
-        
-        
 //        self.colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor, constant: margin).isActive = true
 //        self.colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -margin).isActive = true
 //        self.colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -110).isActive = true
@@ -393,6 +395,18 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         return view
     }
 
+    
+    
+    @objc func onColorChanged(_ slider: ColorSlider){
+        let color = slider.color
+        var hue: CGFloat = 1
+        
+        if color.getHue(&hue, saturation: nil, brightness: nil, alpha: nil){
+            
+            self.currentHue = hue
+            self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+        }
+    }
     
     
     func numberOfItems(_ wheelPicker: WheelPicker) -> Int {

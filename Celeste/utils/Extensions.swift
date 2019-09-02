@@ -86,6 +86,24 @@ extension UIImage {
     
 }
 
+func rotateHue(with sourceCore: UIImage, rotatedByHue deltaHueRadians: CGFloat) -> UIImage {
+    
+    let rawImage = sourceCore
+    let sourceCore = CIImage(cgImage: rawImage.cgImage!)
+    
+    // Apply a CIHueAdjust filter
+    let hueAdjust = CIFilter(name: "CIHueAdjust")
+    hueAdjust?.setDefaults()
+    hueAdjust?.setValue(sourceCore, forKey: "inputImage")
+    hueAdjust?.setValue(deltaHueRadians, forKey: "inputAngle")
+    let resultCore = hueAdjust?.value(forKey: "outputImage") as? CIImage
+    // Convert the filter output back into a UIImage.
+    let context = CIContext(options: nil)
+    let resultRef = context.createCGImage(resultCore!, from: (resultCore?.extent)!)
+    let result = UIImage(cgImage: resultRef!)
+    //CGImageRelease(resultRef)
+    return result
+}
 
 func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
     
@@ -155,5 +173,28 @@ extension Range {
         return lowerBound > value ? lowerBound
             : upperBound < value ? upperBound
             : value
+    }
+}
+
+extension UIImage {
+    func maskWithColor(color: UIColor) -> UIImage {
+        
+        let maskImage = self.cgImage
+        let width = self.size.width
+        let height = self.size.height
+        let bounds = CGRect(x: 0, y: 0, width: width, height: height)
+        
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+        let bitmapContext = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
+        bitmapContext?.clip(to: bounds, mask: maskImage!)
+//        CGContextClipToMask(bitmapContext!, bounds, maskImage!)
+        bitmapContext!.setFillColor(color.cgColor)
+        bitmapContext!.fill(bounds)
+        
+        let cImage = bitmapContext!.makeImage()
+        let coloredImage = UIImage(cgImage: cImage!)
+        
+        return coloredImage
     }
 }
