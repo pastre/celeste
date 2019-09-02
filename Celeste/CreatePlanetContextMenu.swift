@@ -217,7 +217,7 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         let node = SCNNode()
         var model: SCNNode?
         if let color = self.currentColor{
-            model = PlanetProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: color)
+            model = PlanetTextureProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: color)
         }
         
 //        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }

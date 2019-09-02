@@ -67,9 +67,9 @@ let kTEXTURE_TO_SHAPE = [
 
 var kTEXTURE_TO_IMAGE: [String: UIImage] = [String: UIImage]()
 
-class PlanetProvider{
+class PlanetTextureProvider{
     
-    static let instance = PlanetProvider()
+    static let instance = PlanetTextureProvider()
     
     private init(){
         for i in ShapeName.allCases{
@@ -101,4 +101,5 @@ class PlanetProvider{
         modelNode.name = "newPlanet"
         return modelNode
     }
+    
 }

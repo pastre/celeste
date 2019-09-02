@@ -12,69 +12,19 @@ import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate {
 
-    
-   
-    // MARK: - PlanetContextMenuDelegate methods
-    func onEdit() {
-        defer { self.hideUIContextMenu()}
-        print("Mostrei!")
-    }
-
-    func onOrbit(source node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Orbit!")
-        
-    }
-    
-    func onCopy() {
-        defer { self.hideUIContextMenu()}
-        print("Copy!")
-        
-    }
-    
-    func onDelete(node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Delete!")
-//        self.hideContextMenu()
-//        assert(self.currentSelectedStar != nil)
-        
-        node.removeFromParentNode()
-//         = nil
-    }
-    
-    func onEnded() {
-        defer { self.hideUIContextMenu()}
-        print("Ended!")
-    }
-    
-    func displayOrbitView(){
-        
-    }
-
     @IBOutlet var sceneView: ARSCNView!
     
+    // Mark: - Constants
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
     let orbitContextMenu = OrbitContextMenu.instance
-    
-    var planetContextMenuView: UIView = {
-        let view = UIView()
-        
-        return view
-    }()
-    
+    lazy var galaxy: Galaxy =  self.getDebugGalaxy()
+
+    // MARK: - Gestures
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
     
-    var currentSelectedStar: SCNNode?{
-        didSet{
-            if self.currentSelectedStar == nil{
-                self.isMovingNode = false
-            } else {
-                self.isMovingNode = true
-            }
-        }
-    }
-    
+    // MARK: - UIKit elements
+    var planetContextMenuView: UIView? = UIView()
     var addPlanetButton: UIButton = {
         let button = UIButton()
         
@@ -88,10 +38,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         return button
     }()
-    
-    var highlighterNode: SCNNode?
-    
-    var contextMenuNode: SCNNode?
     var contextMenuView: UIView? {
         didSet{
             if let _ = self.contextMenuView{
@@ -102,10 +48,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
+    // MARK: - SCNKit elements
+    var tappedNode: SCNNode?
+    var highlighterNode: SCNNode?
+    var contextMenuNode: SCNNode?
+    var currentSelectedStar: SCNNode?{
+        didSet{
+            if self.currentSelectedStar == nil{
+                self.isMovingNode = false
+            } else {
+                self.isMovingNode = true
+            }
+        }
+    }
+
+    // MARK: - Flags
     var isMovingNode: Bool! = false
     var isDisplayingUIContextMenu: Bool = false
     
-    lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     
     // MARK: - UIViewController overrides
     
@@ -134,6 +94,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.createPlanetContextMenu.delegate = self
         self.tapGesture.delegate = self
         self.planetContextMenu.delegate = self
+        
+        self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
         self.view.addGestureRecognizer(contextMenuGesture)
@@ -141,6 +103,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.contextMenuGesture.cancelsTouchesInView = false
         self.setupAddPlanetButton()
+        self.modalPresentationStyle = .overCurrentContext
     }
     
     func setupAddPlanetButton(){
@@ -189,7 +152,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let contextMenu = self.contextMenuNode{
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
-    
+        
+        if let camera = self.sceneView.pointOfView{
+            
+            for node in self.sceneView.scene.rootNode.childNodes{
+                if let textNode = node.childNode(withName: "planetName", recursively: true){
+                    textNode.look(at: camera.position)
+                }
+                
+            }
+
+        }
     }
     
     
@@ -222,6 +195,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let n = self.highlighterNode{
             n.removeFromParentNode()
         }
+        
+        let a = self.sceneView.scene.rootNode
+        
         
         let highlighter = self.getHighlighterNode()
         self.highlighterNode = highlighter
@@ -268,7 +244,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onEndDrag(at location: CGPoint){
-        print("Selected star on drag", self.currentSelectedStar)
         if let selectedStar = self.currentSelectedStar{
             print("Tem estrela boa")
             let newStar = selectedStar.clone()
@@ -306,15 +281,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func createOrbit(around center: SCNNode, child: SCNNode, radius: CGFloat){
-//        let orbitingNode = SCNNode()
-//        orbitingNode.position = SCNVector3(radius, 0, 0)
-//        child.removeFromParentNode()
-//        orbitingNode.addChildNode(child)
-//        let action = SCNAction.rotate(by: 3.1415, around: SCNVector3Zero, duration: 1)
-//        center.addChildNode(orbitingNode)
-//        orbitingNode.runAction(action)
-
-        
         
         let worldTransform = child.worldTransform
         let rotator = SCNNode()
@@ -329,8 +295,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         rotator.position = SCNVector3Zero
         inclinator.addChildNode(rotator)
-        //                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
-        //                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
         inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
         
         center.addChildNode(inclinator)
@@ -360,31 +324,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                     }
                     
                     self.createOrbit(around: parentNode, child: child, radius: CGFloat.random(in: 0...0.5))
-//                    let worldTransform = child.worldTransform
-//                    let rotator = SCNNode()
-//                    let inclinator = SCNNode()
-//
-//
-//                    child.removeFromParentNode()
-//
-//                    rotator.addChildNode(child)
-//
-//                    child.setWorldTransform(worldTransform)
-//
-//                    rotator.position = SCNVector3Zero
-//                    inclinator.addChildNode(rotator)
-////                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
-////                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
-//                    inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
-//
-//                    parentNode.addChildNode(inclinator)
-//
-//                    let rotateAction = SCNAction.rotate(by: CGFloat.pi, around: inclinator.position, duration: 3)
-//                    let foreverAction = SCNAction.repeatForever(rotateAction)
-//
-//                    rotator.runAction(foreverAction)
                     
-//                    self.createOrbit(around: planetNode, child: child, radius: planet.radius + orbit.radius)
                     print("AEEEEEE")
                 }
             }
@@ -394,12 +334,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if otherGestureRecognizer.name == "ContextMenuGesture"{
+        if otherGestureRecognizer.name == "ContextMenuGesture" || gestureRecognizer.name == "TapGesture"{
            return false
         }
-//        if (self.contextMenuView?.frame.contains(gestureRecognizer.location(in: self.view))) ?? false{
-//            return false
-//        }
+        
         return true
     }
     
@@ -435,7 +373,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
 
-        
+        self.tapGesture.state = .cancelled
         self.hideContextMenu()
         let hitResults = self.sceneView.hitTest(position, options: [:])
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
@@ -476,7 +414,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.view.addSubview(menu)
         
-        
         menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
         menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
@@ -486,9 +423,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.contextMenuView = menu
         self.isDisplayingUIContextMenu = true
-        
-        print("Added menu!", self.contextMenuView)
-        
     }
     
     func displaySceneContextMenu(){
@@ -527,7 +461,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             pos.y += offset
             pos.z += offset
         }
-//        return pos * orientation.versor() * 0.5
+        
         return pos + orientation.normalized() * 0.5
     }
     
@@ -552,10 +486,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let center = CGPoint(x: self.view.frame.maxX  / 2, y: self.view.frame.maxY / 2)
         let diff =  position - center
         let dist = (diff.x * diff.x + diff.y * diff.y).squareRoot()
-//        print("Dist is", dist)
+
         self.planetContextMenu.updateHighlightedIcon(at: dist > 50 ? diff : nil)
-//        gesture
-//        print("Position is", diff)
     }
     
     // MARK: - ContextMenuDelegate methods
@@ -580,6 +512,42 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.contextMenuNode = planetNode
         
     }
+    
+    
+    
+    // MARK: - PlanetContextMenuDelegate methods
+    func onEdit() {
+        defer { self.hideUIContextMenu()}
+        print("Mostrei!")
+    }
+    
+    func onOrbit(source node: SCNNode) {
+        defer { self.hideUIContextMenu()}
+        print("Orbit!")
+        
+    }
+    
+    func onCopy() {
+        defer { self.hideUIContextMenu()}
+        print("Copy!")
+        
+    }
+    
+    func onDelete(node: SCNNode) {
+        defer { self.hideUIContextMenu()}
+        print("Delete!")
+        //        self.hideContextMenu()
+        //        assert(self.currentSelectedStar != nil)
+        
+        node.removeFromParentNode()
+        //         = nil
+    }
+    
+    func onEnded() {
+        defer { self.hideUIContextMenu()}
+        print("Ended!")
+    }
+    
 
     
     // MARK: - Callbacks
@@ -602,8 +570,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let position = sender.location(in: self.view)
         
         if let hit = self.sceneView.hitTest(position, options: [:]).first{
-            if hit.node == self.contextMenuNode{
+            if hit.node == self.contextMenuNode || hit.node == self.currentSelectedStar{
                 print("Node!!")
+            } else  if !self.contextMenuGesture.hasTriggered{
+                self.tappedNode = hit.node
+                let vc = PlanetDetailViewController()
+                vc.sceneViewController = self
+                self.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                vc.modalTransitionStyle = .crossDissolve
+                self.present(vc, animated: true) {
+                    print("Saca so acabou de apresentar")
+                }
             }
         }
 //        let isInView = self.contextMenuView?.frame.contains(position) ?? false
@@ -659,6 +637,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             ]
         )
     }
+    
+    
 
 }
 
