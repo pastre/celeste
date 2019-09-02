@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D409F61B2308B32800DCE2B4 /* Scene2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61A2308B32800DCE2B4 /* Scene2D.swift */; };
+		D409F61D2308B36800DCE2B4 /* ViewController2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61C2308B36800DCE2B4 /* ViewController2D.swift */; };
+		D4B17B09230B183000A4F53E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B17B08230B183000A4F53E /* Model.swift */; };
 		D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F5782305F82500B0A726 /* AppDelegate.swift */; };
 		D707F57B2305F82500B0A726 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D707F57A2305F82500B0A726 /* art.scnassets */; };
 		D707F57D2305F82500B0A726 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F57C2305F82500B0A726 /* ViewController.swift */; };
@@ -39,6 +42,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D409F61A2308B32800DCE2B4 /* Scene2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene2D.swift; sourceTree = "<group>"; };
+		D409F61C2308B36800DCE2B4 /* ViewController2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController2D.swift; sourceTree = "<group>"; };
+		D4B17B08230B183000A4F53E /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		D707F5752305F82500B0A726 /* Celeste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celeste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D707F5782305F82500B0A726 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D707F57A2305F82500B0A726 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -83,6 +89,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D409F6182308AD7B00DCE2B4 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				D409F61A2308B32800DCE2B4 /* Scene2D.swift */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		D409F6192308ADA000DCE2B4 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				D409F61C2308B36800DCE2B4 /* ViewController2D.swift */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
 		D707F56C2305F82500B0A726 = {
 			isa = PBXGroup;
 			children = (
@@ -103,7 +125,6 @@
 			isa = PBXGroup;
 			children = (
 				D7D651642309C09700815B15 /* utils */,
-				D7E91D8323061A1C00FC88B8 /* model */,
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
 				D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */,
 				D733242023106EC300493865 /* PlanetContextMenu.swift */,
@@ -116,6 +137,9 @@
 				D707F5832305F82700B0A726 /* LaunchScreen.storyboard */,
 				D707F5782305F82500B0A726 /* AppDelegate.swift */,
 				D707F5862305F82700B0A726 /* Info.plist */,
+				D7E91D8323061A1C00FC88B8 /* model */,
+				D409F6192308ADA000DCE2B4 /* controller */,
+				D409F6182308AD7B00DCE2B4 /* view */,
 			);
 			path = Celeste;
 			sourceTree = "<group>";
@@ -157,6 +181,7 @@
 		D7E91D8323061A1C00FC88B8 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				D4B17B08230B183000A4F53E /* Model.swift */,
 				D7E91D8423061A9700FC88B8 /* Star.swift */,
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
@@ -243,8 +268,10 @@
 				D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */,
 				D734B87423071E0B00EFA0AD /* Point.swift in Sources */,
 				D7BA9ACE230D8D54003ECAAD /* Orbit.swift in Sources */,
+				D409F61D2308B36800DCE2B4 /* ViewController2D.swift in Sources */,
 				D707F57D2305F82500B0A726 /* ViewController.swift in Sources */,
 				D733242C2312FD0D00493865 /* Provider.swift in Sources */,
+				D409F61B2308B32800DCE2B4 /* Scene2D.swift in Sources */,
 				D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */,
 				D7337DB8231C53A200403018 /* DefaultPreviewView.swift in Sources */,
 				D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */,
@@ -265,6 +292,7 @@
 				D7337DB6231C536500403018 /* Gradient.swift in Sources */,
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
 				D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */,
+				D4B17B09230B183000A4F53E /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

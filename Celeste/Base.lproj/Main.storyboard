@@ -22,10 +22,24 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                                 <gestureRecognizers/>
                             </arscnView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jYd-zQ-fn0">
+                                <rect key="frame" x="354" y="836" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="HqO-tE-tPZ"/>
+                                    <constraint firstAttribute="height" constant="50" id="f4T-tq-uQm"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="2D"/>
+                                <connections>
+                                    <segue destination="R7J-vl-EDs" kind="show" animates="NO" id="7KP-e1-K1z"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="jYd-zQ-fn0" secondAttribute="trailing" constant="10" id="RoP-4a-coE"/>
+                            <constraint firstAttribute="bottom" secondItem="jYd-zQ-fn0" secondAttribute="bottom" constant="10" id="Tag-Cp-9S3"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
@@ -38,6 +52,73 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="972" y="20"/>
+        </scene>
+        <!--View Controller2D-->
+        <scene sceneID="UnF-b8-ZV1">
+            <objects>
+                <viewController id="R7J-vl-EDs" customClass="ViewController2D" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zcO-RF-RdK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z96-VJ-eOA">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Kd6-iv-eiu" appends="YES" id="2rS-cm-3PX"/>
+                                    <outletCollection property="gestureRecognizers" destination="f9U-U7-pMi" appends="YES" id="Re4-Ks-yRl"/>
+                                </connections>
+                            </skView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oDc-Bv-kqV">
+                                <rect key="frame" x="354" y="836" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="7th-qt-SI0"/>
+                                    <constraint firstAttribute="width" constant="50" id="AlX-pW-t41"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="3D"/>
+                                <connections>
+                                    <segue destination="BV1-FR-VrT" kind="show" animates="NO" id="rJq-02-6WH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerX" secondItem="zcO-RF-RdK" secondAttribute="centerX" id="36l-yG-rbw"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="width" secondItem="zcO-RF-RdK" secondAttribute="width" id="3DT-Di-spT"/>
+                            <constraint firstAttribute="bottom" secondItem="oDc-Bv-kqV" secondAttribute="bottom" constant="10" id="5fu-W8-hwx"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerY" secondItem="zcO-RF-RdK" secondAttribute="centerY" id="7bt-WE-csQ"/>
+                            <constraint firstAttribute="trailing" secondItem="oDc-Bv-kqV" secondAttribute="trailing" constant="10" id="Io9-ew-Tmt"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="height" secondItem="zcO-RF-RdK" secondAttribute="height" id="kQt-iR-weO"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="POZ-x9-gz6"/>
+                    </view>
+                    <connections>
+                        <outlet property="panGesture" destination="f9U-U7-pMi" id="uT4-cK-X9R"/>
+                        <outlet property="pinchGesture" destination="Kd6-iv-eiu" id="MHL-Oj-ESc"/>
+                        <outlet property="rotationGesture" destination="u5B-V0-yJv" id="R2d-Mm-gSc"/>
+                        <outlet property="skview" destination="z96-VJ-eOA" id="03C-HA-jpc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UT0-3r-FbF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="Kd6-iv-eiu">
+                    <connections>
+                        <action selector="pinchGesture:" destination="R7J-vl-EDs" id="6Qc-my-6BD"/>
+                    </connections>
+                </pinchGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="f9U-U7-pMi">
+                    <connections>
+                        <action selector="panGesture:" destination="R7J-vl-EDs" id="6oD-FB-q1n"/>
+                    </connections>
+                </panGestureRecognizer>
+                <rotationGestureRecognizer id="u5B-V0-yJv">
+                    <connections>
+                        <action selector="rotationGesture:" destination="R7J-vl-EDs" id="LNI-dG-RzX"/>
+                    </connections>
+                </rotationGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1830" y="19"/>
         </scene>
     </scenes>
 </document>
