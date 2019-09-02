@@ -56,7 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
     let orbitContextMenu = OrbitContextMenu.instance
     
-    var planetContextMenuView: UIView = {
+    var planetContextMenuView: UIView? = {
         let view = UIView()
         
         return view
@@ -134,6 +134,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.createPlanetContextMenu.delegate = self
         self.tapGesture.delegate = self
         self.planetContextMenu.delegate = self
+        
+        self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
         self.view.addGestureRecognizer(contextMenuGesture)
@@ -360,7 +362,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if otherGestureRecognizer.name == "ContextMenuGesture"{
+        if otherGestureRecognizer.name == "ContextMenuGesture" || gestureRecognizer.name == "TapGesture"{
            return false
         }
         
@@ -399,7 +401,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
 
-        
+        self.tapGesture.state = .cancelled
         self.hideContextMenu()
         let hitResults = self.sceneView.hitTest(position, options: [:])
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
@@ -566,9 +568,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let position = sender.location(in: self.view)
         
         if let hit = self.sceneView.hitTest(position, options: [:]).first{
-            if hit.node == self.contextMenuNode{
+            if hit.node == self.contextMenuNode || hit.node == self.currentSelectedStar{
                 print("Node!!")
-            } else {
+            } else  if !self.contextMenuGesture.hasTriggered{
+                
                 print("BATEU!!!!")
                 let vc = PlanetDetailViewController()
                 self.modalTransitionStyle = .crossDissolve
