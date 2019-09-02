@@ -6,6 +6,7 @@
 //  Copyright © 2019 Bruno Pastre. All rights reserved.
 //
 
+import SceneKit
 import UIKit
 
 class PlanetDetailViewController: UIViewController, UITextViewDelegate {
@@ -19,7 +20,7 @@ class PlanetDetailViewController: UIViewController, UITextViewDelegate {
 
     // MARK: - Atributes
     var isShowingKeyboard: Bool = false
-    
+    var sceneViewController: ViewController?
     // MARK: - View declarations
     
     let contentView: UIView = {
@@ -250,11 +251,32 @@ class PlanetDetailViewController: UIViewController, UITextViewDelegate {
     }
     
     @objc func onOk(_ sender: UIButton){
+        guard let _ = self.sceneViewController?.sceneView.scene, let node = self.sceneViewController?.tappedNode, let radius = node.geometry?.boundingSphere.radius else { return }
         
+        if let currentText = node.childNode(withName: "planetName", recursively: true){
+            currentText.removeFromParentNode()
+        }
+        
+        if self.nameTextView.text.isEmpty { return }
+        
+        
+        let text = SCNText(string: self.nameTextView.text, extrusionDepth: 1)
+        let textNode = SCNNode(geometry: text)
+        textNode.name = "planetName"
+        
+        
+        node.addChildNode(textNode)
+        node.eulerAngles = SCNVector3(0, 0, 0)
+        
+        textNode.position = SCNVector3Zero
+        textNode.position = SCNVector3(0, -(radius + 0.2), 0)
+        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
     @objc func onCancel(_ sender: UIButton){
-        
+        self.dismiss(animated: true, completion: nil)
     }
     /*
     // MARK: - Navigation

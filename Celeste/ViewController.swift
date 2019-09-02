@@ -49,6 +49,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     // MARK: - SCNKit elements
+    var tappedNode: SCNNode?
     var highlighterNode: SCNNode?
     var contextMenuNode: SCNNode?
     var currentSelectedStar: SCNNode?{
@@ -151,7 +152,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let contextMenu = self.contextMenuNode{
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
-    
+        
+        if let camera = self.sceneView.pointOfView{
+            
+            for node in self.sceneView.scene.rootNode.childNodes{
+                if let textNode = node.childNode(withName: "planetName", recursively: true){
+                    textNode.look(at: camera.position)
+                }
+                
+            }
+
+        }
     }
     
     
@@ -184,6 +195,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let n = self.highlighterNode{
             n.removeFromParentNode()
         }
+        
+        let a = self.sceneView.scene.rootNode
+        
         
         let highlighter = self.getHighlighterNode()
         self.highlighterNode = highlighter
@@ -230,7 +244,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onEndDrag(at location: CGPoint){
-        print("Selected star on drag", self.currentSelectedStar)
         if let selectedStar = self.currentSelectedStar{
             print("Tem estrela boa")
             let newStar = selectedStar.clone()
@@ -560,9 +573,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             if hit.node == self.contextMenuNode || hit.node == self.currentSelectedStar{
                 print("Node!!")
             } else  if !self.contextMenuGesture.hasTriggered{
-                
-                print("BATEU!!!!")
+                self.tappedNode = hit.node
                 let vc = PlanetDetailViewController()
+                vc.sceneViewController = self
                 self.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 vc.modalTransitionStyle = .crossDissolve
@@ -624,6 +637,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             ]
         )
     }
+    
+    
 
 }
 
