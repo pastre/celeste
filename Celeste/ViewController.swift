@@ -141,6 +141,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.contextMenuGesture.cancelsTouchesInView = false
         self.setupAddPlanetButton()
+        self.modalPresentationStyle = .overCurrentContext
     }
     
     func setupAddPlanetButton(){
@@ -306,15 +307,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func createOrbit(around center: SCNNode, child: SCNNode, radius: CGFloat){
-//        let orbitingNode = SCNNode()
-//        orbitingNode.position = SCNVector3(radius, 0, 0)
-//        child.removeFromParentNode()
-//        orbitingNode.addChildNode(child)
-//        let action = SCNAction.rotate(by: 3.1415, around: SCNVector3Zero, duration: 1)
-//        center.addChildNode(orbitingNode)
-//        orbitingNode.runAction(action)
-
-        
         
         let worldTransform = child.worldTransform
         let rotator = SCNNode()
@@ -329,8 +321,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         rotator.position = SCNVector3Zero
         inclinator.addChildNode(rotator)
-        //                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
-        //                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
         inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
         
         center.addChildNode(inclinator)
@@ -360,31 +350,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                     }
                     
                     self.createOrbit(around: parentNode, child: child, radius: CGFloat.random(in: 0...0.5))
-//                    let worldTransform = child.worldTransform
-//                    let rotator = SCNNode()
-//                    let inclinator = SCNNode()
-//
-//
-//                    child.removeFromParentNode()
-//
-//                    rotator.addChildNode(child)
-//
-//                    child.setWorldTransform(worldTransform)
-//
-//                    rotator.position = SCNVector3Zero
-//                    inclinator.addChildNode(rotator)
-////                    inclinator.eulerAngles.y = Float.pi * 2 * Float.random(in: -1...1)
-////                    inclinator.localRotate(by: SCNQuaternion(0, Float.random(in: -1...1), 0, 0))
-//                    inclinator.localTranslate(by: SCNVector3(0, Float.random(in: -1...1), 0))
-//
-//                    parentNode.addChildNode(inclinator)
-//
-//                    let rotateAction = SCNAction.rotate(by: CGFloat.pi, around: inclinator.position, duration: 3)
-//                    let foreverAction = SCNAction.repeatForever(rotateAction)
-//
-//                    rotator.runAction(foreverAction)
                     
-//                    self.createOrbit(around: planetNode, child: child, radius: planet.radius + orbit.radius)
                     print("AEEEEEE")
                 }
             }
@@ -397,9 +363,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if otherGestureRecognizer.name == "ContextMenuGesture"{
            return false
         }
-//        if (self.contextMenuView?.frame.contains(gestureRecognizer.location(in: self.view))) ?? false{
-//            return false
-//        }
+        
         return true
     }
     
@@ -604,6 +568,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let hit = self.sceneView.hitTest(position, options: [:]).first{
             if hit.node == self.contextMenuNode{
                 print("Node!!")
+            } else {
+                print("BATEU!!!!")
+                let vc = PlanetDetailViewController()
+                self.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                vc.modalTransitionStyle = .crossDissolve
+                self.present(vc, animated: true) {
+                    print("Saca so acabou de apresentar")
+                }
             }
         }
 //        let isInView = self.contextMenuView?.frame.contains(position) ?? false
