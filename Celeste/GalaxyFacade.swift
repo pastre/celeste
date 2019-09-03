@@ -38,4 +38,26 @@ class GalaxyFacade{
         
 //        self.galaxy
     }
+    
+    func deletePlanet(with node: SCNNode){
+        
+        self.galaxy.stars.removeAll { (s) -> Bool in
+            s.id == node.name
+        }
+        
+        self.storage.updateGalaxy(to: self.galaxy)
+        
+    }
+    
+    func sync(node: SCNNode){
+        guard let nodeStar = self.galaxy.getStar(by: node) else { fatalError("NAO ACHOU A ESTRELA! FALHA NA CONSISTENCIA")}
+        
+        for star in self.galaxy.stars{
+            if star == nodeStar{
+                star.center = Point(position: node.position)
+                star.scale = node.scale.x
+            }
+        }
+        
+    }
 }

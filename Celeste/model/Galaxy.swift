@@ -69,6 +69,16 @@ class Galaxy: Encodable, Decodable{
         
         return nil
     }
+    
+//    func getStar(by id: String){
+//        for star in self.stars{
+//            if star.id == id{
+//                return star
+//            }
+//        }
+//        
+//        return nil
+//    }
 
     
     
@@ -76,7 +86,7 @@ class Galaxy: Encodable, Decodable{
         let stars = self.getStars()
         for star in stars{
             print(star.getNode(), node)
-            if star.getNode() == node {
+            if star.id == node.name {
                 return star
             }
         }

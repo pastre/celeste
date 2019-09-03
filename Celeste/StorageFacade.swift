@@ -18,6 +18,7 @@ class StorageFacade{
     }
 
     let userDefaults = UserDefaults.standard
+   
     func getGalaxy() -> Galaxy? {
         guard let galaxyData = self.userDefaults.object(forKey: StorageKeys.kGALAXY.rawValue)  else { return nil }
         let galaxy = try? JSONDecoder().decode(Galaxy.self, from: galaxyData as! Data)

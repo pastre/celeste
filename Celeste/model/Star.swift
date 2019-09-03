@@ -81,6 +81,7 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
         try container.encode(self.planetDescription ?? "No description", forKey: .description)
         try container.encode(self.shapeName.rawValue, forKey: .shapeName)
         try container.encode(self.scale ?? 1, forKey: .scale)
+        
     }
     
     enum CodingKeys: String, CodingKey{
@@ -128,16 +129,12 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
     func getRawNode() -> SCNNode{
         let node =  PlanetTextureProvider.instance.getPlanet(named: self.shapeName.rawValue, color: self.color)!
         let scale = self.scale ?? 1
-        node.scale = SCNVector3(x: scale, y: scale, z: scale)
-        return node
-//        let
-//        sphere.materials.first?.diffuse.contents = self.color
         
-//        let node  =  SCNNode(geometry: sphere)
-//        node.name = self.id
-//
-//        return node
-
+        node.scale = SCNVector3(x: scale, y: scale, z: scale)
+        node.name = self.id
+        
+        return node
+        
     }
     
     func getNode() -> SCNNode{

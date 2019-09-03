@@ -130,6 +130,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         // Run the view's session
         sceneView.session.run(configuration)
         
+        
         self.enableAllOrbits()
     }
     
@@ -153,7 +154,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let contextMenu = self.contextMenuNode{
             contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
         }
-        
+    
         if let camera = self.sceneView.pointOfView{
             
             for node in self.sceneView.scene.rootNode.childNodes{
@@ -250,11 +251,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
             
-            self.sceneView.scene.rootNode.addChildNode(newStar)
+            let root = self.sceneView.scene.rootNode
+            root.addChildNode(newStar)
             newStar.setWorldTransform(transform)
+//            root.childNode(withName: "galaxy", recursively: true)!.addChildNode(newStar)
+
             if let color = self.createPlanetContextMenu.currentColor{
                 let scale = self.createPlanetContextMenu.getScale()
-            self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+                self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
             }
             
             self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
@@ -262,6 +266,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.updatedOrbit(newStar)
             self.clearHighlight()
         }
+        
+        guard let particleSystem = SCNParticleSystem(named: "stars.scnp", inDirectory: nil) else { fatalError("Bro deu ruim")}
+        self.sceneView.pointOfView?.addParticleSystem(particleSystem)
         
         self.currentSelectedStar = nil
         
@@ -541,7 +548,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         print("Delete!")
         //        self.hideContextMenu()
         //        assert(self.currentSelectedStar != nil)
-        
+        self.galaxyFacade.deletePlanet(with: node)
         node.removeFromParentNode()
         //         = nil
     }
@@ -617,6 +624,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
+    
     
     
     func getDebugGalaxy() -> Galaxy{

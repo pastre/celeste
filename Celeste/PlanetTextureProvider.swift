@@ -98,7 +98,7 @@ class PlanetTextureProvider{
         
         modelNode.geometry?.firstMaterial?.diffuse.contents = maskedTexture
         modelNode.position = SCNVector3Zero
-        modelNode.name = "newPlanet"
+        
         return modelNode
     }
     
