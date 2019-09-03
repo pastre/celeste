@@ -21,10 +21,85 @@ protocol SceneNodeInteractable{
     func didRelease(in location: CGPoint)
 }
 
-class Star: SCNNodeTransformer{
+class Color: Encodable, Decodable{
+    var r: CGFloat
+    var g: CGFloat
+    var b: CGFloat
+    
+    enum CodingKeys: String, CodingKey{
+        case r = "r"
+        case g = "g"
+        case b = "b"
+
+    }
+    
+    required init(decoder aDecoder: Decoder) throws {
+        let container = try aDecoder.container(keyedBy: CodingKeys.self)
+        self.r = try CGFloat(container.decode(Float.self, forKey: .r))
+        self.g = try CGFloat(container.decode(Float.self, forKey: .g))
+        self.b = try CGFloat(container.decode(Float.self, forKey: .b))
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(r, forKey: .r)
+        try container.encode(g, forKey: .g)
+        try container.encode(b, forKey: .b)
+    }
+    
+    init(uiColor: UIColor){
+        self.r = uiColor.ciColor.red
+        self.g = uiColor.ciColor.green
+        self.b = uiColor.ciColor.blue
+    }
+    
+    func getUIColor() -> UIColor{
+        
+        return UIColor(red: r, green: g, blue: b, alpha: 1)
+    }
+}
+
+class Star: SCNNodeTransformer, Encodable, Decodable{
     
     func contains(point: CGPoint) -> Bool {
         return self.getNode().frame.contains(point)
+    }
+    
+    func encode(to encoder: Encoder) throws{
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.radius, forKey: .radius)
+        try container.encode(self.center, forKey: .center)
+        try container.encode(Color(uiColor: self.color), forKey: .color)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.name, forKey: .name)
+        try container.encode(self.description, forKey: .description)
+    
+    }
+    
+    enum CodingKeys: String, CodingKey{
+        case radius = "radius"
+        case center = "center"
+        case color = "color"
+        case id = "id"
+        case name = "name"
+        case description = "description"
+        
+        case child = "child"
+        
+        case orbits = "orbits"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        var container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.radius = try CGFloat(container.decode(Float.self, forKey: .radius))
+        self.center = try container.decode(Point.self, forKey: .center)
+        self.color = try container.decode(Color.self, forKey: .color).getUIColor()
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.description = try container.decode(String.self, forKey: .description)
+        
     }
     
     internal init(radius: CGFloat?, center: Point?, color: UIColor?) {
@@ -33,6 +108,8 @@ class Star: SCNNodeTransformer{
         self.color = color
         self.id = String.random()
     }
+    
+    
     
     func getPosition() -> SCNVector3 {
         // TODO: Pensar em um fator de escala para ficar bem  posicionado
@@ -80,6 +157,20 @@ class NesteableStar: Star {
         self.child = child
     }
     
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = try decoder.container(keyedBy: Star.CodingKeys.self)
+        
+        self.child = try container.decode([Star].self, forKey: .child)
+    }
+    
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = try encoder.container(keyedBy: Star.CodingKeys.self)
+        
+        try container.encode(self.child, forKey: .child)
+    }
     
     override func getNode() -> SCNNode {
         let ret = super.getNode()

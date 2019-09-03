@@ -20,6 +20,21 @@ class Planet: NesteableStar{
         self.orbits = nil
     }
     
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = try decoder.container(keyedBy: Star.CodingKeys.self)
+        self.radius = try CGFloat(container.decode(Float.self, forKey: .radius))
+        self.orbits = try container.decode([Orbit].self, forKey: .orbits)
+
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = try encoder.container(keyedBy: Star.CodingKeys.self)
+        try container.encode(self.orbits, forKey: .orbits)
+        
+    }
+    
     var orbits: [Orbit]?
     
     func getOrbiters() -> [Star]?  {
