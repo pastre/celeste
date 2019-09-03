@@ -38,6 +38,10 @@ class Point: Equatable, Encodable, Decodable{
         
     }
     
+    convenience init(position: SCNVector3) {
+        self.init(x: CGFloat(position.x), y: CGFloat(position.y), z: CGFloat(position.z))
+    }
+    
     internal init(x: CGFloat?, y: CGFloat?, z: CGFloat?) {
         self.x = x
         self.y = y

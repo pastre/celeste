@@ -137,6 +137,7 @@
 				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */,
 				D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */,
+				D7E032C1231DE54400103473 /* StorageFacade.swift */,
 				D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
 				D707F5812305F82700B0A726 /* Assets.xcassets */,
@@ -182,7 +183,6 @@
 				D7332422231073E900493865 /* wheelPicker */,
 				D742F0CC2309C0C90041F46F /* VectorMath.swift */,
 				D733242923123A0800493865 /* Extensions.swift */,
-				D7E032C1231DE54400103473 /* StorageFacade.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";

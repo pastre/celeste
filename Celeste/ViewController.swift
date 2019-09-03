@@ -18,6 +18,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
     let orbitContextMenu = OrbitContextMenu.instance
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
+    let galaxyFacade = GalaxyFacade.instance
 
     // MARK: - Gestures
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
@@ -244,14 +245,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func onEndDrag(at location: CGPoint){
         if let selectedStar = self.currentSelectedStar{
-            print("Tem estrela boa")
+            
             let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
             
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
-            
+            if let color = self.createPlanetContextMenu.currentColor{
+                let scale = self.createPlanetContextMenu.getScale()
+            self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+            }
             
             self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
         
@@ -616,7 +620,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     
     func getDebugGalaxy() -> Galaxy{
-        
+        return self.galaxyFacade.getCurrentGalaxy()
         let moons = [
             Star(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 1, green: 1, blue: 0, alpha: 1)),
             Star(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)),

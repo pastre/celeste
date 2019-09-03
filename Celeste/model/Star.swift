@@ -48,9 +48,13 @@ class Color: Encodable, Decodable{
     }
     
     init(uiColor: UIColor){
-        self.r = uiColor.ciColor.red
-        self.g = uiColor.ciColor.green
-        self.b = uiColor.ciColor.blue
+        var red: CGFloat = 1
+        var green: CGFloat = 1
+        var blue: CGFloat = 1
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: nil)
+        self.r = red
+        self.g = green
+        self.b = blue
     }
     
     func getUIColor() -> UIColor{
@@ -60,6 +64,7 @@ class Color: Encodable, Decodable{
 }
 
 class Star: SCNNodeTransformer, Encodable, Decodable{
+    
     
     func contains(point: CGPoint) -> Bool {
         return self.getNode().frame.contains(point)
@@ -72,9 +77,10 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
         try container.encode(self.center, forKey: .center)
         try container.encode(Color(uiColor: self.color), forKey: .color)
         try container.encode(self.id, forKey: .id)
-        try container.encode(self.name, forKey: .name)
-        try container.encode(self.description, forKey: .description)
-    
+        try container.encode(self.name ?? "No name", forKey: .name)
+        try container.encode(self.planetDescription ?? "No description", forKey: .description)
+        try container.encode(self.shapeName.rawValue, forKey: .shapeName)
+        try container.encode(self.scale ?? 1, forKey: .scale)
     }
     
     enum CodingKeys: String, CodingKey{
@@ -84,6 +90,8 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
         case id = "id"
         case name = "name"
         case description = "description"
+        case shapeName = "shapeName"
+        case scale = "scale"
         
         case child = "child"
         
@@ -91,15 +99,16 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
     }
     
     required init(from decoder: Decoder) throws {
-        var container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.radius = try CGFloat(container.decode(Float.self, forKey: .radius))
         self.center = try container.decode(Point.self, forKey: .center)
         self.color = try container.decode(Color.self, forKey: .color).getUIColor()
         self.id = try container.decode(String.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
-        self.description = try container.decode(String.self, forKey: .description)
-        
+        self.planetDescription = try container.decode(String.self, forKey: .description)
+        self.shapeName = ShapeName.getShapeName(by: try container.decode(String.self, forKey: .shapeName))
+        self.scale = try container.decode(Float.self, forKey: .scale)
     }
     
     internal init(radius: CGFloat?, center: Point?, color: UIColor?) {
@@ -117,14 +126,17 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
     }
     
     func getRawNode() -> SCNNode{
-        
-        let sphere = SCNSphere(radius: self.radius)
-        sphere.materials.first?.diffuse.contents = self.color
-        
-        let node  =  SCNNode(geometry: sphere)
-        node.name = self.id
-    
+        let node =  PlanetTextureProvider.instance.getPlanet(named: self.shapeName.rawValue, color: self.color)!
+        let scale = self.scale ?? 1
+        node.scale = SCNVector3(x: scale, y: scale, z: scale)
         return node
+//        let
+//        sphere.materials.first?.diffuse.contents = self.color
+        
+//        let node  =  SCNNode(geometry: sphere)
+//        node.name = self.id
+//
+//        return node
 
     }
     
@@ -144,8 +156,9 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
     var color: UIColor!
     var id: String!
     var name: String?
-    var description: String?
-    
+    var planetDescription: String?
+    var scale: Float?
+    var shapeName: ShapeName!
 }
 
 class NesteableStar: Star {
