@@ -188,25 +188,16 @@ extension Range {
     }
 }
 
-extension UIImage {
-    func maskWithColor(color: UIColor) -> UIImage {
+extension String {
+    
+    static func random(length: Int = 20) -> String {
+        let base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        var randomString: String = ""
         
-        let maskImage = self.cgImage
-        let width = self.size.width
-        let height = self.size.height
-        let bounds = CGRect(x: 0, y: 0, width: width, height: height)
-        
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
-        let bitmapContext = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
-        bitmapContext?.clip(to: bounds, mask: maskImage!)
-//        CGContextClipToMask(bitmapContext!, bounds, maskImage!)
-        bitmapContext!.setFillColor(color.cgColor)
-        bitmapContext!.fill(bounds)
-        
-        let cImage = bitmapContext!.makeImage()
-        let coloredImage = UIImage(cgImage: cImage!)
-        
-        return coloredImage
+        for _ in 0..<length {
+            let randomValue = arc4random_uniform(UInt32(base.count))
+            randomString += "\(base[base.index(base.startIndex, offsetBy: Int(randomValue))])"
+        }
+        return randomString
     }
 }

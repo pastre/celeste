@@ -165,7 +165,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    
     // MARK: - Node highlight related methods
     
     func updateHighlightedNode(){

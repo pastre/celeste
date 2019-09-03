@@ -259,7 +259,6 @@ class PlanetDetailViewController: UIViewController, UITextViewDelegate {
         
         if self.nameTextView.text.isEmpty { return }
         
-        
         let text = SCNText(string: self.nameTextView.text, extrusionDepth: 1)
         let textNode = SCNNode(geometry: text)
         textNode.name = "planetName"

@@ -66,6 +66,8 @@ class Star: SCNNodeTransformer{
     var center: Point!
     var color: UIColor!
     var id: String!
+    var name: String?
+    var description: String?
     
 }
 
@@ -105,28 +107,3 @@ class NesteableStar: Star {
     
 }
 
-// TODO: Mover essas classes para outros arquivos
-
-class Moon: NesteableStar{
-    
-    var asteroids: [Asteroid]!
-    
-}
-
-class Asteroid: Star{
-    
-}
-
-extension String {
-    
-    static func random(length: Int = 20) -> String {
-        let base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        var randomString: String = ""
-        
-        for _ in 0..<length {
-            let randomValue = arc4random_uniform(UInt32(base.count))
-            randomString += "\(base[base.index(base.startIndex, offsetBy: Int(randomValue))])"
-        }
-        return randomString
-    }
-}
