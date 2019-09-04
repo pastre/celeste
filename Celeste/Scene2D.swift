@@ -32,7 +32,7 @@ class Scene2D: SKScene {
         let boundary = SKShapeNode(rect: frame)
         boundary.strokeColor = .black
         addChild(boundary)
-        updateStars()
+//        updateStars()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -54,11 +54,11 @@ class Scene2D: SKScene {
         selectedShape = nil
     }
     
-    func updateStars() {
-        for star in Model.shared.galaxy.stars {
-            updateStar(star: star, parent: nil, level: 1.0)
-        }
-    }
+//    func updateStars() {
+//        for star in Model.shared.galaxy.stars {
+//            updateStar(star: star, parent: nil, level: 1.0)
+//        }
+//    }
     
     func updateStar(star: Star, parent: SKShapeNode!, level: CGFloat) {
         let circle = SKShapeNode(circleOfRadius: star.radius * multiplier)

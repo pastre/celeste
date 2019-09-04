@@ -9,7 +9,19 @@
 import Foundation
 import SceneKit
 
-class Galaxy{
+class Galaxy: Encodable, Decodable{
+    
+    enum CodingKeys: String, CodingKey {
+        case stars = "galaxyStars"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.stars = try container.decode([Star].self, forKey: .stars)
+    }
+    
+    
     internal init(stars: [Star]?) {
         self.stars = stars
     }
@@ -23,6 +35,12 @@ class Galaxy{
         }
         
         return ret
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.stars, forKey: .stars)
     }
     
     func getStars() -> [Star]{
@@ -51,14 +69,24 @@ class Galaxy{
         
         return nil
     }
+    
+//    func getStar(by id: String){
+//        for star in self.stars{
+//            if star.id == id{
+//                return star
+//            }
+//        }
+//
+//        return nil
+//    }
 
     
     
     func getStar(by node: SCNNode) -> Star?{
-        let stars = self.getStars()
-        for star in stars{
-            print(star.getNode(), node)
-            if star.getNode() == node {
+        
+        for star in self.stars{
+            
+            if star.id == node.name {
                 return star
             }
         }

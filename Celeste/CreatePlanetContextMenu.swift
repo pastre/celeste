@@ -44,8 +44,6 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
     
     var currentColor: UIColor?
     
-    
-    
     var currentRadius: Float? {
         didSet{
             self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
@@ -72,18 +70,6 @@ class CreatePlanetContextMenu: SCNNodeTransformer, WheelPickerDelegate, WheelPic
         slider.addTarget(self, action: #selector(self.onColorChanged(_:)), for: .valueChanged)
         return slider
     }()
-//    lazy var colorPicker: WheelPicker = {
-//        let picker = WheelPicker()
-//
-//        picker.translatesAutoresizingMaskIntoConstraints = false
-//        picker.delegate = self
-//        picker.dataSource = self
-//        picker.style = .styleFlat
-//
-//        return picker
-//    }()
-//
-    
     
     lazy var slider: UISlider = {
         let ret = UISlider()

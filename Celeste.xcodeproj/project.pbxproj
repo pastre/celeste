@@ -38,6 +38,10 @@
 		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
 		D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DABAAC2312FE970015A0F4 /* ModelOption.swift */; };
 		D7DD58C32318A8B1003F0F26 /* OribitContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */; };
+		D7E032C0231DE4FF00103473 /* GalaxyFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */; };
+		D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032C1231DE54400103473 /* StorageFacade.swift */; };
+		D7E27E93231ED6120085CB67 /* stars.scnp in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E91231ED6120085CB67 /* stars.scnp */; };
+		D7E27E94231ED6120085CB67 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E92231ED6120085CB67 /* star.png */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
 		D7FE3B2323145E8900532024 /* PlanetTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */; };
 /* End PBXBuildFile section */
@@ -76,6 +80,10 @@
 		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
 		D7DABAAC2312FE970015A0F4 /* ModelOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOption.swift; sourceTree = "<group>"; };
 		D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OribitContextMenu.swift; sourceTree = "<group>"; };
+		D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyFacade.swift; sourceTree = "<group>"; };
+		D7E032C1231DE54400103473 /* StorageFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageFacade.swift; sourceTree = "<group>"; };
+		D7E27E91231ED6120085CB67 /* stars.scnp */ = {isa = PBXFileReference; lastKnownFileType = file.scp; path = stars.scnp; sourceTree = "<group>"; };
+		D7E27E92231ED6120085CB67 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
 		D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetTextureProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -132,6 +140,10 @@
 				D733242023106EC300493865 /* PlanetContextMenu.swift */,
 				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */,
+				D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */,
+				D7E032C1231DE54400103473 /* StorageFacade.swift */,
+				D7E27E91231ED6120085CB67 /* stars.scnp */,
+				D7E27E92231ED6120085CB67 /* star.png */,
 				D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
 				D707F5812305F82700B0A726 /* Assets.xcassets */,
@@ -254,8 +266,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7E27E93231ED6120085CB67 /* stars.scnp in Resources */,
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
+				D7E27E94231ED6120085CB67 /* star.png in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,
 				D707F5802305F82500B0A726 /* Main.storyboard in Resources */,
 			);
@@ -281,6 +295,7 @@
 				D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */,
 				D7FE3B2323145E8900532024 /* PlanetTextureProvider.swift in Sources */,
 				D7DD58C32318A8B1003F0F26 /* OribitContextMenu.swift in Sources */,
+				D7E032C0231DE4FF00103473 /* GalaxyFacade.swift in Sources */,
 				D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */,
 				D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */,
 				D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */,
@@ -297,6 +312,7 @@
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
 				D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */,
 				D4B17B09230B183000A4F53E /* Model.swift in Sources */,
+				D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
