@@ -25,6 +25,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
     
     // MARK: - UIKit elements
+    var floorPaintingMenu = FloorPaintingMenu()
     var planetContextMenuView: UIView? = UIView()
     var addPlanetButton: UIButton = {
         let button = UIButton()
@@ -201,8 +202,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let n = self.highlighterNode{
             n.removeFromParentNode()
         }
-        
-        let a = self.sceneView.scene.rootNode
         
         
         let highlighter = self.getHighlighterNode()
@@ -447,18 +446,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
         
     }
-
-    
-    @objc func displayAddPlanetMenu(){
-        
-        self.tapGesture.state = .failed
-        let vib = UIImpactFeedbackGenerator()
-        vib.impactOccurred()
-        
-        self.displayUIContextMenu()
-        displaySceneContextMenu( )
-
-    }
     
     // MARK: - ContextMenu related functions
     
@@ -618,6 +605,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         default:
             break
         }
+        
+    }
+    
+    
+    @objc func displayAddPlanetMenu(){
+
+        let view = self.floorPaintingMenu.getView()
+        self.view.addSubview(view)
+        
+        view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        view.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.8)
+        view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
+        view.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.1).isActive = true
+//        self.tapGesture.state = .failed
+//        let vib = UIImpactFeedbackGenerator()
+//        vib.impactOccurred()
+//
+//        self.displayUIContextMenu()
+//        displaySceneContextMenu( )
         
     }
     
