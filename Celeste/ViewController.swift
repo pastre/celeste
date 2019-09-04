@@ -608,7 +608,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    
     @objc func displayAddPlanetMenu(){
 
         let view = self.floorPaintingMenu.getView()
