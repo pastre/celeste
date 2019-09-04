@@ -37,9 +37,11 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         rotationGesture.delegate = self
         rotationGesture.isEnabled = false
         
-        skview.showsFields = true
-        skview.showsPhysics = true
-        skview.showsFPS = true
+//        skview.showsFields = true
+//        skview.showsPhysics = true
+//        skview.showsFPS = true
+        
+//        skview.isMultipleTouchEnabled = true
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

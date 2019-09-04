@@ -8,6 +8,12 @@
 
 import Foundation
 import SceneKit
+import SpriteKit
+
+protocol SKNodeTransformer {
+    func get2DPosition() -> CGPoint
+    func get2DNode() -> SKShapeNode
+}
 
 protocol SCNNodeTransformer{
     func getPosition() -> SCNVector3
@@ -21,7 +27,7 @@ protocol SceneNodeInteractable{
     func didRelease(in location: CGPoint)
 }
 
-class Star: SCNNodeTransformer{
+class Star: SCNNodeTransformer, SKNodeTransformer{
     
     func contains(point: CGPoint) -> Bool {
         return self.getNode().frame.contains(point)
@@ -32,6 +38,31 @@ class Star: SCNNodeTransformer{
         self.center = center
         self.color = color
         self.id = String.random()
+    }
+    
+    func get2DPosition() -> CGPoint {
+        return CGPoint(x: center.x, y: center.y)
+    }
+    
+    func get2DNode() -> SKShapeNode {
+        let shape = SKShapeNode(circleOfRadius: radius * multiplier)
+        shape.position = get2DPosition()
+        shape.strokeColor = color
+        shape.fillColor = color
+        shape.name = id
+        
+        let randomInt32 = UInt32.random(in: 0...4294967295)
+        shape.physicsBody = SKPhysicsBody(circleOfRadius: radius * multiplier)
+        shape.physicsBody?.fieldBitMask = randomInt32
+        
+        let force = SKFieldNode.radialGravityField()
+        force.minimumRadius = 0
+        force.strength = -0.01
+        force.categoryBitMask = 4294967295 - randomInt32
+        force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
+        shape.addChild(force)
+        
+        return shape
     }
     
     func getPosition() -> SCNVector3 {
@@ -62,6 +93,7 @@ class Star: SCNNodeTransformer{
     }
     
     // Classe abstrata pra nois
+    var multiplier: CGFloat = 50
     var radius: CGFloat!
     var center: Point!
     var color: UIColor!
