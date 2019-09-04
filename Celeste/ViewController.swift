@@ -273,6 +273,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
             self.updatedOrbit(newStar)
             self.clearHighlight()
+            self.galaxyFacade.updateOrbit(of: newStar)
             
             if self.hasDeleted {
                 self.hasDeleted = false

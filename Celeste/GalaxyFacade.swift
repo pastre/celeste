@@ -112,6 +112,22 @@ class GalaxyFacade{
         self.persistGalaxy()
     }
     
+    func updateOrbit(of node: SCNNode){
+        for star in self.galaxy.stars{
+            guard let planet = star as? Planet else { continue }
+//            guard let orbits = planet.orbits else { continue}
+            
+            planet.orbits?.removeAll(where: { (orbit) -> Bool in
+                orbit.orbiter.id == node.name
+            })
+            
+            print("[GALAXYFACADE] Updated orbit for planet", node.name)
+        }
+        
+//        self.sy
+        self.persistGalaxy()
+    }
+    
     func persistGalaxy(){
         self.storage.updateGalaxy(to: self.galaxy)
         
