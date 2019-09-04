@@ -273,7 +273,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
             self.updatedOrbit(newStar)
             self.clearHighlight()
-            self.galaxyFacade.updateOrbit(of: newStar)
             
             if self.hasDeleted {
                 self.hasDeleted = false
@@ -427,6 +426,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             
             if self.currentSelectedStar!.parent?.name == "rotator"{
                 self.currentSelectedStar!.parent?.parent?.removeFromParentNode()
+                self.galaxyFacade.updateOrbit(of: result.node)
+
             } else {
                 self.currentSelectedStar!.removeFromParentNode()
             }
