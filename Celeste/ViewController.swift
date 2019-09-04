@@ -254,8 +254,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             
             let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
-            selectedStar.removeFromParentNode()
-
+            
+            self.currentSelectedStar!.removeFromParentNode()
+            
             if let color = self.createPlanetContextMenu.currentColor{
                 let scale = self.createPlanetContextMenu.getScale()
                 let planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
@@ -313,6 +314,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let rotator = SCNNode()
         let inclinator = SCNNode()
         
+        rotator.name = "rotator"
+        inclinator.name = "inclinator"
         
         child.removeFromParentNode()
         
@@ -416,9 +419,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
         self.tapGesture.state = .cancelled
         self.hideContextMenu()
+        
         let hitResults = self.sceneView.hitTest(position, options: [:])
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
+            
+            if self.currentSelectedStar!.parent?.name == "rotator"{
+                self.currentSelectedStar!.parent?.parent?.removeFromParentNode()
+            } else {
+                self.currentSelectedStar!.removeFromParentNode()
+            }
             self.currentSelectedStar!.removeFromParentNode()
             self.currentSelectedStar?.removeAllActions()
             pov.addChildNode(self.currentSelectedStar!)

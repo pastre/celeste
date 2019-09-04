@@ -100,6 +100,8 @@ class GalaxyFacade{
     func sync(node: SCNNode){
         guard let nodeStar = self.galaxy.getStar(by: node) else { fatalError("NAO ACHOU A ESTRELA! FALHA NA CONSISTENCIA")}
         
+        print("NODE HAS ACTIONS", node.hasActions)
+        
         for star in self.galaxy.stars{
             if star == nodeStar{
                 star.center = Point(position: node.position)
