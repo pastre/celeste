@@ -8,18 +8,18 @@
 
 import Foundation
 import SceneKit
-
-class ModelOption{
-    internal init(node: SCNNode?, imageIcon: UIImage?, name: String?) {
-        self.node = node
-        self.imageIcon = imageIcon
-        self.name = name
-    }
-    
-    
-    var node: SCNNode!
-    var imageIcon: UIImage!
-    var name: String!
-    
-    
-}
+//
+//class ModelOption{
+//    internal init(node: SCNNode?, imageIcon: UIImage?, name: String?) {
+//        self.node = node
+//        self.imageIcon = imageIcon
+//        self.name = name
+//    }
+//    
+//    
+//    var node: SCNNode!
+//    var imageIcon: UIImage!
+//    var name: String!
+//    
+//    
+//}

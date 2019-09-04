@@ -24,17 +24,24 @@ class GalaxyFacade{
         return self.galaxy
     }
     
-    func createPlanet(node: SCNNode, color: UIColor, shapeName: ShapeName, scaled scale: Float){
+    func createPlanet(node: SCNNode, color: UIColor, shapeName: ShapeName, scaled scale: Float) -> Star{
         
         let radius = node.boundingSphere.radius
         let position = node.worldPosition
        
         let newPlanet = Planet(radius: CGFloat(radius), center: Point(position: position), color: color, child: nil)
+        
         newPlanet.shapeName = shapeName
         newPlanet.scale = scale
-        self.galaxy.stars.append(newPlanet)
         
-        self.storage.updateGalaxy(to: self.galaxy)
+        node.name = newPlanet.id
+        
+        self.galaxy.stars.append(newPlanet)
+        self.persistGalaxy()
+        
+        print("[GALAXYFACADE] Created planet named", node.name)
+        
+        return newPlanet
         
 //        self.galaxy
     }
@@ -44,9 +51,50 @@ class GalaxyFacade{
         self.galaxy.stars.removeAll { (s) -> Bool in
             s.id == node.name
         }
+        self.persistGalaxy()
         
-        self.storage.updateGalaxy(to: self.galaxy)
+    }
+    
+    func createOrbit(around aroundNode: SCNNode, child childNode: SCNNode, with radius: CGFloat){
+        print()
         
+        
+        guard  let childStar = self.galaxy.getStar(by: childNode) else {
+            print("BROW BOLA FORA PRA CRIAR A ORBITA")
+            return
+        }
+        
+        let orbit = Orbit(radius: radius, orbiter: childStar)
+        
+        for (i, star) in self.galaxy.stars.enumerated(){
+            
+            if star.id == aroundNode.name {
+                var asPlanet: Planet!
+                if let planet = star as? Planet{
+                    asPlanet = planet
+                } else {
+                    asPlanet = Planet(from: star)
+                }
+                
+                if asPlanet.orbits == nil{
+                    asPlanet.orbits = [Orbit]()
+                }
+                
+                asPlanet.orbits?.append(orbit)
+                
+                self.galaxy.stars[i] = asPlanet
+                break
+            }
+        }
+        print("[GALAXYFACADE] Created orbit for", childNode.name, " around ", aroundNode.name)
+        self.persistGalaxy()
+        print()
+    }
+    
+    func printPlanets(){
+        for s in self.galaxy.stars{
+            print(s.id)
+        }
     }
     
     func sync(node: SCNNode){
@@ -56,8 +104,14 @@ class GalaxyFacade{
             if star == nodeStar{
                 star.center = Point(position: node.position)
                 star.scale = node.scale.x
+                print("[GALAXYFACADE] Sync planet named", node.name)
             }
         }
+        self.persistGalaxy()
+    }
+    
+    func persistGalaxy(){
+        self.storage.updateGalaxy(to: self.galaxy)
         
     }
 }

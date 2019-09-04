@@ -15,6 +15,13 @@ class Planet: NesteableStar{
         self.orbits = orbits
     }
     
+    convenience init(from star: Star) {
+        self.init(radius: star.radius, center: star.center, color: star.color, child: nil)
+        self.id = star.id
+        self.shapeName = star.shapeName
+        self.scale = star.scale
+    }
+    
     override init(radius: CGFloat?, center: Point?, color: UIColor?, child: [Star]?){
         super.init(radius: radius, center: center, color: color, child: child)
         self.orbits = nil

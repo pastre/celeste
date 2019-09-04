@@ -131,6 +131,7 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
         let scale = self.scale ?? 1
         
         node.scale = SCNVector3(x: scale, y: scale, z: scale)
+        print("SETTING ID TO", self.id)
         node.name = self.id
         
         return node

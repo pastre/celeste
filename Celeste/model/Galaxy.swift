@@ -16,7 +16,7 @@ class Galaxy: Encodable, Decodable{
     }
     
     required init(from decoder: Decoder) throws {
-        var container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.stars = try container.decode([Star].self, forKey: .stars)
     }
@@ -76,16 +76,16 @@ class Galaxy: Encodable, Decodable{
 //                return star
 //            }
 //        }
-//        
+//
 //        return nil
 //    }
 
     
     
     func getStar(by node: SCNNode) -> Star?{
-        let stars = self.getStars()
-        for star in stars{
-            print(star.getNode(), node)
+        
+        for star in self.stars{
+            
             if star.id == node.name {
                 return star
             }

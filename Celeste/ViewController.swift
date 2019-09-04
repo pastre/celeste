@@ -16,7 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // Mark: - Constants
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
-    let orbitContextMenu = OrbitContextMenu.instance
+//    let orbitContextMenu = OrbitContextMenu.instance
     lazy var galaxy: Galaxy =  self.getDebugGalaxy()
     let galaxyFacade = GalaxyFacade.instance
 
@@ -50,10 +50,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     // MARK: - SCNKit elements
-    var tappedNode: SCNNode?
-    var highlighterNode: SCNNode?
-    var contextMenuNode: SCNNode?
-    var currentSelectedStar: SCNNode?{
+    weak var tappedNode: SCNNode?
+    weak var highlighterNode: SCNNode?
+    weak var contextMenuNode: SCNNode?
+    weak var currentSelectedStar: SCNNode?{
         didSet{
             if self.currentSelectedStar == nil{
                 self.isMovingNode = false
@@ -83,10 +83,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
-        let galaxyNode = self.galaxy.getScene()
-        galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
-        galaxyNode.name = "galaxy"
-        scene.rootNode.addChildNode(galaxyNode)
+//        let galaxyNode = self.galaxy.getScene()
+//        galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
+//        galaxyNode.name = "galaxy"
+//        scene.rootNode.addChildNode(galaxyNode)
+  
+        for star in self.galaxy.stars{
+            let node = star.getNode()
+            scene.rootNode.addChildNode(node)
+        }
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -250,28 +255,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             let newStar = selectedStar.clone()
             let transform = selectedStar.worldTransform
             selectedStar.removeFromParentNode()
-            
-            let root = self.sceneView.scene.rootNode
-            root.addChildNode(newStar)
-            newStar.setWorldTransform(transform)
-//            root.childNode(withName: "galaxy", recursively: true)!.addChildNode(newStar)
 
             if let color = self.createPlanetContextMenu.currentColor{
                 let scale = self.createPlanetContextMenu.getScale()
-                self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+                let planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+                
+                newStar.name = planet.id
+                self.createPlanetContextMenu.currentColor = nil
             }
+            
+            self.sceneView.scene.rootNode.addChildNode(newStar)
+            newStar.setWorldTransform(transform)
+            newStar.eulerAngles = SCNVector3Zero
             
             self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
         
             self.updatedOrbit(newStar)
             self.clearHighlight()
+            
+            self.galaxyFacade.sync(node: newStar)
         }
         
-        guard let particleSystem = SCNParticleSystem(named: "stars.scnp", inDirectory: nil) else { fatalError("Bro deu ruim")}
-        self.sceneView.pointOfView?.addParticleSystem(particleSystem)
-        
         self.currentSelectedStar = nil
-        
     }
     
     // MARK: - Orbit helper methods
@@ -284,8 +289,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             if test.node == self.currentSelectedStar{ continue }
             
             print("created orbit!")
-            star.name = "sacaso"
             self.createOrbit(around: test.node, child: star, radius: 0.02)
+            
+            if test.node.name == "sphere"{
+                guard let node = self.galaxy.getStar(by: test.node.position)?.getNode() else { return }
+                self.galaxyFacade.createOrbit(around: node, child: star, with: 0.02)
+            } else {
+                self.galaxyFacade.createOrbit(around: test.node, child: star, with: 0.02)
+            }
+            
             break
         }
     }
@@ -320,8 +332,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func enableAllOrbits(){
+        var orbitingNodes = [SCNNode]()
+        
         for star in self.galaxy.stars{
             if let planet = star as? Planet{
+                print("ASPLANET BRO")
                 guard let parentNode = self.getNode(star: planet) else {
                     print("Oia so deu ruim cuzao")
                     continue
@@ -334,9 +349,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                     }
                     
                     self.createOrbit(around: parentNode, child: child, radius: CGFloat.random(in: 0...0.5))
-                    
+                    orbitingNodes.append(child)
                     print("AEEEEEE")
                 }
+            } else {
+                print("NOPLANET BRO")
+            }
+        }
+        
+        for node in orbitingNodes{
+            let root = self.sceneView.scene.rootNode
+            print("Testing")
+            if root.childNodes.contains(node) {
+                node.removeFromParentNode()
+                print("aeeeeeeee tirou")
             }
         }
     }

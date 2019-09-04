@@ -40,8 +40,6 @@
 		D7DD58C32318A8B1003F0F26 /* OribitContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */; };
 		D7E032C0231DE4FF00103473 /* GalaxyFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */; };
 		D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032C1231DE54400103473 /* StorageFacade.swift */; };
-		D7E27E8F231ED53B0085CB67 /* bokeh.png in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E8D231ED53B0085CB67 /* bokeh.png */; };
-		D7E27E90231ED53B0085CB67 /* Particle test.scnp in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E8E231ED53B0085CB67 /* Particle test.scnp */; };
 		D7E27E93231ED6120085CB67 /* stars.scnp in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E91231ED6120085CB67 /* stars.scnp */; };
 		D7E27E94231ED6120085CB67 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E92231ED6120085CB67 /* star.png */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
@@ -84,8 +82,6 @@
 		D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OribitContextMenu.swift; sourceTree = "<group>"; };
 		D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyFacade.swift; sourceTree = "<group>"; };
 		D7E032C1231DE54400103473 /* StorageFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageFacade.swift; sourceTree = "<group>"; };
-		D7E27E8D231ED53B0085CB67 /* bokeh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bokeh.png; sourceTree = "<group>"; };
-		D7E27E8E231ED53B0085CB67 /* Particle test.scnp */ = {isa = PBXFileReference; lastKnownFileType = file.scp; path = "Particle test.scnp"; sourceTree = "<group>"; };
 		D7E27E91231ED6120085CB67 /* stars.scnp */ = {isa = PBXFileReference; lastKnownFileType = file.scp; path = stars.scnp; sourceTree = "<group>"; };
 		D7E27E92231ED6120085CB67 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
@@ -122,8 +118,6 @@
 		D707F56C2305F82500B0A726 = {
 			isa = PBXGroup;
 			children = (
-				D7E27E8D231ED53B0085CB67 /* bokeh.png */,
-				D7E27E8E231ED53B0085CB67 /* Particle test.scnp */,
 				D707F5772305F82500B0A726 /* Celeste */,
 				D707F5762305F82500B0A726 /* Products */,
 			);
@@ -272,10 +266,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7E27E8F231ED53B0085CB67 /* bokeh.png in Resources */,
 				D7E27E93231ED6120085CB67 /* stars.scnp in Resources */,
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
-				D7E27E90231ED53B0085CB67 /* Particle test.scnp in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
 				D7E27E94231ED6120085CB67 /* star.png in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,

@@ -9,20 +9,20 @@
 import Foundation
 import SceneKit
 
-class ModelProvider{
-    
-    static let instance = ModelProvider()
-    var models: [ModelOption]
-    
-    
-    private init(){
-        self.models = [ModelOption]()
-        self.loadModels()
-    }
-    
-    func loadModels(){
-        
-    }
-    
-    
-}
+//class ModelProvider{
+//    
+//    static let instance = ModelProvider()
+//    var models: [ModelOption]
+//    
+//    
+//    private init(){
+//        self.models = [ModelOption]()
+//        self.loadModels()
+//    }
+//    
+//    func loadModels(){
+//        
+//    }
+//    
+//    
+//}
