@@ -66,7 +66,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Flags
     var isMovingNode: Bool! = false
     var isDisplayingUIContextMenu: Bool = false
-    
+    var hasDeleted = false
     
     // MARK: - UIViewController overrides
     
@@ -273,7 +273,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.updatedOrbit(newStar)
             self.clearHighlight()
             
-            self.galaxyFacade.sync(node: newStar)
+            if self.hasDeleted {
+                self.hasDeleted = false
+            } else {
+                self.galaxyFacade.sync(node: newStar)
+            }
+            
         }
         
         self.currentSelectedStar = nil
@@ -415,6 +420,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
             self.currentSelectedStar!.removeFromParentNode()
+            self.currentSelectedStar?.removeAllActions()
             pov.addChildNode(self.currentSelectedStar!)
             
             if self.isDisplayingUIContextMenu{
@@ -574,6 +580,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         print("Delete!")
         //        self.hideContextMenu()
         //        assert(self.currentSelectedStar != nil)
+        self.hasDeleted = true
         self.galaxyFacade.deletePlanet(with: node)
         node.removeFromParentNode()
         //         = nil
