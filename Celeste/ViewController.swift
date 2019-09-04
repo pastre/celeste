@@ -203,6 +203,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             n.removeFromParentNode()
         }
         
+        let a = self.sceneView.scene.rootNode
+        
         
         let highlighter = self.getHighlighterNode()
         self.highlighterNode = highlighter
@@ -449,7 +451,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - ContextMenu related functions
     
-    func displayUIContextMenu(){
+    func displayAddPlanetMeny(){
         self.hideContextMenu()
         let menu = self.createPlanetContextMenu.getView()
         
@@ -608,21 +610,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
+    
     @objc func displayAddPlanetMenu(){
+    
+        self.tapGesture.state = .failed
+        let vib = UIImpactFeedbackGenerator()
+        vib.impactOccurred()
 
-        let view = self.floorPaintingMenu.getView()
-        self.view.addSubview(view)
-        
-        view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        view.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.8)
-        view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
-        view.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.1).isActive = true
-//        self.tapGesture.state = .failed
-//        let vib = UIImpactFeedbackGenerator()
-//        vib.impactOccurred()
-//
-//        self.displayUIContextMenu()
-//        displaySceneContextMenu( )
+        self.displayAddPlanetMeny()
+        displaySceneContextMenu( )
         
     }
     
