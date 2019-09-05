@@ -11,7 +11,7 @@ import SceneKit
 
 enum ContextMenuMode:String, CaseIterable{
     case galaxy = "Galaxy Mode"
-    case planet = "Planet  Mode"
+    case planet = "Planet Mode"
 }
 
 enum ContextMenuOption:String, CaseIterable{
@@ -24,6 +24,9 @@ protocol ContextMenuDelegate {
     func onNewPlanetUpdated(planetNode: SCNNode)
     func onNewPlanetTextureChanged(to texture: UIImage?)
     func onNewPlanetScaleChanged(to scale: Float)
+    
+    func onSave()
+    func onCancel()
 }
 
 class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate, WheelPickerDataSource{
@@ -32,6 +35,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     var currentModel: SCNNode? {
         didSet{
             self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+            self.isDirty = true
         }
     }
     
@@ -39,16 +43,21 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     var currentShape: ShapeName! = .sun {
         didSet{
             self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
+            self.isDirty = true
+
+        }
+    }
+    
+    var currentRadius: Float?{
+        didSet{
+            self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
+            self.isDirty = true
+
         }
     }
     
     var currentColor: UIColor?
-    
-    var currentRadius: Float? {
-        didSet{
-            self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
-        }
-    }
+    var isDirty: Bool = false
     
     lazy var planetPicker: WheelPicker = {
         let picker = WheelPicker()
@@ -112,8 +121,17 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     
     
     override private init(){
+        super.init()
         self.isHidden = true
         self.mode = .planet
+        
+        self.setDefaults()
+    }
+    
+    func setDefaults(){
+        self.currentColor = UIColor.white
+        self.currentShape = ShapeName.allCases.first
+        self.currentRadius = 2.5
     }
     
     func openContextMenu(mode: ContextMenuMode){
@@ -213,6 +231,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     func getNode() -> SCNNode {
         let node =  getNewPlanetNode() ?? SCNNode()
         
+
         node.scale = SCNVector3(x: self.getScale(), y: self.getScale(), z: self.getScale())
         
         return node
@@ -406,6 +425,13 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         label.textColor = UIColor.cyan
     }
    
+    override func onCancel() {
+        self.delegate?.onCancel()
+    }
+    
+    override func onSave() {
+        self.delegate?.onSave()
+    }
 }
 
 

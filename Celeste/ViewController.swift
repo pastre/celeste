@@ -53,7 +53,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - SCNKit elements
     weak var tappedNode: SCNNode?
     weak var highlighterNode: SCNNode?
-    weak var contextMenuNode: SCNNode?
     weak var currentSelectedStar: SCNNode?{
         didSet{
             if self.currentSelectedStar == nil{
@@ -105,7 +104,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
-        self.view.addGestureRecognizer(contextMenuGesture)
+//        self.view.addGestureRecognizer(contextMenuGesture)
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
@@ -157,10 +156,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.updateHighlightedNode()
         }
         
-        if let contextMenu = self.contextMenuNode{
-            contextMenu.position = SCNVector3(x: 0, y: 0, z: -3)
-        }
-    
         if let camera = self.sceneView.pointOfView{
             
             for node in self.sceneView.scene.rootNode.childNodes{
@@ -250,7 +245,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        }
     }
     
-    func onEndDrag(at location: CGPoint){
+    func moveNodeFromCamera(){
         if let selectedStar = self.currentSelectedStar{
             
             let newStar = selectedStar.clone()
@@ -258,20 +253,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             
             self.currentSelectedStar!.removeFromParentNode()
             
-            if let color = self.createPlanetContextMenu.currentColor{
+            if self.createPlanetContextMenu.isDirty{
+                // Planet creation
+                let color = self.createPlanetContextMenu.currentColor!
                 let scale = self.createPlanetContextMenu.getScale()
                 let planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
                 
                 newStar.name = planet.id
-                self.createPlanetContextMenu.currentColor = nil
+                self.createPlanetContextMenu.isDirty = false
+                //                self.createPlanetContextMenu.setDefaults()
+            } else {
+                
             }
             
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
             newStar.eulerAngles = SCNVector3Zero
             
-            self.planetContextMenu.onPanEnded(canceled: location.y < 100, lastNode: newStar)
-        
             self.updatedOrbit(newStar)
             self.clearHighlight()
             
@@ -284,6 +282,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
         
         self.currentSelectedStar = nil
+    }
+    
+    func onEndDrag(at location: CGPoint){
+        self.moveNodeFromCamera()
     }
     
     // MARK: - Orbit helper methods
@@ -379,9 +381,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - UIGestureRecognizer delegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if otherGestureRecognizer.name == "ContextMenuGesture" || gestureRecognizer.name == "TapGesture"{
-           return false
-        }
+//        if otherGestureRecognizer.name == "ContextMenuGesture" || gestureRecognizer.name == "TapGesture"{
+//           return false
+//        }
         
         return true
     }
@@ -411,7 +413,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         let position = gesture.location(in: self.view)
         
-        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+        if ((self.contextMenuView?.frame.contains(position)) ?? false){
             return
         }
         
@@ -483,8 +485,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func hideSCNNodeMenu(){
-        self.contextMenuNode?.removeFromParentNode()
-        self.contextMenuNode = nil
+        
+        self.currentSelectedStar?.removeFromParentNode()
+        self.currentSelectedStar = nil
     }
     
     func hideContextMenu(){
@@ -535,27 +538,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - ContextMenuDelegate methods
     func onNewPlanetScaleChanged(to scale: Float) {
-        if contextMenuNode == nil { return }
-        self.contextMenuNode!.scale = SCNVector3(scale , scale, scale)
+        if currentSelectedStar == nil { return }
+        self.currentSelectedStar!.scale = SCNVector3(scale , scale, scale)
     }
     
     func onNewPlanetTextureChanged(to texture: UIImage?){
-        self.contextMenuNode?.geometry?.firstMaterial?.diffuse.contents = texture
+        self.currentSelectedStar?.geometry?.firstMaterial?.diffuse.contents = texture
     }
     
     func onNewPlanetUpdated(planetNode: SCNNode) {
         
         planetNode.removeFromParentNode()
-        if self.contextMenuNode == nil{
+        if self.currentSelectedStar == nil{
             self.sceneView.pointOfView?.addChildNode(planetNode)
         }else{
-            self.sceneView.pointOfView?.replaceChildNode(self.contextMenuNode!, with: planetNode)
+            self.sceneView.pointOfView?.replaceChildNode(self.currentSelectedStar!, with: planetNode)
         }
         
-        self.contextMenuNode = planetNode
+        self.currentSelectedStar = planetNode
         
     }
     
+    func onCancel() {
+        self.hideContextMenu()
+    }
+    
+    func onSave(){
+        self.moveNodeFromCamera()
+        self.hideContextMenu()
+    }
     
     
     // MARK: - PlanetContextMenuDelegate methods
@@ -623,10 +634,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     @objc func onTap(_ sender: UITapGestureRecognizer){
+        
+        if self.isDisplayingUIContextMenu { return }
+        
         let position = sender.location(in: self.view)
         
         if let hit = self.sceneView.hitTest(position, options: [:]).first{
-            if hit.node == self.contextMenuNode || hit.node == self.currentSelectedStar{
+            if hit.node == self.currentSelectedStar{
                 print("Node!!")
             } else  if !self.contextMenuGesture.hasTriggered{
                 self.tappedNode = hit.node
@@ -650,7 +664,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    // Mark: - ARSceneView interruption delegates
+    
+    // MARK: - ARSceneView interruption delegates
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -694,6 +709,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             ]
         )
     }
+    
     
     
 

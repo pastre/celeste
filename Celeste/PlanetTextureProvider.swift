@@ -24,6 +24,7 @@ enum ShapeColor: String, CaseIterable{
 }
 
 enum ShapeName: String, CaseIterable{
+    case mars = "mars"
     case neptune = "neptune"
     case uranus = "uranus"
     case ceres = "ceres"
@@ -31,7 +32,6 @@ enum ShapeName: String, CaseIterable{
     case haumea = "haumea"
 //    case makemake = "makemake"
     case jupiter = "jupiter"
-    case mars = "mars"
 //    case mercury = "mercury"
     case saturn = "saturn"
     case sun = "sun"

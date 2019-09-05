@@ -25,13 +25,17 @@ class MenuView {
     func getActioBarOptionBg() -> UIView {
         let imageView = UIImageView(image: UIImage(named: "bottomOption"))
         
+        imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }
     
     func getButton(name: String, icon: UIImage?, action selector: Selector) -> UIView{
-        let button = UIButton()
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+       
+        button.isUserInteractionEnabled = true
+        
         let bg = self.getActioBarOptionBg()
         
         bg.translatesAutoresizingMaskIntoConstraints = false
@@ -83,35 +87,45 @@ class MenuView {
         
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        let cancelOption = self.getButton(name: "Cancel", icon: UIImage(named: "cancel"), action: #selector(self.onCancel(_:)))
-        let confirmOption = self.getButton(name: "Save", icon: UIImage(named: "confirm"), action: #selector(self.onSave(_:)))
+        let cancelOption = self.getButton(name: "Cancel", icon: UIImage(named: "cancel"), action: #selector(self.onCancelCallback))
+        let confirmOption = self.getButton(name: "Save", icon: UIImage(named: "confirm"), action: #selector(self.onSaveCallback))
 //        let deleteOption = hasDelete ? self.getButton(name: "Delete", icon: UIImage(named: "delete"), action: #selector(self.onDelete(_:))) : nil
+        
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.onCancelCallback(_:)))//        bg.addGestureRecognizer(tap)
         
         let actionBarView: UIView = {
             let view = UIView()
-            
+
             view.translatesAutoresizingMaskIntoConstraints = false
             
             view.addSubview(cancelOption)
             view.addSubview(confirmOption)
-            
+
             cancelOption.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.28).isActive = true
             confirmOption.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.28).isActive = true
-            
-            
+
+
             cancelOption.heightAnchor.constraint(equalTo: cancelOption.widthAnchor, multiplier: 1/3.78).isActive = true
             confirmOption.heightAnchor.constraint(equalTo: cancelOption.widthAnchor, multiplier: 1/3.78).isActive = true
 
-            
+
             cancelOption.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
             confirmOption.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-            
+
             cancelOption.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            
+
             confirmOption.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
             
             return view
         }()
+//
+//        view.addSubview(cancelOption)
+//        view.addSubview(confirmOption)
+//        cancelOption.addGestureRecognizer(tap)
+        
+//        actionBarView.addGestureRecognizer(tap)
+//        actionBarView.backgroundColor = UIColor.blue
         
         view.addSubview(content)
         view.addSubview(actionBarView)
@@ -132,16 +146,30 @@ class MenuView {
         return view
     }
     
-    @objc func onCancel(_ sender: UIButton){
-        
+    @objc func onCancelCallback(_ sender: UIButton){
+        print("Cancel callback")
+        self.onCancel()
     }
     
-    @objc func onSave(_ sender: UIButton){
-        
+    @objc func onSaveCallback(_ sender: UIButton){
+        print("Save callback")
+        self.onSave()
     }
     
     @objc func onDelete(_ sender: UIButton){
         
     }
+    
+    func onCancel(){
+        // metodo abstrato para as subclasses implementarem
+    }
+    
+    func onSave(){
+        // metodo abstrato para as subclasses implementarem
+    }
+    
+ 
+    
+    
 }
 
