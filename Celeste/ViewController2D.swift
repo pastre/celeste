@@ -72,12 +72,11 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @IBAction func pinchGesture(_ sender: UIPinchGestureRecognizer) {
-        print(scene.camera!.xScale)
         if sender.state == .ended {
             if scene.camera!.xScale >= 5 {
                 scene.camera!.run(.scale(to: 5, duration: 0.5))
             } else if scene.camera!.xScale < 0.5 {
-                scene.camera!.run(.scale(to: 0.5, duration: 0.5))
+                scene.camera!.run(.scale(to: 0.5, duration: 0.33))
             }
         }
         scene.camera!.xScale /= sender.scale

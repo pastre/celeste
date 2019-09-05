@@ -14,13 +14,14 @@ class Scene2D: SKScene {
     var galaxy: Galaxy!
     let multiplier = CGFloat(50)
     let distanceBetweenStars = CGFloat(75)
+    var maximumDistanceToOrbit: CGFloat!
     var circles: [SKShapeNode] = []
     var selectedShape: SKShapeNode!
     var teste: Bool = true
     var firstTouchPosition: CGPoint!
     var lastTouchPosition: CGPoint!
     var lastTouch: UITouch!
-//    var tempConstraints: [SKConstraint]!
+    var tempConstraints: [SKConstraint]!
     var starsShapes: [SKShapeNode] = []
     
     func setViewController(viewController: ViewController2D){
@@ -34,6 +35,7 @@ class Scene2D: SKScene {
         addChild(camera)
         physicsWorld.gravity = .zero
         physicsWorld.speed = 0.5
+        maximumDistanceToOrbit = distanceBetweenStars * 1.5
         updateStars()
     }
     
@@ -43,8 +45,7 @@ class Scene2D: SKScene {
         let node = self.atPoint(point)
         if node.name != nil {
             selectedShape = node as? SKShapeNode
-//            print("selectedShape: " + selectedShape.name!)
-//            tempConstraints = selectedShape.constraints
+            tempConstraints = selectedShape.constraints
             selectedShape.constraints = []
         }
     }
@@ -62,9 +63,18 @@ class Scene2D: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
+        updateHierarchy(point: point)
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let point = touches.first!.location(in: self)
+        updateHierarchy(point: point)
+    }
+    
+    func updateHierarchy(point: CGPoint) {
         if selectedShape != nil {
             var selectedStar: Star!
-            var selectedStarHasChild = false
+            var selectedStarHasChild: Bool!
             for star in Model.shared.galaxy.stars {
                 if let nested = star as? NesteableStar {
                     if let children = nested.child {
@@ -82,9 +92,7 @@ class Scene2D: SKScene {
             
             if let nested = selectedStar as? NesteableStar {
                 if let children = nested.child {
-                    for child in children {
-                        selectedStarHasChild = true
-                    }
+                    selectedStarHasChild = children.isEmpty ? false : true
                 }
             }
             
@@ -108,8 +116,6 @@ class Scene2D: SKScene {
                         closestStarShape = shape
                     }
                 }
-
-                let maximumDistanceToOrbit = distanceBetweenStars * 1.5
                 
                 for (index, star) in Model.shared.galaxy.stars.enumerated() {
                     if star.id == selectedStar.id {
@@ -146,10 +152,6 @@ class Scene2D: SKScene {
             selectedStar.center.y = point.y
         }
         selectedShape = nil
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-
     }
     
     func updateStarType(shape: SKShapeNode, isChild: Bool) {
