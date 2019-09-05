@@ -30,10 +30,10 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         panGesture.minimumNumberOfTouches = 2
         panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
-        panGesture.isEnabled = false
+//        panGesture.isEnabled = false
         
         pinchGesture.delegate = self
-        pinchGesture.isEnabled = false
+//        pinchGesture.isEnabled = false
         
         rotationGesture.delegate = self
 //        rotationGesture.isEnabled = false
@@ -50,7 +50,9 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @IBAction func rotationGesture(_ sender: UIRotationGestureRecognizer) {
-        print(sender.rotation)
+        print(scene.camera!.zRotation / CGFloat.pi)
+        scene.camera!.zRotation += sender.rotation
+        sender.rotation = 0
     }
     
     @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
@@ -60,8 +62,12 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
             return
         }
         if sender.state != .began {
-            scene.camera!.position.x -= (position.x - lastPosition.x) * scene.camera!.xScale
-            scene.camera!.position.y += (position.y - lastPosition.y) * scene.camera!.yScale
+            scene.camera!.position.x -=
+                (position.x - lastPosition.x) * scene.camera!.xScale * CGFloat(cos(scene.camera!.zRotation)) +
+                (position.y - lastPosition.y) * scene.camera!.yScale * CGFloat(sin(scene.camera!.zRotation))
+            scene.camera!.position.y +=
+                (position.y - lastPosition.y) * scene.camera!.yScale * CGFloat(cos(scene.camera!.zRotation)) -
+                (position.x - lastPosition.x) * scene.camera!.xScale * CGFloat(sin(scene.camera!.zRotation))
         }
         lastPosition = position
     }
