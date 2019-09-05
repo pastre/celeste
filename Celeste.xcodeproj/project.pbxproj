@@ -140,6 +140,7 @@
 			children = (
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
 				D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */,
+				D758A67023205D6B00E9E31B /* MenuView.swift */,
 				D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */,
 				D733242023106EC300493865 /* PlanetContextMenu.swift */,
 				D758A66E2320374200E9E31B /* FloorPainting.swift */,
@@ -160,7 +161,6 @@
 				D409F6192308ADA000DCE2B4 /* controller */,
 				D409F6182308AD7B00DCE2B4 /* view */,
 				D7D651642309C09700815B15 /* utils */,
-				D758A67023205D6B00E9E31B /* MenuView.swift */,
 			);
 			path = Celeste;
 			sourceTree = "<group>";

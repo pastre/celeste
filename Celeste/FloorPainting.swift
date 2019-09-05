@@ -33,29 +33,6 @@ class FloorPaintingMenu: MenuView, SCNNodeTransformer, WheelPickerDataSource, Wh
             return picker
         }()
         
-        let okButton = super.getOKButton()
-        let cancelButton = super.getCancelButton()
-        
-        view.addSubview(colorPicker)
-        view.addSubview(okButton)
-        view.addSubview(cancelButton)
-        
-        
-        okButton.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        okButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        okButton.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        okButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1).isActive = true
-        
-        cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        cancelButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        cancelButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1).isActive = true
-        
-        colorPicker.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        colorPicker.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
-        colorPicker.leftAnchor.constraint(equalTo: cancelButton.rightAnchor, constant: 10).isActive = true
-        colorPicker.rightAnchor.constraint(equalTo: okButton.leftAnchor, constant: -10).isActive = true
         
         return view
     }

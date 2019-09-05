@@ -459,8 +459,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 1).isActive = true
+        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.5).isActive = true
         
         self.view.bringSubviewToFront(menu)
         
