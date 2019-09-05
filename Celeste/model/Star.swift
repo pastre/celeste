@@ -93,6 +93,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer{
     }
     
     // Classe abstrata pra nois
+    var isChild: Bool!
     var multiplier: CGFloat = 50
     var radius: CGFloat!
     var center: Point!
