@@ -34,7 +34,7 @@ class Scene2D: SKScene {
         camera.position = CGPoint(x: frame.width/2, y: frame.height/2)
         addChild(camera)
         physicsWorld.gravity = .zero
-        physicsWorld.speed = 0.5
+//        physicsWorld.speed = 0.5
         maximumDistanceToOrbit = distanceBetweenStars * 1.5
         updateStars()
     }
@@ -134,15 +134,15 @@ class Scene2D: SKScene {
                     parent.child?.append(selectedStar)
                     selectedShape.constraints = [.distance(SKRange(constantValue: distanceBetweenStars), to: closestStarShape)]
                     if !selectedStar.isChild {
-                        updateStarType(shape: selectedShape, isChild: true)
                         selectedStar.isChild = true
+                        updateStarType(star: selectedStar)
                     }
                 } else {
                     selectedShape.constraints = []
                     Model.shared.galaxy.stars.append(selectedStar)
                     if selectedStar.isChild {
-                        updateStarType(shape: selectedShape, isChild: false)
                         selectedStar.isChild = false
+                        updateStarType(star: selectedStar)
                     }
                 }
                 closestStar = nil
@@ -154,13 +154,17 @@ class Scene2D: SKScene {
         selectedShape = nil
     }
     
-    func updateStarType(shape: SKShapeNode, isChild: Bool) {
-        if isChild {
-            shape.run(.scale(by: 0.5, duration: 0.25))
-            shape.physicsBody?.isDynamic = true
+    func updateStarType(star: Star) {
+        if star.isChild {
+            star.shape.run(.scale(by: 0.5, duration: 0.25))
+            star.shape.physicsBody?.isDynamic = true
+            let randomInt32 = UInt32.random(in: 0...4294967295)
+            star.shape.physicsBody?.fieldBitMask = randomInt32
+            star.force.categoryBitMask = 4294967295 - randomInt32
         } else {
-            shape.run(.scale(by: 2, duration: 0.25))
-            shape.physicsBody?.isDynamic = false
+            star.shape.run(.scale(by: 2, duration: 0.25))
+            star.shape.physicsBody?.isDynamic = false
+            star.force.categoryBitMask = 0
         }
     }
     
@@ -187,6 +191,7 @@ class Scene2D: SKScene {
         } else {
             shape.physicsBody?.isDynamic = false
             star.isChild = false
+            star.force.categoryBitMask = 0
         }
         
         if let nested = star as? NesteableStar{

@@ -45,7 +45,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer{
     }
     
     func get2DNode() -> SKShapeNode {
-        let shape = SKShapeNode(circleOfRadius: radius * multiplier)
+        shape = SKShapeNode(circleOfRadius: radius * multiplier)
         shape.position = get2DPosition()
         shape.strokeColor = color
         shape.fillColor = color
@@ -54,10 +54,11 @@ class Star: SCNNodeTransformer, SKNodeTransformer{
         let randomInt32 = UInt32.random(in: 0...4294967295)
         shape.physicsBody = SKPhysicsBody(circleOfRadius: radius * multiplier)
         shape.physicsBody?.fieldBitMask = randomInt32
+        shape.physicsBody?.mass = 1
         
-        let force = SKFieldNode.radialGravityField()
+        force = SKFieldNode.radialGravityField()
         force.minimumRadius = 0
-        force.strength = -0.01
+        force.strength = -0.1
         force.categoryBitMask = 4294967295 - randomInt32
         force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
         shape.addChild(force)
@@ -93,6 +94,8 @@ class Star: SCNNodeTransformer, SKNodeTransformer{
     }
     
     // Classe abstrata pra nois
+    var shape: SKShapeNode!
+    var force: SKFieldNode!
     var isChild: Bool!
     var multiplier: CGFloat = 50
     var radius: CGFloat!
