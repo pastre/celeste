@@ -27,15 +27,16 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         
         skview.presentScene(scene)
         
-        panGesture.maximumNumberOfTouches = 1
+        panGesture.minimumNumberOfTouches = 2
+        panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
         panGesture.isEnabled = false
         
         pinchGesture.delegate = self
-//        pinchGesture.isEnabled = false
+        pinchGesture.isEnabled = false
         
         rotationGesture.delegate = self
-        rotationGesture.isEnabled = false
+//        rotationGesture.isEnabled = false
         
 //        skview.showsFields = true
 //        skview.showsPhysics = true
@@ -54,6 +55,10 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     
     @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
         let position = sender.location(in: view)
+        if sender.numberOfTouches < 2 {
+            sender.state = .ended
+            return
+        }
         if sender.state != .began {
             scene.camera!.position.x -= (position.x - lastPosition.x) * scene.camera!.xScale
             scene.camera!.position.y += (position.y - lastPosition.y) * scene.camera!.yScale

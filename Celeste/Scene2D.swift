@@ -20,10 +20,8 @@ class Scene2D: SKScene {
     var firstTouchPosition: CGPoint!
     var lastTouchPosition: CGPoint!
     var lastTouch: UITouch!
-    var tempConstraints: [SKConstraint]!
+//    var tempConstraints: [SKConstraint]!
     var starsShapes: [SKShapeNode] = []
-//    var parentRadius = CGFloat(25)
-//    var childRadius: CGFloat!
     
     func setViewController(viewController: ViewController2D){
         self.viewController = viewController
@@ -36,12 +34,7 @@ class Scene2D: SKScene {
         addChild(camera)
         physicsWorld.gravity = .zero
         physicsWorld.speed = 0.5
-        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        let boundary = SKShapeNode(rect: frame)
-        boundary.strokeColor = .black
-        addChild(boundary)
         updateStars()
-//        childRadius = parentRadius / 2
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -50,16 +43,20 @@ class Scene2D: SKScene {
         let node = self.atPoint(point)
         if node.name != nil {
             selectedShape = node as? SKShapeNode
-            print("selectedShape: " + selectedShape.name!)
-            tempConstraints = selectedShape.constraints
+//            print("selectedShape: " + selectedShape.name!)
+//            tempConstraints = selectedShape.constraints
             selectedShape.constraints = []
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
+        
         if selectedShape != nil {
             selectedShape.position = point
+        } else {
+            camera?.position.x += lastTouchPosition.x - point.x
+            camera?.position.y += lastTouchPosition.y - point.y
         }
     }
     
