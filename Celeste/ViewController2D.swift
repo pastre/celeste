@@ -27,19 +27,22 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         
         skview.presentScene(scene)
         
-        panGesture.maximumNumberOfTouches = 1
+        panGesture.minimumNumberOfTouches = 2
+        panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
-        panGesture.isEnabled = false
+//        panGesture.isEnabled = false
         
         pinchGesture.delegate = self
 //        pinchGesture.isEnabled = false
         
         rotationGesture.delegate = self
-        rotationGesture.isEnabled = false
+//        rotationGesture.isEnabled = false
         
-        skview.showsFields = true
-        skview.showsPhysics = true
-        skview.showsFPS = true
+//        skview.showsFields = true
+//        skview.showsPhysics = true
+//        skview.showsFPS = true
+        
+//        skview.isMultipleTouchEnabled = true
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -47,19 +50,35 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @IBAction func rotationGesture(_ sender: UIRotationGestureRecognizer) {
-        print(sender.rotation)
+        scene.camera!.zRotation += sender.rotation
+        sender.rotation = 0
     }
     
     @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
         let position = sender.location(in: view)
+        if sender.numberOfTouches < 2 {
+            sender.state = .ended
+            return
+        }
         if sender.state != .began {
-            scene.camera!.position.x -= (position.x - lastPosition.x) * scene.camera!.xScale
-            scene.camera!.position.y += (position.y - lastPosition.y) * scene.camera!.yScale
+            scene.camera!.position.x -=
+                (position.x - lastPosition.x) * scene.camera!.xScale * CGFloat(cos(scene.camera!.zRotation)) +
+                (position.y - lastPosition.y) * scene.camera!.yScale * CGFloat(sin(scene.camera!.zRotation))
+            scene.camera!.position.y +=
+                (position.y - lastPosition.y) * scene.camera!.yScale * CGFloat(cos(scene.camera!.zRotation)) -
+                (position.x - lastPosition.x) * scene.camera!.xScale * CGFloat(sin(scene.camera!.zRotation))
         }
         lastPosition = position
     }
     
     @IBAction func pinchGesture(_ sender: UIPinchGestureRecognizer) {
+        if sender.state == .ended {
+            if scene.camera!.xScale >= 5 {
+                scene.camera!.run(.scale(to: 5, duration: 0.5))
+            } else if scene.camera!.xScale < 0.5 {
+                scene.camera!.run(.scale(to: 0.5, duration: 0.33))
+            }
+        }
         scene.camera!.xScale /= sender.scale
         scene.camera!.yScale /= sender.scale
         sender.scale = 1.0

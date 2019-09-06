@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="R7J-vl-EDs">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -23,7 +23,7 @@
                                 <gestureRecognizers/>
                             </arscnView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jYd-zQ-fn0">
-                                <rect key="frame" x="354" y="836" width="50" height="50"/>
+                                <rect key="frame" x="300" y="846" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="HqO-tE-tPZ"/>
                                     <constraint firstAttribute="height" constant="50" id="f4T-tq-uQm"/>
@@ -38,8 +38,8 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="jYd-zQ-fn0" secondAttribute="trailing" constant="10" id="RoP-4a-coE"/>
-                            <constraint firstAttribute="bottom" secondItem="jYd-zQ-fn0" secondAttribute="bottom" constant="10" id="Tag-Cp-9S3"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="jYd-zQ-fn0" secondAttribute="trailing" constant="64" id="RoP-4a-coE"/>
+                            <constraint firstAttribute="bottom" secondItem="jYd-zQ-fn0" secondAttribute="bottom" id="Tag-Cp-9S3"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
@@ -52,7 +52,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="972" y="20"/>
+            <point key="canvasLocation" x="971.01449275362324" y="19.419642857142858"/>
         </scene>
         <!--View Controller2D-->
         <scene sceneID="UnF-b8-ZV1">
@@ -68,6 +68,7 @@
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="Kd6-iv-eiu" appends="YES" id="2rS-cm-3PX"/>
                                     <outletCollection property="gestureRecognizers" destination="f9U-U7-pMi" appends="YES" id="Re4-Ks-yRl"/>
+                                    <outletCollection property="gestureRecognizers" destination="QDs-V0-Xhl" appends="YES" id="cOa-KC-wRw"/>
                                 </connections>
                             </skView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oDc-Bv-kqV">
@@ -97,7 +98,7 @@
                     <connections>
                         <outlet property="panGesture" destination="f9U-U7-pMi" id="uT4-cK-X9R"/>
                         <outlet property="pinchGesture" destination="Kd6-iv-eiu" id="MHL-Oj-ESc"/>
-                        <outlet property="rotationGesture" destination="u5B-V0-yJv" id="R2d-Mm-gSc"/>
+                        <outlet property="rotationGesture" destination="QDs-V0-Xhl" id="mJg-gr-bIh"/>
                         <outlet property="skview" destination="z96-VJ-eOA" id="03C-HA-jpc"/>
                     </connections>
                 </viewController>
@@ -112,9 +113,9 @@
                         <action selector="panGesture:" destination="R7J-vl-EDs" id="6oD-FB-q1n"/>
                     </connections>
                 </panGestureRecognizer>
-                <rotationGestureRecognizer id="u5B-V0-yJv">
+                <rotationGestureRecognizer id="QDs-V0-Xhl">
                     <connections>
-                        <action selector="rotationGesture:" destination="R7J-vl-EDs" id="LNI-dG-RzX"/>
+                        <action selector="rotationGesture:" destination="R7J-vl-EDs" id="zIA-4m-EmV"/>
                     </connections>
                 </rotationGestureRecognizer>
             </objects>

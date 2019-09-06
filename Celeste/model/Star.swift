@@ -8,6 +8,12 @@
 
 import Foundation
 import SceneKit
+import SpriteKit
+
+protocol SKNodeTransformer {
+    func get2DPosition() -> CGPoint
+    func get2DNode() -> SKShapeNode
+}
 
 protocol SCNNodeTransformer{
     func getPosition() -> SCNVector3
@@ -25,6 +31,7 @@ class Color: Encodable, Decodable{
     var r: CGFloat
     var g: CGFloat
     var b: CGFloat
+class Star: SCNNodeTransformer, SKNodeTransformer{
     
     enum CodingKeys: String, CodingKey{
         case r = "r"
@@ -119,7 +126,31 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
         self.id = String.random()
     }
     
+    func get2DPosition() -> CGPoint {
+        return CGPoint(x: center.x, y: center.y)
+    }
     
+    func get2DNode() -> SKShapeNode {
+        shape = SKShapeNode(circleOfRadius: radius * multiplier)
+        shape.position = get2DPosition()
+        shape.strokeColor = color
+        shape.fillColor = color
+        shape.name = id
+        
+        let randomInt32 = UInt32.random(in: 0...4294967295)
+        shape.physicsBody = SKPhysicsBody(circleOfRadius: radius * multiplier)
+        shape.physicsBody?.fieldBitMask = randomInt32
+        shape.physicsBody?.mass = 1
+        
+        force = SKFieldNode.radialGravityField()
+        force.minimumRadius = 0
+        force.strength = -0.1
+        force.categoryBitMask = 4294967295 - randomInt32
+        force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
+        shape.addChild(force)
+        
+        return shape
+    }
     
     func getPosition() -> SCNVector3 {
         // TODO: Pensar em um fator de escala para ficar bem  posicionado
@@ -149,6 +180,10 @@ class Star: SCNNodeTransformer, Encodable, Decodable{
     }
     
     // Classe abstrata pra nois
+    var shape: SKShapeNode!
+    var force: SKFieldNode!
+    var isChild: Bool!
+    var multiplier: CGFloat = 50
     var radius: CGFloat!
     var center: Point!
     var color: UIColor!
