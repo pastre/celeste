@@ -32,6 +32,14 @@ protocol ContextMenuDelegate {
 class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate, WheelPickerDataSource{
     
     
+    
+    let PLACEHOLDER_COLOR = UIColor.white.withAlphaComponent(0.5)
+    let TEXT_COLOR = UIColor.white
+    let NAME_PLACEHOLDER_TEXT = "Name"
+    let DESCRIPTION_PLACEHOLDER_TEXT = "Description"
+    
+    var description: String
+    
     var currentModel: SCNNode? {
         didSet{
             self.delegate?.onNewPlanetUpdated(planetNode: self.getNode())
@@ -55,6 +63,11 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
 
         }
     }
+    
+    var currentParent: ViewController?
+    var currentStar: Star?
+    var currentName: String?
+    var currentDescription: String?
     
     var currentColor: UIColor?
     var isDirty: Bool = false
@@ -93,6 +106,8 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         
         return ret
     }()
+    
+    
 
     
     static let instance = CreatePlanetContextMenu()
@@ -123,7 +138,9 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     
     
     override private init(){
+        self.description = "asd"
         super.init()
+        
         self.isHidden = true
         self.mode = .planet
         
@@ -219,13 +236,9 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             model = PlanetTextureProvider.instance.getPlanet(named: self.currentShape!.rawValue, color: color)
         }
         
-//        guard let model = PlanetProvider.instance.getPlanet(named: "gasGiant", color: self.currentColor ?? .purple) else { return nil }
         guard let aModel = model else { return nil}
         node.addChildNode(aModel)
         aModel.worldPosition = SCNVector3(0, 0, 0 )
-        
-//        let mult = (self.currentRadius ?? 1) * 0.1
-//        model.scale = SCNVector3(x: mult, y: mult, z: mult)
         
         return model
     }
@@ -237,23 +250,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         node.scale = SCNVector3(x: self.getScale(), y: self.getScale(), z: self.getScale())
         
         return node
-        return self.buildGalaxyMenu()
         
-        //        let planeGeometry = SCNPlane(width: 0.2, height: 0.2)
-        let planeGeometry = SCNCone(topRadius: 0.3, bottomRadius: 0.3, height: 0)
-        let material = SCNMaterial()
-
-        material.diffuse.contents = self.color
-        
-        material.isDoubleSided = true
-        material.writesToDepthBuffer = false
-        //        material.blendMode = .screen
-        
-        let planeNode = SCNNode(geometry: planeGeometry)
-        planeNode.geometry?.firstMaterial = material
-        
-        
-        return planeNode
     }
     
     @objc func onSliderChanged(_ sender: UISlider){
@@ -277,8 +274,79 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         return view
     }
     
+    func getNameDescriptionView() -> UIView {
+        let view: UIView = {
+            let view = UIView()
+            
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            view.clipsToBounds = false
+            view.layer.cornerRadius = 8
+            
+            return view
+        }()
+        
+        
+        let nameTextView: UITextView = {
+            let textView = UITextView()
+            //        textView.description = "nameTextView"
+            textView.backgroundColor = UIColor.clear
+            textView.translatesAutoresizingMaskIntoConstraints = false
+            textView.layer.borderColor = UIColor.clear.cgColor
+            textView.textAlignment = NSTextAlignment.left
+            
+            textView.textColor = PLACEHOLDER_COLOR
+            textView.text = NAME_PLACEHOLDER_TEXT
+            textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 26)
+            
+            
+            return textView
+        }()
+        
+        let descriptionTextView: UITextView = {
+            let textView = UITextView()
+            
+            textView.backgroundColor = UIColor.clear
+            textView.layer.borderColor = UIColor.clear.cgColor
+            textView.translatesAutoresizingMaskIntoConstraints = false
+            
+            textView.textColor = PLACEHOLDER_COLOR
+            textView.text = DESCRIPTION_PLACEHOLDER_TEXT
+            textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 16)
+            
+            return textView
+        }()
+        
+        nameTextView.delegate = self.currentParent
+        descriptionTextView.delegate = self.currentParent
+        
+        nameTextView.tag = 1
+        
+        
+        let widthMult: CGFloat = 0.9
+        let CONTENT_MARGIN: CGFloat = 10
+        
+        view.addSubview(nameTextView)
+        view.addSubview(descriptionTextView)
+
+        descriptionTextView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        descriptionTextView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        descriptionTextView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthMult).isActive = true
+        descriptionTextView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -CONTENT_MARGIN ).isActive = true
     
-    func getView() -> UIView{
+        nameTextView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        nameTextView.topAnchor.constraint(equalTo: view.topAnchor, constant: CONTENT_MARGIN).isActive = true
+        nameTextView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthMult).isActive = true
+        nameTextView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.18).isActive = true
+        
+        nameTextView.bottomAnchor.constraint(equalTo: descriptionTextView.topAnchor, constant: -0 ).isActive = true
+        
+        return view
+    }
+    
+    
+    func getPlanetModifierView() -> UIView {
+        
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -357,6 +425,29 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         
         planetPickerSelectedIndicator.centerXAnchor.constraint(equalTo: planetOption.centerXAnchor).isActive = true
         planetPickerSelectedIndicator.centerYAnchor.constraint(equalTo: planetOption.centerYAnchor).isActive = true
+        
+        return view
+    }
+    
+    func getView() -> UIView{
+        let view = UIView()
+        let planetModifierView = self.getPlanetModifierView()
+        let planetNameView = self.getNameDescriptionView()
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(planetModifierView)
+        view.addSubview(planetNameView)
+        
+        planetNameView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        planetNameView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        planetNameView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.95).isActive = true
+        planetNameView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3).isActive = true
+        
+        planetModifierView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        planetModifierView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        planetModifierView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+        planetModifierView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.308).isActive = true
         
         
         return super.getAsMenu(with: view)

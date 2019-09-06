@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate, UITextViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -27,6 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Mark: - Constants
     
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
+    let planetContextMenu = PlanetContextMenu.instance
 //    let orbitContextMenu = OrbitContextMenu.instance
     lazy var galaxy: Galaxy = self.galaxyFacade.getCurrentGalaxy()
     let galaxyFacade = GalaxyFacade.instance
@@ -122,6 +123,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         sceneView.scene = scene
         
         self.contextMenuGesture.delegate = self
+        self.createPlanetContextMenu.currentParent = self
         self.createPlanetContextMenu.delegate = self
         self.tapGesture.delegate = self
         self.planetContextMenu.delegate = self
@@ -270,6 +272,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - Planet dragging helper functions
     
+    func applyPlanetName(name: String, to node: SCNNode){
+        
+        guard let radius = node.geometry?.boundingSphere.radius else { return }
+        if let currentText = node.childNode(withName: "planetName", recursively: true){
+            currentText.removeFromParentNode()
+        }
+        
+        if name == "" { return }
+        
+        let text = SCNText(string: name, extrusionDepth: 1)
+        let textNode = SCNNode(geometry: text)
+        textNode.name = "planetName"
+        
+        
+        node.addChildNode(textNode)
+        node.eulerAngles = SCNVector3(0, 0, 0)
+        
+        textNode.position = SCNVector3Zero
+        textNode.position = SCNVector3(0, -(radius + 0.2), 0)
+        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        
+    }
+    
     func onStartDrag(at position: CGPoint){
         
     }
@@ -286,9 +311,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 // Planet creation
                 let color = self.createPlanetContextMenu.currentColor!
                 let scale = self.createPlanetContextMenu.getScale()
-                let planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+                var planet: Star!
+                if let name = self.createPlanetContextMenu.currentName, let description = self.createPlanetContextMenu.currentDescription {
+                 planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale, name: name, description: description)
+                    self.applyPlanetName(name: name, to: newStar)
+                } else {
+                    
+                    planet = self.galaxyFacade.createPlanet(node: newStar, color: color, shapeName: self.createPlanetContextMenu.currentShape, scaled: scale)
+                }
+                
                 
                 newStar.name = planet.id
+                
                 self.createPlanetContextMenu.isDirty = false
                 //                self.createPlanetContextMenu.setDefaults()
             } else {
@@ -417,9 +451,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return true
     }
     
-    
-    let planetContextMenu = PlanetContextMenu.instance
-    
     func displayPlanetMenu(){
 
         let displayMenuView = self.planetContextMenu.getView()
@@ -491,7 +522,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
         menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
-        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.5).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.95).isActive = true
         
         self.view.bringSubviewToFront(menu)
         
@@ -657,23 +688,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     @objc func onTap(_ sender: UITapGestureRecognizer){
         
-        if self.isDisplayingUIContextMenu { return }
+        if self.isDisplayingUIContextMenu {
+            self.contextMenuView?.endEditing(true)
+            self.view.endEditing(true)
+            
+            return
+        }
         
         let position = sender.location(in: self.view)
+        
+        if self.addPlanetButton.frame.contains(position) { return }
         
         if let hit = self.sceneView.hitTest(position, options: [:]).first{
             if hit.node == self.currentSelectedStar{
                 print("Node!!")
             } else  if !self.contextMenuGesture.hasTriggered{
-                self.tappedNode = hit.node
-                let vc = PlanetDetailViewController()
-                vc.sceneViewController = self
-                self.modalTransitionStyle = .crossDissolve
-                vc.modalPresentationStyle = .overCurrentContext
-                vc.modalTransitionStyle = .crossDissolve
-                self.present(vc, animated: true) {
-                    print("Saca so acabou de apresentar")
-                }
+//                self.tappedNode = hit.node
+//                let vc = self.createPlanetContextMenu()
+//                vc.sceneViewController = self
+//                self.modalTransitionStyle = .crossDissolve
+//                vc.modalPresentationStyle = .overCurrentContext
+//                vc.modalTransitionStyle = .crossDissolve
+//                self.present(vc, animated: true) {
+//                    print("Saca so acabou de apresentar")
+//                }
             }
         }
 //        let isInView = self.contextMenuView?.frame.contains(position) ?? false
@@ -710,5 +748,41 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     
 
+    // MARK: - UITextFieldDelegate methods
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == self.createPlanetContextMenu.PLACEHOLDER_COLOR && (textView.text == self.createPlanetContextMenu.NAME_PLACEHOLDER_TEXT || textView.text == self.createPlanetContextMenu.DESCRIPTION_PLACEHOLDER_TEXT){
+            textView.text = ""
+            textView.textColor = self.createPlanetContextMenu.TEXT_COLOR
+        }
+        
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty{
+            textView.textColor = self.createPlanetContextMenu.PLACEHOLDER_COLOR
+            textView.text = self.createPlanetContextMenu.DESCRIPTION_PLACEHOLDER_TEXT
+            
+            if textView.tag == 1{
+                textView.text = self.createPlanetContextMenu.NAME_PLACEHOLDER_TEXT
+            }
+        }
+        
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard let updatedText = textView.text as NSString? else { return true }
+        let realText  = updatedText.replacingCharacters(in: range, with: text)
+        
+        if textView.tag == 1{
+            self.createPlanetContextMenu.currentName = realText
+        }else {
+            self.createPlanetContextMenu.currentDescription = realText
+        }
+        
+        return true
+    }
+    
+    
 }
 

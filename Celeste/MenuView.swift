@@ -116,13 +116,7 @@ class MenuView {
             
             return view
         }()
-//
-//        view.addSubview(cancelOption)
-//        view.addSubview(confirmOption)
-//        cancelOption.addGestureRecognizer(tap)
         
-//        actionBarView.addGestureRecognizer(tap)
-//        actionBarView.backgroundColor = UIColor.blue
         
         view.addSubview(content)
         view.addSubview(actionBarView)
@@ -138,7 +132,7 @@ class MenuView {
         content.bottomAnchor.constraint(equalTo: actionBarView.topAnchor, constant: -35).isActive = true
         
         actionBarView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.08).isActive = true
-        content.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
+        content.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.8).isActive = true
         
         return view
     }
