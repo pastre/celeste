@@ -24,6 +24,7 @@ enum ShapeColor: String, CaseIterable{
 }
 
 enum ShapeName: String, CaseIterable{
+    case mars = "mars"
     case neptune = "neptune"
     case uranus = "uranus"
     case ceres = "ceres"
@@ -31,12 +32,17 @@ enum ShapeName: String, CaseIterable{
     case haumea = "haumea"
 //    case makemake = "makemake"
     case jupiter = "jupiter"
-    case mars = "mars"
 //    case mercury = "mercury"
     case saturn = "saturn"
     case sun = "sun"
     case venus = "venus"
     case brain = "brain"
+    case milo = "milo"
+    case teapot = "teapot"
+    case microondas = "microondas"
+    case cone = "cone"
+    case monkey = "monkey"
+    case tubarao = "tubarao"
     
     static func getShapeName(by string: String) -> ShapeName?{
         for i in ShapeName.allCases{
@@ -61,7 +67,13 @@ let kTEXTURE_TO_SHAPE = [
     ShapeName.saturn : "sphere",
     ShapeName.sun : "sphere",
     ShapeName.venus : "sphere",
-    ShapeName.brain: "brain"
+    ShapeName.brain: "brain",
+    ShapeName.milo: "milo",
+    ShapeName.teapot: "teapot",
+    ShapeName.microondas:  "microondas",
+    ShapeName.cone: "cone",
+    ShapeName.monkey: "monkey",
+    ShapeName.tubarao: "tubarao",
 //    ShapeName.venus : "sphere",
 ]
 

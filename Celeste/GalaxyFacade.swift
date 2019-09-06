@@ -24,7 +24,7 @@ class GalaxyFacade{
         return self.galaxy
     }
     
-    func createPlanet(node: SCNNode, color: UIColor, shapeName: ShapeName, scaled scale: Float) -> Star{
+    func createPlanet(node: SCNNode, color: UIColor, shapeName: ShapeName, scaled scale: Float, name: String = "No name", description: String = "No description") -> Star{
         
         let radius = node.boundingSphere.radius
         let position = node.worldPosition
@@ -33,6 +33,9 @@ class GalaxyFacade{
         
         newPlanet.shapeName = shapeName
         newPlanet.scale = scale
+        
+        newPlanet.name = name
+        newPlanet.planetDescription = description
         
         node.name = newPlanet.id
         
@@ -98,7 +101,7 @@ class GalaxyFacade{
     }
     
     func sync(node: SCNNode){
-        guard let nodeStar = self.galaxy.getStar(by: node) else { fatalError("NAO ACHOU A ESTRELA! FALHA NA CONSISTENCIA")}
+        guard let nodeStar = self.galaxy.getStar(by: node) else { return }
         
         print("NODE HAS ACTIONS", node.hasActions)
         
