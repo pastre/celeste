@@ -77,6 +77,8 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.layer.borderColor = UIColor.clear.cgColor
         slider.addTarget(self, action: #selector(self.onColorChanged(_:)), for: .valueChanged)
+        slider.previewView?.removeFromSuperview()
+        
         return slider
     }()
     
@@ -334,6 +336,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         view.addSubview(planetOption)
         view.addSubview(colorOption)
         view.addSubview(sizeOption)
+        view.addSubview(planetPickerSelectedIndicator)
         
         
         planetOption.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -352,6 +355,8 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         colorOption.topAnchor.constraint(equalTo: planetOption.bottomAnchor, constant: 20).isActive = true
         sizeOption.topAnchor.constraint(equalTo: colorOption.bottomAnchor, constant: 20).isActive = true
         
+        planetPickerSelectedIndicator.centerXAnchor.constraint(equalTo: planetOption.centerXAnchor).isActive = true
+        planetPickerSelectedIndicator.centerYAnchor.constraint(equalTo: planetOption.centerYAnchor).isActive = true
         
         
         return super.getAsMenu(with: view)

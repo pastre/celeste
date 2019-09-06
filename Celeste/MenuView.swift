@@ -89,10 +89,7 @@ class MenuView {
         
         let cancelOption = self.getButton(name: "Cancel", icon: UIImage(named: "cancel"), action: #selector(self.onCancelCallback))
         let confirmOption = self.getButton(name: "Save", icon: UIImage(named: "confirm"), action: #selector(self.onSaveCallback))
-//        let deleteOption = hasDelete ? self.getButton(name: "Delete", icon: UIImage(named: "delete"), action: #selector(self.onDelete(_:))) : nil
         
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.onCancelCallback(_:)))//        bg.addGestureRecognizer(tap)
         
         let actionBarView: UIView = {
             let view = UIView()

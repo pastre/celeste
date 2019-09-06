@@ -11,35 +11,35 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate {
-
+    
     @IBOutlet var sceneView: ARSCNView!
     
+    func getOnScreenMenuBg() -> UIView {
+        let view = UIView()
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = view.frame.height / 2
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        return view
+    }
+    
     // Mark: - Constants
+    
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
 //    let orbitContextMenu = OrbitContextMenu.instance
-    lazy var galaxy: Galaxy =  self.getDebugGalaxy()
+    lazy var galaxy: Galaxy = self.galaxyFacade.getCurrentGalaxy()
     let galaxyFacade = GalaxyFacade.instance
 
     // MARK: - Gestures
+    
     lazy var tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTap(_:)))
     lazy var contextMenuGesture: ContextMenuGestureRecognizer = ContextMenuGestureRecognizer(target: self, action: #selector(self.onContextMenu(_:)))
     
     // MARK: - UIKit elements
+    
     var floorPaintingMenu = FloorPaintingMenu()
     var planetContextMenuView: UIView? = UIView()
-    var addPlanetButton: UIButton = {
-        let button = UIButton()
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "add_icon"), for: .normal)
-        button.layer.cornerRadius = button.frame.height / 2
-        button.layer.borderWidth = 1
-        button.layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.01176470611, blue: 0.5607843399, alpha: 1)
-        button.backgroundColor = #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1)
-        
-        
-        return button
-    }()
     var contextMenuView: UIView? {
         didSet{
             if let _ = self.contextMenuView{
@@ -49,6 +49,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             }
         }
     }
+    lazy var addPlanetButton: UIView = {
+        let tapGesture = UITapGestureRecognizer()
+        let button = UIView()
+        let imageView = UIImageView(image: UIImage(named: "planetMenuIcon"))
+        
+        tapGesture.addTarget(self, action: #selector(self.onDisplayAddPlanetMenu))
+
+        button.addGestureRecognizer(tapGesture)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = button.frame.height / 2
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        
+        button.addSubview(imageView)
+        
+        imageView.heightAnchor.constraint(equalTo: button.heightAnchor, multiplier: 0.8).isActive = true
+        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+        
+        imageView.rightAnchor.constraint(equalTo: button.leftAnchor, constant: 40).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+        
+        return button
+    }()
     
     // MARK: - SCNKit elements
     weak var tappedNode: SCNNode?
@@ -78,7 +103,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         sceneView.session.delegate = self
         
         // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+//        sceneView.showsStatistics = true
         
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -108,22 +133,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
-        self.setupAddPlanetButton()
         self.modalPresentationStyle = .overCurrentContext
-    }
-    
-    func setupAddPlanetButton(){
-        self.addPlanetButton.addTarget(self, action: #selector(self.displayAddPlanetMenu), for: .touchDown)
-        
-        self.view.addSubview(self.addPlanetButton)
-        
-        self.addPlanetButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 40).isActive = true
-        self.addPlanetButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20).isActive = true
-        
-        self.addPlanetButton.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.1).isActive = true
-        self.addPlanetButton.heightAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.1).isActive = true
-        
-        self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.width / 2
+        self.setupAddDisplayButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -168,6 +179,45 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
+    // MARK: - OnScreen UI menu methods
+    
+    func setupAddDisplayButton(){
+        self.view.addSubview(self.addPlanetButton)
+        
+        self.addPlanetButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.addPlanetButton.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.05).isActive = true
+        self.addPlanetButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 30).isActive = true
+        self.addPlanetButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
+        
+        self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.height / 2
+        
+        self.addPlanetButton.setNeedsLayout()
+        self.addPlanetButton.setNeedsDisplay()
+    }
+    func displayAddPlanetMenu(){
+        
+        self.displayAddPlanetMeny()
+        self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
+        
+        UIView.animate(withDuration: 0.3) {
+            self.contextMenuView?.transform = .identity
+            self.addPlanetButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
+        }
+    }
+    
+    func closeAddPlanetMenu() {
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
+            self.addPlanetButton.transform = .identity
+        }, completion: { (_) in
+            
+            self.hideContextMenu()
+        })
+        
+    }
+    
+    
     // MARK: - Node highlight related methods
     
     func updateHighlightedNode(){
@@ -198,9 +248,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             n.removeFromParentNode()
         }
         
-        let a = self.sceneView.scene.rootNode
-        
-        
         let highlighter = self.getHighlighterNode()
         self.highlighterNode = highlighter
         node.addChildNode(highlighter)
@@ -224,25 +271,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Planet dragging helper functions
     
     func onStartDrag(at position: CGPoint){
-//        let position = gesture.location(in: self.view)
-//
-//        if ((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
-//            return
-//        }
-//
-//        self.hideContextMenu()
-//        let hitResults = self.sceneView.hitTest(position, options: [:])
-//        if let result = hitResults.first, let pov = self.sceneView.pointOfView{
-//            self.currentSelectedStar = result.node
-//            self.currentSelectedStar!.removeFromParentNode()
-//            pov.addChildNode(self.currentSelectedStar!)
-//
-//            if self.isDisplayingUIContextMenu{
-//                self.hideUIContextMenu()
-//            } else {
-//                self.hideContextMenu()
-//            }
-//        }
+        
     }
     
     func moveNodeFromCamera(){
@@ -560,12 +589,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onCancel() {
-        self.hideContextMenu()
+        self.closeAddPlanetMenu()
     }
     
     func onSave(){
         self.moveNodeFromCamera()
-        self.hideContextMenu()
+        self.closeAddPlanetMenu()
     }
     
     
@@ -622,15 +651,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     
-    @objc func displayAddPlanetMenu(){
-    
-        self.tapGesture.state = .failed
-        let vib = UIImpactFeedbackGenerator()
-        vib.impactOccurred()
-
-        self.displayAddPlanetMeny()
-        displaySceneContextMenu( )
-        
+    @objc func onDisplayAddPlanetMenu(){
+        self.displayAddPlanetMenu()
     }
     
     @objc func onTap(_ sender: UITapGestureRecognizer){
@@ -685,31 +707,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
-    
-    
-    
-    func getDebugGalaxy() -> Galaxy{
-        return self.galaxyFacade.getCurrentGalaxy()
-        let moons = [
-            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: -1, z: 1), color: #colorLiteral(red: 1, green: 1, blue: 0, alpha: 1)),
-            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: -1, z: 1), color: #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)),
-            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: 1), color: #colorLiteral(red: 0.06274510175, green: 0, blue: 0.1921568662, alpha: 1)),
-            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: 1), color: #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1)),
-            Star(radius: 0.5 * 0.5, center: Point(x: 1, y: 1, z: -1), color: #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1)),
-            Star(radius: 0.5 * 0.5, center: Point(x: -1, y: 1, z: -1), color: #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)),
-        ]
-        
-        let orbits = moons.map { (star) -> Orbit in
-            return Orbit(radius: CGFloat.random(in: 0.001...0.2), orbiter: star)
-        }
-        
-        return Galaxy(stars: [
-            Planet(radius: 0.5 * 1, center: Point.zero, color: #colorLiteral(red: 0.5073578358, green: 1, blue: 0.4642170072, alpha: 1), child: moons,
-                   orbits: orbits)
-            ]
-        )
-    }
-    
     
     
 
