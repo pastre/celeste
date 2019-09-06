@@ -31,7 +31,6 @@ class Color: Encodable, Decodable{
     var r: CGFloat
     var g: CGFloat
     var b: CGFloat
-class Star: SCNNodeTransformer, SKNodeTransformer{
     
     enum CodingKeys: String, CodingKey{
         case r = "r"
@@ -70,7 +69,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer{
     }
 }
 
-class Star: SCNNodeTransformer, Encodable, Decodable{
+class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     
     
     func contains(point: CGPoint) -> Bool {
