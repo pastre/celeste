@@ -530,13 +530,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.isDisplayingUIContextMenu = true
     }
     
-    func displaySceneContextMenu(){
-        
-        let node = self.createPlanetContextMenu.getNode()
-        self.onNewPlanetUpdated(planetNode: node)
-        self.createPlanetContextMenu.openContextMenu(mode: .planet)
-        
-    }
     
     func hideUIContextMenu(){
         self.contextMenuView?.removeFromSuperview()
@@ -619,12 +612,45 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    func onCancel() {
+    var selectedNodePreviousWorldPosition: SCNMatrix4?
+
+    func resetPosition(of star: Star){
+        guard let selectedStar = self.currentSelectedStar else { return }
+        guard let transform = self.selectedNodePreviousWorldPosition else { return }
+        let newStar = selectedStar.clone()
+       
+        self.currentSelectedStar!.removeFromParentNode()
+        
+        self.sceneView.scene.rootNode.addChildNode(newStar)
+        
+        newStar.setWorldTransform(transform)
+        
+        newStar.name = star.id
+        
+        self.clearHighlight()
+        
+        self.galaxyFacade.sync(node: newStar)
+    }
+    
+    func onCancel(_ star: Star?) {
+        if let s  = star {
+            self.resetPosition(of: s)
+        }
+        self.closeAddPlanetMenu()
+        
+    }
+    
+    func onSave(_ star: Star?){
+        if let s  = star {
+            self.resetPosition(of: s)
+        }
         self.closeAddPlanetMenu()
     }
     
-    func onSave(){
-        self.moveNodeFromCamera()
+    func onDelete(star: Star) {
+        self.galaxyFacade.deletePlanet(with: self.currentSelectedStar!)
+        self.currentSelectedStar?.removeFromParentNode()
+        self.currentSelectedStar = nil
         self.closeAddPlanetMenu()
     }
     
@@ -706,7 +732,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 self.tappedNode = hit.node
                 let star = self.galaxy.getStar(by: hit.node)
                 self.createPlanetContextMenu.currentStar = star
+                
+                self.selectedNodePreviousWorldPosition = hit.node.worldTransform
+                
                 self.displayAddPlanetMenu()
+                
+                hit.node.removeFromParentNode()
 //                let vc = self.createPlanetContextMenu()
 //                vc.sceneViewController = self
 //                self.modalTransitionStyle = .crossDissolve
