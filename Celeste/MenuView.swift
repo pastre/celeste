@@ -114,6 +114,18 @@ class MenuView {
 
             confirmOption.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
             
+            
+            if hasDelete{
+                let deleteOption = self.getButton(name: "Delete", icon: UIImage(named: "delete"), action: #selector(self.onDeleteCallback(_:)))
+                
+                view.addSubview(deleteOption)
+                
+                deleteOption.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+                deleteOption.centerYAnchor.constraint(equalTo: cancelOption.centerYAnchor).isActive = true
+                
+//                deleteOption.
+            }
+            
             return view
         }()
         
@@ -138,17 +150,18 @@ class MenuView {
     }
     
     @objc func onCancelCallback(_ sender: UIButton){
-        print("Cancel callback")
+        print("[MENUACTION] Cancel callback")
         self.onCancel()
     }
     
     @objc func onSaveCallback(_ sender: UIButton){
-        print("Save callback")
+        print("[MENUACTION] Save callback")
         self.onSave()
     }
     
-    @objc func onDelete(_ sender: UIButton){
-        
+    @objc func onDeleteCallback(_ sender: UIButton){
+        print("[MENUACTION] Delete callback")
+        self.onDelete()
     }
     
     func onCancel(){
@@ -159,6 +172,9 @@ class MenuView {
         // metodo abstrato para as subclasses implementarem
     }
     
+    func onDelete(){
+        
+    }
  
     
     

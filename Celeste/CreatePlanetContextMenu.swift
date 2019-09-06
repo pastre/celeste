@@ -65,7 +65,23 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     }
     
     var currentParent: ViewController?
-    var currentStar: Star?
+    var currentStar: Star?{
+        didSet{
+            guard let star = self.currentStar else { return }
+            
+            self.currentName = star.name
+            self.currentDescription = star.planetDescription
+            
+            self.currentRadius = Float(star.radius)
+            self.slider.value = star.scale ?? 1
+            
+            self.currentColor = star.color
+            self.currentShape = star.shapeName
+            
+            print("[PLANETEDITING] Names:", self.slider.value, self.currentDescription)
+            
+        }
+    }
     var currentName: String?
     var currentDescription: String?
     
@@ -295,8 +311,9 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.textAlignment = NSTextAlignment.left
             
-            textView.textColor = PLACEHOLDER_COLOR
-            textView.text = NAME_PLACEHOLDER_TEXT
+            textView.textColor = self.currentName == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
+            
+            textView.text = self.currentStar == nil ? NAME_PLACEHOLDER_TEXT : self.currentName
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 26)
             
             
@@ -310,8 +327,9 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.translatesAutoresizingMaskIntoConstraints = false
             
-            textView.textColor = PLACEHOLDER_COLOR
-            textView.text = DESCRIPTION_PLACEHOLDER_TEXT
+            textView.textColor = self.currentDescription == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
+            
+            textView.text = self.currentDescription == "" ?  DESCRIPTION_PLACEHOLDER_TEXT : self.currentDescription
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 16)
             
             return textView
@@ -449,20 +467,19 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         planetModifierView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
         planetModifierView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.308).isActive = true
         
+        if let star = self.currentStar{
+            self.planetPicker.scroll(to: ShapeName.allCases.firstIndex(of: star.shapeName) ?? 0, true)
+        }
         
-        return super.getAsMenu(with: view)
+        return super.getAsMenu(with: view, hasDelete: self.currentStar != nil)
     }
 
-    
-    
     @objc func onColorChanged(_ slider: ColorSlider){
         let color = slider.color
         let texture = kTEXTURE_TO_IMAGE[self.currentShape.rawValue]
         let maskedTexture = texture?.tint(tintColor: color)
         self.delegate?.onNewPlanetTextureChanged(to: maskedTexture)
         self.currentColor = color
-//        self.del
-       
     }
     
     

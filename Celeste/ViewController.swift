@@ -287,7 +287,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         
         node.addChildNode(textNode)
-        node.eulerAngles = SCNVector3(0, 0, 0)
+//        node.eulerAngles = SCNVector3(0, 0, 0)
         
         textNode.position = SCNVector3Zero
         textNode.position = SCNVector3(0, -(radius + 0.2), 0)
@@ -331,7 +331,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
-            newStar.eulerAngles = SCNVector3Zero
+//            newStar.eulerAngles = SCNVector3Zero
             
             self.updatedOrbit(newStar)
             self.clearHighlight()
@@ -450,21 +450,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         return true
     }
-    
+//
     func displayPlanetMenu(){
 
         let displayMenuView = self.planetContextMenu.getView()
-        
+
         self.view.addSubview(displayMenuView)
-        
+
         displayMenuView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         displayMenuView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        
+
         displayMenuView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.5).isActive = true
         displayMenuView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
-        
+
         self.contextMenuView = displayMenuView
-        
+
         self.contextMenuGesture.state = .possible
     }
     
@@ -703,7 +703,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             if hit.node == self.currentSelectedStar{
                 print("Node!!")
             } else  if !self.contextMenuGesture.hasTriggered{
-//                self.tappedNode = hit.node
+                self.tappedNode = hit.node
+                let star = self.galaxy.getStar(by: hit.node)
+                self.createPlanetContextMenu.currentStar = star
+                self.displayAddPlanetMenu()
 //                let vc = self.createPlanetContextMenu()
 //                vc.sceneViewController = self
 //                self.modalTransitionStyle = .crossDissolve
@@ -717,9 +720,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        let isInView = self.contextMenuView?.frame.contains(position) ?? false
 //        print("isInView", isInView, self.contextMenuView?.frame.contains(position), self.contextMenuView?.frame, position, self.contextMenuView?.bounds)
 //        if !(isInView ?? true) {
-        if !((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
-            self.hideContextMenu()
-        }
+//        if !((self.contextMenuView?.subviews.first?.frame.contains(position)) ?? false){
+//            self.hideContextMenu()
+//        }
 //        }
         
     }
