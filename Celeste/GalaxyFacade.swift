@@ -101,7 +101,10 @@ class GalaxyFacade{
     }
     
     func sync(node: SCNNode){
-        guard let nodeStar = self.galaxy.getStar(by: node) else { return }
+        guard let nodeStar = self.galaxy.getStar(by: node) else {
+            print("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
+            return
+        }
         
         print("NODE HAS ACTIONS", node.hasActions)
         
@@ -109,7 +112,8 @@ class GalaxyFacade{
             if star == nodeStar{
                 star.center = Point(position: node.position)
                 star.scale = node.scale.x
-                print("[GALAXYFACADE] Sync planet named", node.name)
+                
+                print("[GALAXYFACADE] Sync planet named", node.name ?? "<node with no name>", star.scale)
             }
         }
         self.persistGalaxy()

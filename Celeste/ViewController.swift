@@ -29,7 +29,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
     let planetContextMenu = PlanetContextMenu.instance
 //    let orbitContextMenu = OrbitContextMenu.instance
-    lazy var galaxy: Galaxy = self.galaxyFacade.getCurrentGalaxy()
+    lazy var galaxy: Galaxy = self.galaxyFacade.galaxy
     let galaxyFacade = GalaxyFacade.instance
 
     // MARK: - Gestures
@@ -612,19 +612,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    var selectedNodePreviousWorldPosition: SCNMatrix4?
+    var selectedNodePreviousWorldPosition: SCNVector3?
 
     func resetPosition(of star: Star){
         guard let selectedStar = self.currentSelectedStar else { return }
         guard let transform = self.selectedNodePreviousWorldPosition else { return }
+        
         let newStar = selectedStar.clone()
        
         self.currentSelectedStar!.removeFromParentNode()
         
         self.sceneView.scene.rootNode.addChildNode(newStar)
         
-        newStar.setWorldTransform(transform)
-        
+        newStar.worldPosition = transform
         newStar.name = star.id
         
         self.clearHighlight()
@@ -643,6 +643,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     func onSave(_ star: Star?){
         if let s  = star {
             self.resetPosition(of: s)
+        } else {
+            self.moveNodeFromCamera()
         }
         self.closeAddPlanetMenu()
     }
@@ -730,10 +732,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 print("Node!!")
             } else  if !self.contextMenuGesture.hasTriggered{
                 self.tappedNode = hit.node
+                
                 let star = self.galaxy.getStar(by: hit.node)
                 self.createPlanetContextMenu.currentStar = star
                 
-                self.selectedNodePreviousWorldPosition = hit.node.worldTransform
+                self.selectedNodePreviousWorldPosition = hit.node.worldPosition
                 
                 self.displayAddPlanetMenu()
                 

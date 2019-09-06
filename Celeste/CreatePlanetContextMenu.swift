@@ -48,11 +48,10 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         }
     }
     
-    var currentRadius: Float?{
+    var currentRadius: Float? = 1{
         didSet{
             self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
             self.isDirty = true
-
         }
     }
     
@@ -64,11 +63,13 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             self.currentName = star.name
             self.currentDescription = star.planetDescription
             
-            self.currentRadius = Float(star.radius)
-            self.slider.value = star.scale ?? 1
+            self.currentRadius = Float(star.scale!)  * 10
+            self.slider.value = Float(star.scale!)  * 10
             
             self.currentColor = star.color
             self.currentShape = star.shapeName
+            
+//            self.delegate.onNew
             
             print("[PLANETEDITING] Names:", self.slider.value, self.currentDescription)
             
@@ -170,7 +171,6 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     func getNode() -> SCNNode {
         let node =  getNewPlanetNode() ?? SCNNode()
         
-
         node.scale = SCNVector3(x: self.getScale(), y: self.getScale(), z: self.getScale())
         
         return node
