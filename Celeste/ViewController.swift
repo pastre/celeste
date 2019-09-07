@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, PlanetContextMenuDelegate, UITextViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, UITextViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -27,7 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Mark: - Constants
     
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
-    let planetContextMenu = PlanetContextMenu.instance
+    
 //    let orbitContextMenu = OrbitContextMenu.instance
     lazy var galaxy: Galaxy = self.galaxyFacade.galaxy
     let galaxyFacade = GalaxyFacade.instance
@@ -39,7 +39,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - UIKit elements
     
-    var floorPaintingMenu = FloorPaintingMenu()
     var planetContextMenuView: UIView? = UIView()
     var contextMenuView: UIView? {
         didSet{
@@ -50,32 +49,41 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             }
         }
     }
-    lazy var addPlanetButton: UIView = {
-        let tapGesture = UITapGestureRecognizer()
-        let button = UIView()
-        let imageView = UIImageView(image: UIImage(named: "planetMenuIcon"))
+    
+    func getOption(imageView: UIImageView, action selector: Selector, mult: CGFloat = 1, heightMult: CGFloat = 0.8, rightMargin: CGFloat = 40) -> UIView{
         
-        tapGesture.addTarget(self, action: #selector(self.onDisplayAddPlanetMenu))
-
-        button.addGestureRecognizer(tapGesture)
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = button.frame.height / 2
-        button.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        let tapGesture = UITapGestureRecognizer()
+        let buttonView = UIView()
+        
+        tapGesture.addTarget(self, action: selector)
+        
+        buttonView.addGestureRecognizer(tapGesture)
+        buttonView.clipsToBounds = true
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        buttonView.layer.cornerRadius = buttonView.frame.height / 2
+        buttonView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.isUserInteractionEnabled = true
         
-        button.addSubview(imageView)
+        buttonView.addSubview(imageView)
         
-        imageView.heightAnchor.constraint(equalTo: button.heightAnchor, multiplier: 0.8).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+        imageView.heightAnchor.constraint(equalTo: buttonView.heightAnchor, multiplier: heightMult).isActive = true
+        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: mult).isActive = true
         
-        imageView.rightAnchor.constraint(equalTo: button.leftAnchor, constant: 40).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+        imageView.rightAnchor.constraint(equalTo: buttonView.leftAnchor, constant: rightMargin).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor).isActive = true
         
-        return button
-    }()
+        return buttonView
+    }
+    
+    lazy var appMenuButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "menu")), action: #selector(self.onAppMenu(_:)), mult: 8/13, heightMult: 0.5, rightMargin: 20)
+    
+    @objc func onAppMenu(_ sender: UIButton){
+        print("AppMenu!!!")
+    }
+    
+    lazy var addPlanetButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "planetMenuIcon")), action: #selector(self.onDisplayAddPlanetMenu))
     
     // MARK: - SCNKit elements
     weak var tappedNode: SCNNode?
@@ -122,7 +130,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.createPlanetContextMenu.currentParent = self
         self.createPlanetContextMenu.delegate = self
         self.tapGesture.delegate = self
-        self.planetContextMenu.delegate = self
+        
         
         self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
@@ -148,7 +156,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.enableAllOrbits()
         self.setupAddDisplayButton()
-
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -190,10 +198,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     override func viewDidLayoutSubviews() {
         self.setupAddDisplayButton()
+        
+        self.setupMenuAppButton()
+
+        self.setupMenuAppButton()
+
         print("LAYOUT")
     }
     
     // MARK: - OnScreen UI menu methods
+    
+    func setupMenuAppButton() {
+        self.view.addSubview(self.appMenuButton)
+        
+        self.appMenuButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.appMenuButton.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.03).isActive = true
+        
+        self.appMenuButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 70).isActive = true
+        self.appMenuButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
+        
+        
+        self.appMenuButton.layer.cornerRadius = self.appMenuButton.frame.height / 2
+        self.appMenuButton.clipsToBounds = true
+//        self.appMenuButton.cor
+    }
     
     func setupAddDisplayButton(){
         self.view.addSubview(self.addPlanetButton)
@@ -468,20 +496,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return true
     }
 //
-    func displayPlanetMenu(){
-
-        let displayMenuView = self.planetContextMenu.getView()
-
-        self.view.addSubview(displayMenuView)
-
-        displayMenuView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        displayMenuView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-
-        displayMenuView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.5).isActive = true
-        displayMenuView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
-
-        self.contextMenuView = displayMenuView
-    }
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
@@ -607,16 +621,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         let mat = SCNMatrix4(frame.camera.transform)
         
         return SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
-        
-    }
-    
-    func onPanChanged(_ gesture: ContextMenuGestureRecognizer){
-        let position = gesture.location(in: self.view)
-        let center = CGPoint(x: self.view.frame.maxX  / 2, y: self.view.frame.maxY / 2)
-        let diff =  position - center
-        let dist = (diff.x * diff.x + diff.y * diff.y).squareRoot()
-
-        self.planetContextMenu.updateHighlightedIcon(at: dist > 50 ? diff : nil)
     }
     
     // MARK: - ContextMenuDelegate methods
