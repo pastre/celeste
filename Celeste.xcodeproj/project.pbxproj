@@ -139,15 +139,15 @@
 			isa = PBXGroup;
 			children = (
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
-				D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */,
+				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D758A67023205D6B00E9E31B /* MenuView.swift */,
 				D7DD58C22318A8B1003F0F26 /* OribitContextMenu.swift */,
 				D733242023106EC300493865 /* PlanetContextMenu.swift */,
 				D758A66E2320374200E9E31B /* FloorPainting.swift */,
-				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
 				D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */,
 				D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */,
 				D7E032C1231DE54400103473 /* StorageFacade.swift */,
+				D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */,
 				D7E27E91231ED6120085CB67 /* stars.scnp */,
 				D7E27E92231ED6120085CB67 /* star.png */,
 				D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */,
@@ -467,7 +467,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7JAFRWUBYM;
+				DEVELOPMENT_TEAM = QM43B7QRF9;
 				INFOPLIST_FILE = Celeste/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -485,7 +485,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7JAFRWUBYM;
+				DEVELOPMENT_TEAM = QM43B7QRF9;
 				INFOPLIST_FILE = Celeste/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

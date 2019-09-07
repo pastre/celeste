@@ -116,6 +116,9 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         self.planetDescription = try container.decode(String.self, forKey: .description)
         self.shapeName = ShapeName.getShapeName(by: try container.decode(String.self, forKey: .shapeName))
         self.scale = try container.decode(Float.self, forKey: .scale)
+        
+        if self.name == "No name" { self.name = nil}
+        if self.planetDescription == "No description" { self.planetDescription = nil}
     }
     
     internal init(radius: CGFloat?, center: Point?, color: UIColor?) {

@@ -9,24 +9,16 @@
 import Foundation
 import SceneKit
 
-enum ContextMenuMode:String, CaseIterable{
-    case galaxy = "Galaxy Mode"
-    case planet = "Planet Mode"
-}
-
-enum ContextMenuOption:String, CaseIterable{
-    case createPlanet = "Create Planet"
-    
-    case editPlanet = "Edit Planet"
-}
 
 protocol ContextMenuDelegate {
     func onNewPlanetUpdated(planetNode: SCNNode)
     func onNewPlanetTextureChanged(to texture: UIImage?)
     func onNewPlanetScaleChanged(to scale: Float)
     
-    func onSave()
-    func onCancel()
+    func onSave(_ star: Star?)
+    func onCancel(_ star: Star?)
+    func onDelete(star: Star)
+    
 }
 
 class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate, WheelPickerDataSource{
@@ -56,11 +48,10 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         }
     }
     
-    var currentRadius: Float?{
+    var currentRadius: Float? = 1{
         didSet{
             self.delegate?.onNewPlanetScaleChanged(to: self.getScale())
             self.isDirty = true
-
         }
     }
     
@@ -72,14 +63,11 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             self.currentName = star.name
             self.currentDescription = star.planetDescription
             
-            self.currentRadius = Float(star.radius)
-            self.slider.value = star.scale ?? 1
+            self.currentRadius = Float(star.scale!)  * 10
+            self.slider.value = Float(star.scale!)  * 10
             
             self.currentColor = star.color
             self.currentShape = star.shapeName
-            
-            print("[PLANETEDITING] Names:", self.slider.value, self.currentDescription)
-            
         }
     }
     var currentName: String?
@@ -129,7 +117,6 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     static let instance = CreatePlanetContextMenu()
     
     var delegate: ContextMenuDelegate?
-    var mode: ContextMenuMode!
     var isHidden: Bool!
     var color: UIColor!
     
@@ -138,27 +125,12 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         return (self.currentRadius ?? 1) * 0.1
     }
     
-    func getOptions() -> [ContextMenuOption] {
-        switch self.mode {
-        
-        case .galaxy?:
-            return [.createPlanet]
-        case .planet?:
-            return [.editPlanet]
-        default: break
-        
-        }
-        
-        return []
-    }
-    
-    
     override private init(){
         self.description = "asd"
         super.init()
         
         self.isHidden = true
-        self.mode = .planet
+        
         
         self.setDefaults()
     }
@@ -169,75 +141,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         self.currentRadius = 2.5
     }
     
-    func openContextMenu(mode: ContextMenuMode){
-        switch mode {
-        case .galaxy:
-            //TODO
-            self.color = #colorLiteral(red: 0.02779892646, green: 0.4870637059, blue: 0.4917319417, alpha: 1)
-            
-        case .planet:
-            // TODO
-            self.color = #colorLiteral(red: 0.4971322417, green: 0.1406211555, blue: 0.4916602969, alpha: 1)
-            
-        }
-    }
     
-    func buildOption(option: ContextMenuOption) -> SCNNode{
-        let ret = SCNNode()
-        let text = SCNText(string: option.rawValue, extrusionDepth: 0.01)
-        
-        let background = SCNPlane(width: 0.1, height: 0.1)
-        let bgMaterial = SCNMaterial()
-        
-        let backgroundNode = SCNNode(geometry: background)
-        let labelNode = SCNNode(geometry: text)
-        
-        bgMaterial.isDoubleSided = true
-        bgMaterial.writesToDepthBuffer = false
-        bgMaterial.diffuse.contents = UIColor.black
-        
-        
-        
-        background.cornerRadius = 50
-        background.firstMaterial = bgMaterial
-        
-        ret.addChildNode(backgroundNode)
-        ret.addChildNode(labelNode)
-        
-        labelNode.scale = SCNVector3(0.008, 0.008, 0.008)
-        
-        let textHeight = (text.boundingBox.max - text.boundingBox.min).y * 0.008
-        print("textHeight", textHeight)
-        labelNode.position = SCNVector3(0.01, 0, 0)
-        backgroundNode.position = SCNVector3(0, -textHeight, 0)
-        backgroundNode.transform = SCNMatrix4Rotate(backgroundNode.transform, -Float.pi/2, 0, 0, 1)
-        
-        
-        
-        ret.name = "Opcao: \(option.rawValue)"
-        return ret
-    }
-    
-    func buildGalaxyMenu() -> SCNNode{
-        let rootNode = SCNNode()
-        let rotatedNode = SCNNode()
-        let options = self.getOptions()
-        
-        var yInc: Double = 0
-        
-        for option in options{
-            let optionNode = buildOption(option: option)
-            optionNode.localTranslate(by: SCNVector3(0, yInc, 0))
-            rotatedNode.addChildNode(optionNode)
-            yInc += 0.3
-        }
-        
-        rotatedNode.transform = SCNMatrix4Rotate(rotatedNode.transform, Float.pi, 0, 1, 0)
-        rootNode.addChildNode(rotatedNode)
-        rootNode.name = "Menu de Contexto"
-        
-        return rootNode
-    }
     
     // MARK: - SCNNodeTransformDelegate methods
     
@@ -262,7 +166,6 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     func getNode() -> SCNNode {
         let node =  getNewPlanetNode() ?? SCNNode()
         
-
         node.scale = SCNVector3(x: self.getScale(), y: self.getScale(), z: self.getScale())
         
         return node
@@ -311,9 +214,14 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.textAlignment = NSTextAlignment.left
             
-            textView.textColor = self.currentName == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
+            if self.currentStar == nil || self.currentName == nil{
+                textView.textColor = PLACEHOLDER_COLOR
+                textView.text = NAME_PLACEHOLDER_TEXT
+            } else {
+                textView.textColor = TEXT_COLOR
+                textView.text = self.currentName
+            }
             
-            textView.text = self.currentStar == nil ? NAME_PLACEHOLDER_TEXT : self.currentName
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 26)
             
             
@@ -326,11 +234,15 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.backgroundColor = UIColor.clear
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.translatesAutoresizingMaskIntoConstraints = false
-            
-            textView.textColor = self.currentDescription == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
-            
-            textView.text = self.currentDescription == "" ?  DESCRIPTION_PLACEHOLDER_TEXT : self.currentDescription
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 16)
+            
+            if self.currentDescription == ""  || self.currentDescription == nil {
+                textView.textColor = PLACEHOLDER_COLOR
+                textView.text = DESCRIPTION_PLACEHOLDER_TEXT
+            } else {
+                textView.textColor = TEXT_COLOR
+                textView.text = self.currentDescription
+            }
             
             return textView
         }()
@@ -539,12 +451,20 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
     }
    
     override func onCancel() {
-        self.delegate?.onCancel()
+        self.delegate?.onCancel(self.currentStar)
+        self.currentStar = nil
     }
     
     override func onSave() {
-        self.delegate?.onSave()
+        self.delegate?.onSave(self.currentStar)
+        self.currentStar = nil
     }
+    
+    override func onDelete() {
+        self.delegate?.onDelete(star: self.currentStar!)
+        self.currentStar = nil
+    }
+
 }
 
 
