@@ -9,13 +9,15 @@
 import Foundation
 import UIKit
 
-protocol AppMenuDelegate{
+protocol AppMenuDelegate: MenuDelegate{
     
 }
 
 class AppMenu: MenuView {
     
     static let instance = AppMenu()
+    
+    var delegate: AppMenuDelegate?
     
     private override init() {
         super.init()
@@ -28,13 +30,15 @@ class AppMenu: MenuView {
         
         let mapOption = super.getButton(name: "Galaxy Map", icon: UIImage(named: "map"), action: #selector(self.onGalaxyMap(_:)))
         let aboutOption = super.getButton(name: "About", icon: UIImage(named: "information"), action: #selector(self.onAbout(_:)))
-        let helpOption = super.getButton(name: "Help", icon: UIImage(named: "help"), action: #selector(self.onHelp(_:)))
+        let helpOption = super.getButton(name: "Close", icon: UIImage(named: "cancel"), action: #selector(self.onHelp(_:)))
+        
+        
         
         view.addSubview(mapOption)
         view.addSubview(aboutOption)
         view.addSubview(helpOption)
         
-        mapOption.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25).isActive = true
+//        mapOption.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1).isActive = true
         aboutOption.heightAnchor.constraint(equalTo: mapOption.heightAnchor).isActive = true
         helpOption.heightAnchor.constraint(equalTo: mapOption.heightAnchor).isActive = true
         
@@ -50,8 +54,8 @@ class AppMenu: MenuView {
         
         helpOption.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        aboutOption.topAnchor.constraint(equalTo: mapOption.topAnchor, constant: 10).isActive = true
-        aboutOption.bottomAnchor.constraint(equalTo: helpOption.bottomAnchor, constant: -10).isActive = true
+        aboutOption.topAnchor.constraint(equalTo: mapOption.bottomAnchor, constant: 20).isActive = true
+        aboutOption.bottomAnchor.constraint(equalTo: helpOption.topAnchor, constant: -20).isActive = true
         
         return view
     }
@@ -65,6 +69,6 @@ class AppMenu: MenuView {
     }
     
     @objc func onHelp(_ sender: UIButton){
-        
+        self.delegate?.onCancel(nil)
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, UITextViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, UITextViewDelegate, AppMenuDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -27,6 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // Mark: - Constants
     
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
+    let appMenu = AppMenu.instance
     
 //    let orbitContextMenu = OrbitContextMenu.instance
     lazy var galaxy: Galaxy = self.galaxyFacade.galaxy
@@ -77,10 +78,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return buttonView
     }
     
-    lazy var appMenuButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "menu")), action: #selector(self.onAppMenu(_:)), mult: 8/13, heightMult: 0.5, rightMargin: 20)
+    lazy var appMenuButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "menu")), action: #selector(self.onAppMenu), mult: 8/13, heightMult: 0.5, rightMargin: 20)
     
     @objc func onAppMenu(_ sender: UIButton){
         print("AppMenu!!!")
+        self.openAppMenu()
     }
     
     lazy var addPlanetButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "planetMenuIcon")), action: #selector(self.onDisplayAddPlanetMenu))
@@ -129,6 +131,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.contextMenuGesture.delegate = self
         self.createPlanetContextMenu.currentParent = self
         self.createPlanetContextMenu.delegate = self
+        self.appMenu.delegate = self
         self.tapGesture.delegate = self
         
         
@@ -208,6 +211,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - OnScreen UI menu methods
     
+    func hideMenus(){
+        
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
+            self.addPlanetButton.transform = .identity
+            self.appMenuButton.transform = .identity
+        }, completion: { (_) in
+            
+            self.hideContextMenu()
+        })
+    }
+    
+    func openMenu(){
+        
+        self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
+        
+        UIView.animate(withDuration: 0.3) {
+            self.contextMenuView?.transform = .identity
+            self.addPlanetButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
+            self.appMenuButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
+        }
+    }
+    
     func setupMenuAppButton() {
         self.view.addSubview(self.appMenuButton)
         
@@ -221,6 +248,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.appMenuButton.layer.cornerRadius = self.appMenuButton.frame.height / 2
         self.appMenuButton.clipsToBounds = true
 //        self.appMenuButton.cor
+    }
+    func openAppMenu(){
+        
+        self.displayAppMenu()
+        self.openMenu()
+    }
+    func displayAppMenu(){
+        self.hideContextMenu()
+        let menu = self.appMenu.getView()
+        
+        self.view.addSubview(menu)
+        
+        menu.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.32).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.15).isActive = true
+        
+        menu.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 80).isActive = true
+        menu.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
+        
+        self.view.bringSubviewToFront(menu)
+        
+        self.contextMenuView = menu
+        self.isDisplayingUIContextMenu = true
     }
     
     func setupAddDisplayButton(){
@@ -239,29 +288,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.addPlanetButton.setNeedsLayout()
         self.addPlanetButton.setNeedsDisplay()
     }
+    func openAddPlanetMenu(){
+        
+        self.displayAddPlanetMenu()
+        self.openMenu()
+    }
     func displayAddPlanetMenu(){
+        self.hideContextMenu()
+        let menu = self.createPlanetContextMenu.getView()
         
-        self.displayAddPlanetMeny()
-        self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
+        self.view.addSubview(menu)
         
-        UIView.animate(withDuration: 0.3) {
-            self.contextMenuView?.transform = .identity
-            self.addPlanetButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
-        }
+        menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.95).isActive = true
+        
+        self.view.bringSubviewToFront(menu)
+        
+        self.contextMenuView = menu
+        self.isDisplayingUIContextMenu = true
     }
-    
     func closeAddPlanetMenu() {
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
-            self.addPlanetButton.transform = .identity
-        }, completion: { (_) in
-            
-            self.hideContextMenu()
-        })
-        
+        self.hideMenus()
     }
-    
     
     // MARK: - Node highlight related methods
     
@@ -538,22 +588,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - ContextMenu related functions
     
-    func displayAddPlanetMeny(){
-        self.hideContextMenu()
-        let menu = self.createPlanetContextMenu.getView()
-        
-        self.view.addSubview(menu)
-        
-        menu.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        menu.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        menu.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
-        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.95).isActive = true
-        
-        self.view.bringSubviewToFront(menu)
-        
-        self.contextMenuView = menu
-        self.isDisplayingUIContextMenu = true
-    }
     
     func resetPosition(of star: Star){
         guard let selectedStar = self.currentSelectedStar else { return }
@@ -723,7 +757,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     
     @objc func onDisplayAddPlanetMenu(){
-        self.displayAddPlanetMenu()
+        self.openAddPlanetMenu()
     }
     
     @objc func onTap(_ sender: UITapGestureRecognizer){
@@ -750,7 +784,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 
                 self.selectedNodePreviousWorldPosition = hit.node.worldPosition
                 
-                self.displayAddPlanetMenu()
+                self.openAddPlanetMenu()
                 
                 hit.node.removeFromParentNode()
 //                let vc = self.createPlanetContextMenu()
