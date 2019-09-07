@@ -493,8 +493,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
         if self.isDisplayingUIContextMenu || self.contextMenuView != nil { return }
         
-        let vib = UIImpactFeedbackGenerator()
-        vib.impactOccurred()
 //
         self.tapGesture.state = .cancelled
 //        gesture.state = .cancelled
@@ -506,6 +504,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
 
+            let vib = UIImpactFeedbackGenerator()
+            vib.impactOccurred()
+            
             if self.currentSelectedStar!.parent?.name == "rotator"{
                 self.currentSelectedStar!.parent?.parent?.removeFromParentNode()
                 self.galaxyFacade.updateOrbit(of: result.node)
