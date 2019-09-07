@@ -10,14 +10,18 @@ import Foundation
 import SceneKit
 
 
-protocol ContextMenuDelegate {
-    func onNewPlanetUpdated(planetNode: SCNNode)
-    func onNewPlanetTextureChanged(to texture: UIImage?)
-    func onNewPlanetScaleChanged(to scale: Float)
+protocol MenuDelegate{
     
     func onSave(_ star: Star?)
     func onCancel(_ star: Star?)
     func onDelete(star: Star)
+}
+
+protocol ContextMenuDelegate: MenuDelegate {
+    func onNewPlanetUpdated(planetNode: SCNNode)
+    func onNewPlanetTextureChanged(to texture: UIImage?)
+    func onNewPlanetScaleChanged(to scale: Float)
+    
     
 }
 
