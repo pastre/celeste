@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Celeste/ViewController.swift"
-            timestampString = "589590712.638037"
+            timestampString = "589593174.623517"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "551"
-            endingLineNumber = "551"
+            startingLineNumber = "636"
+            endingLineNumber = "636"
             landmarkName = "onTriggered(_:)"
             landmarkType = "7">
          </BreakpointContent>

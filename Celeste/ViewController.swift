@@ -14,15 +14,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     @IBOutlet var sceneView: ARSCNView!
     
-    func getOnScreenMenuBg() -> UIView {
+    let sessionInfoView: UIView! = {
         let view = UIView()
-        
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = view.frame.height / 2
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        
+        view.layer.cornerRadius = 8
+        view.clipsToBounds = true
         return view
-    }
+    }()
+    
+    let sessionInfoLabel: UILabel! = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor.white
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        return label
+    }()
     
     // Mark: - Constants
     
@@ -102,9 +110,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
     // MARK: - Flags
     var isMovingNode: Bool! = false
-    var isDisplayingUIContextMenu: Bool = false
+    var isDisplayingUIContextMenu: Bool = false{
+        didSet{
+//            if self.isDisplayingUIContextMenu{
+                self.sessionInfoView.isHidden = self.isDisplayingUIContextMenu
+            
+        }
+    }
     var hasDeleted = false
-    
+
+
     // MARK: - UIViewController overrides
     
     override func viewDidLoad() {
@@ -158,8 +173,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         
         self.enableAllOrbits()
-        self.setupAddDisplayButton()
         
+    }
+    
+    
+    override func viewDidLayoutSubviews() {
+        self.setupAddDisplayButton()
+        self.setupMenuAppButton()
+        self.setupARInfoView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -199,15 +220,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        self.setupAddDisplayButton()
-        
-        self.setupMenuAppButton()
-
-        self.setupMenuAppButton()
-
-        print("LAYOUT")
+    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+        guard let frame = session.currentFrame else { return }
+        updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
     }
+    
+    func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
+        guard let frame = session.currentFrame else { return }
+        updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
+    }
+    
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
+    }
+
     
     // MARK: - OnScreen UI menu methods
     
@@ -233,6 +259,65 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.addPlanetButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
             self.appMenuButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
         }
+    }
+   
+    
+    private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
+        // Update the UI to provide feedback on the state of the AR experience.
+        let message: String
+        
+        switch trackingState {
+        case .normal where frame.anchors.isEmpty:
+            // No planes detected; provide instructions for this app's AR interactions.
+            message = "Move the device around to detect horizontal and vertical surfaces."
+            
+        case .notAvailable:
+            message = "Tracking unavailable."
+            
+        case .limited(.excessiveMotion):
+            message = "Tracking limited - Move the device more slowly."
+            
+        case .limited(.insufficientFeatures):
+            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
+            
+        case .limited(.initializing):
+            message = "Initializing AR session."
+            
+        default:
+            // No feedback needed when tracking is normal and planes are visible.
+            // (Nor when in unreachable limited-tracking states.)
+            message = ""
+            
+        }
+        
+        sessionInfoLabel.text = message
+        sessionInfoView.isHidden = message.isEmpty ||  self.isDisplayingUIContextMenu
+    }
+
+    
+    func setupARInfoView(){
+        self.view.addSubview(self.sessionInfoView)
+        self.sessionInfoView.addSubview(self.sessionInfoLabel)
+        
+//        sessionInfoLabel.centerXAnchor.constraint(equalTo: self.sessionInfoView.centerXAnchor).isActive = true
+//        sessionInfoLabel.centerYAnchor.constraint(equalTo: self.sessionInfoView.centerYAnchor).isActive = true
+//        sessionInfoLabel.widthAnchor.constraint(equalTo: self.sessionInfoView.widthAnchor, multiplier: 0.95).isActive = true
+//        sessionInfoLabel.heightAnchor.constraint(equalTo: self.sessionInfoView.heightAnchor).isActive = true
+        
+        sessionInfoLabel.topAnchor.constraint(equalTo: self.sessionInfoView.topAnchor, constant: 10).isActive = true
+        sessionInfoLabel.leftAnchor.constraint(equalTo: self.sessionInfoView.leftAnchor, constant: 10).isActive = true
+        sessionInfoLabel.rightAnchor.constraint(equalTo: self.sessionInfoView.rightAnchor, constant: -10).isActive = true
+        sessionInfoLabel.bottomAnchor.constraint(equalTo: self.sessionInfoView.bottomAnchor, constant: -10).isActive = true
+        
+//        self.sessionInfoView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
+        self.sessionInfoView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.sessionInfoView.centerYAnchor.constraint(equalTo: self.addPlanetButton.centerYAnchor).isActive = true
+        self.sessionInfoView.widthAnchor.constraint(lessThanOrEqualTo: self.view.widthAnchor, multiplier: 0.4).isActive = true
+        self.sessionInfoView.heightAnchor.constraint(lessThanOrEqualTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
+//        self.sessionInfoView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.4).isActive = true
+//        self.sessionInfoView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.08).isActive = true
+        
+        
     }
     
     func setupMenuAppButton() {
