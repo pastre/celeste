@@ -190,8 +190,20 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     var center: Point!
     var color: UIColor!
     var id: String!
-    var name: String?
-    var planetDescription: String?
+    var name: String?{
+        didSet{
+            if name == "No name"{
+                self.name = nil
+            }
+        }
+    }
+    var planetDescription: String?{
+        didSet{
+            if name == "No name"{
+                self.name = nil
+            }
+        }
+    }
     var scale: Float?
     var shapeName: ShapeName!
 }

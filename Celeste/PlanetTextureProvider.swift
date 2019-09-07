@@ -90,10 +90,10 @@ class PlanetTextureProvider{
         }
     
     }
+    let scene = SCNScene(named: "art.scnassets/models.scn")!
     
     func getPlanet(named modelName: String, color uiColor: UIColor?) -> SCNNode? {
         
-        let scene = SCNScene(named: "art.scnassets/models.scn")!
         print("Model name is", modelName )
         let modelShape = kTEXTURE_TO_SHAPE[ShapeName.getShapeName(by: modelName)!]
         
@@ -106,13 +106,33 @@ class PlanetTextureProvider{
         
         print("\t-> Model Texture is", modelTexture)
 //        let maskedTexture = uiColor == nil ? modelTexture : modelTexture.maskWithColor(color: uiColor!)
-        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true)?.clone() else { return nil }
+        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true) as? SCNNode else { return nil }
+        
+        
         
         modelNode.geometry?.firstMaterial?.diffuse.contents = maskedTexture
-        modelNode.position = SCNVector3Zero
-        modelNode.name = ""
         
-        return modelNode
+//
+//        if let newMaterial = modelNode.geometry?.materials.first?.copy() as? SCNMaterial {
+//            //make changes to material
+//            retNode.geometry?.materials = [newMaterial]
+//            retNode.position = SCNVector3Zero
+//            retNode.name = ""
+//        }
+        
+        return deepCopyNode(node: modelNode)
     }
     
 }
+
+fileprivate func deepCopyNode(node: SCNNode) -> SCNNode {
+    let clone = node.clone()
+    clone.geometry = node.geometry?.copy() as? SCNGeometry
+    clone.name = ""
+    clone.position = SCNVector3Zero
+    if let g = node.geometry {
+        clone.geometry?.materials = g.materials.map{ $0.copy() as! SCNMaterial }
+    }
+    return clone
+}
+
