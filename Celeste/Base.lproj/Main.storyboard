@@ -13,7 +13,7 @@
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ar" id="BV1-FR-VrT" customClass="ViewController" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -43,7 +43,7 @@
         <!--View Controller2D-->
         <scene sceneID="UnF-b8-ZV1">
             <objects>
-                <viewController id="R7J-vl-EDs" customClass="ViewController2D" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="2d" id="R7J-vl-EDs" customClass="ViewController2D" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zcO-RF-RdK">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -57,23 +57,12 @@
                                     <outletCollection property="gestureRecognizers" destination="QDs-V0-Xhl" appends="YES" id="cOa-KC-wRw"/>
                                 </connections>
                             </skView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oDc-Bv-kqV">
-                                <rect key="frame" x="354" y="836" width="50" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="7th-qt-SI0"/>
-                                    <constraint firstAttribute="width" constant="50" id="AlX-pW-t41"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal" title="3D"/>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="z96-VJ-eOA" firstAttribute="centerX" secondItem="zcO-RF-RdK" secondAttribute="centerX" id="36l-yG-rbw"/>
                             <constraint firstItem="z96-VJ-eOA" firstAttribute="width" secondItem="zcO-RF-RdK" secondAttribute="width" id="3DT-Di-spT"/>
-                            <constraint firstAttribute="bottom" secondItem="oDc-Bv-kqV" secondAttribute="bottom" constant="10" id="5fu-W8-hwx"/>
                             <constraint firstItem="z96-VJ-eOA" firstAttribute="centerY" secondItem="zcO-RF-RdK" secondAttribute="centerY" id="7bt-WE-csQ"/>
-                            <constraint firstAttribute="trailing" secondItem="oDc-Bv-kqV" secondAttribute="trailing" constant="10" id="Io9-ew-Tmt"/>
                             <constraint firstItem="z96-VJ-eOA" firstAttribute="height" secondItem="zcO-RF-RdK" secondAttribute="height" id="kQt-iR-weO"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="POZ-x9-gz6"/>

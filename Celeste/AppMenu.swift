@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 protocol AppMenuDelegate: MenuDelegate{
-    
+    func onChangeMode()
 }
 
 class AppMenu: MenuView {
@@ -61,7 +61,7 @@ class AppMenu: MenuView {
     }
     
     @objc func onGalaxyMap(_ sender: UIButton){
-        
+        self.delegate?.onChangeMode()
     }
     
     @objc func onAbout(_ sender: UIButton){

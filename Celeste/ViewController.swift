@@ -866,6 +866,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return true
     }
     
+    func onChangeMode() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let vc = storyboard.instantiateViewController(withIdentifier: "2d")
+        
+        self.present(vc, animated: true, completion: nil)
+        
+    }
     
 }
 
