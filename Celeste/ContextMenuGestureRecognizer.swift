@@ -59,9 +59,9 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
             if self.state == .began{
                 self.startTimer()
             } else if self.state == .changed{
-//                if self.hasTriggered {
-//                    self.stopTimer()
-//                }
+                if self.hasTriggered {
+                    self.stopTimer()
+                }
             } else if self.state != .possible{
                 self.stopTimer()
                 self.hasTriggered = false
@@ -76,9 +76,8 @@ class ContextMenuGestureRecognizer: UIPanGestureRecognizer {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesMoved(touches, with: event)
-//        self.tra
-//        self.restartTimer()
+        
     }
-//    override var delegate: ContextMenuGestureDelegate?
+    
 }
 

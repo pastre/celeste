@@ -131,12 +131,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
-//        self.view.addGestureRecognizer(contextMenuGesture)
+        self.view.addGestureRecognizer(contextMenuGesture)
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
         self.modalPresentationStyle = .overCurrentContext
         self.setupAddDisplayButton()
+        
+        contextMenuGesture.require(toFail: tapGesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -465,29 +467,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         displayMenuView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
 
         self.contextMenuView = displayMenuView
-
-        self.contextMenuGesture.state = .possible
     }
     
     // Chamada quando da o tempo minimo para abrir o menu de contexto
     func onTriggered(_ gesture: ContextMenuGestureRecognizer) {
-        
-        let position = gesture.location(in: self.view)
-        
-        if ((self.contextMenuView?.frame.contains(position)) ?? false){
-            return
-        }
+//
+//
+//        if ((self.contextMenuView?.frame.contains(position)) ?? false){
+//            return
+//        }
+
+        if self.isDisplayingUIContextMenu || self.contextMenuView != nil { return }
         
         let vib = UIImpactFeedbackGenerator()
         vib.impactOccurred()
-
+//
         self.tapGesture.state = .cancelled
-        self.hideContextMenu()
-        
+//        gesture.state = .cancelled
+//
+//        self.hideContextMenu()
+        let position = gesture.location(in: self.view)
         let hitResults = self.sceneView.hitTest(position, options: [:])
+        
         if let result = hitResults.first, let pov = self.sceneView.pointOfView{
             self.currentSelectedStar = result.node
-            
+
             if self.currentSelectedStar!.parent?.name == "rotator"{
                 self.currentSelectedStar!.parent?.parent?.removeFromParentNode()
                 self.galaxyFacade.updateOrbit(of: result.node)
@@ -498,18 +502,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.currentSelectedStar!.removeFromParentNode()
             self.currentSelectedStar?.removeAllActions()
             pov.addChildNode(self.currentSelectedStar!)
-            
-            if self.isDisplayingUIContextMenu{
-                self.hideUIContextMenu()
-            } else {
-                self.hideContextMenu()
-            }
-            
-            self.displayPlanetMenu()
-        } else {
-            self.displayAddPlanetMenu()
+
         }
-        
+//
     }
     
     // MARK: - ContextMenu related functions
@@ -638,6 +633,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         if let s  = star {
             self.resetPosition(of: s)
         }
+        self.currentSelectedStar?.removeFromParentNode()
+        self.currentSelectedStar = nil
         self.closeAddPlanetMenu()
         
     }
@@ -700,17 +697,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     // MARK: - Callbacks
     
     @objc func onContextMenu(_ sender: ContextMenuGestureRecognizer){
-        switch sender.state {
-        case .began:
-            self.onStartDrag(at: sender.location(in: self.view))
-        case .changed:
-            self.onPanChanged(sender)
-        case .ended:
-            self.onEndDrag(at: sender.location(in: self.view))
-        default:
-            break
+        if sender.state == .ended && (!self.isDisplayingUIContextMenu || self.contextMenuView == nil) {
+                self.moveNodeFromCamera()
         }
-        
     }
     
     
