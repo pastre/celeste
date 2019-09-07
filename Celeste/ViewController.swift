@@ -58,6 +58,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         tapGesture.addTarget(self, action: #selector(self.onDisplayAddPlanetMenu))
 
         button.addGestureRecognizer(tapGesture)
+        button.clipsToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = button.frame.height / 2
         button.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -113,11 +114,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        galaxyNode.transform =  SCNMatrix4Translate(self.sceneView.pointOfView?.transform ?? galaxyNode.transform, 0, 0, -3)
 //        galaxyNode.name = "galaxy"
 //        scene.rootNode.addChildNode(galaxyNode)
-  
-        for star in self.galaxy.stars{
-            let node = star.getNode()
-            scene.rootNode.addChildNode(node)
-        }
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -136,7 +132,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.contextMenuGesture.cancelsTouchesInView = false
         self.modalPresentationStyle = .overCurrentContext
-        self.setupAddDisplayButton()
         
         contextMenuGesture.require(toFail: tapGesture)
     }
@@ -152,6 +147,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         
         self.enableAllOrbits()
+        self.setupAddDisplayButton()
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        for star in self.galaxy.stars{
+            let node = star.getNode()
+            self.sceneView.scene.rootNode.addChildNode(node)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -183,6 +188,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        self.setupAddDisplayButton()
+        print("LAYOUT")
+    }
+    
     // MARK: - OnScreen UI menu methods
     
     func setupAddDisplayButton(){
@@ -194,6 +204,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.addPlanetButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
         
         self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.height / 2
+        self.addPlanetButton.clipsToBounds = true
+        
+        print("Frame size is", self.addPlanetButton.frame.height)
         
         self.addPlanetButton.setNeedsLayout()
         self.addPlanetButton.setNeedsDisplay()
@@ -269,6 +282,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     func clearHighlight(){
         self.highlighterNode?.removeFromParentNode()
+        self.highlighterNode?.geometry?.firstMaterial = nil
         self.highlighterNode = nil
     }
     
