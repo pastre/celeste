@@ -68,11 +68,6 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             
             self.currentColor = star.color
             self.currentShape = star.shapeName
-            
-//            self.delegate.onNew
-            
-            print("[PLANETEDITING] Names:", self.slider.value, self.currentDescription)
-            
         }
     }
     var currentName: String?
@@ -219,9 +214,14 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.textAlignment = NSTextAlignment.left
             
-            textView.textColor = self.currentName == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
+            if self.currentStar == nil || self.currentName == nil{
+                textView.textColor = PLACEHOLDER_COLOR
+                textView.text = NAME_PLACEHOLDER_TEXT
+            } else {
+                textView.textColor = TEXT_COLOR
+                textView.text = self.currentName
+            }
             
-            textView.text = self.currentStar == nil ? NAME_PLACEHOLDER_TEXT : self.currentName
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 26)
             
             
@@ -234,11 +234,15 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
             textView.backgroundColor = UIColor.clear
             textView.layer.borderColor = UIColor.clear.cgColor
             textView.translatesAutoresizingMaskIntoConstraints = false
-            
-            textView.textColor = self.currentDescription == "" ? PLACEHOLDER_COLOR : TEXT_COLOR
-            
-            textView.text = self.currentDescription == "" ?  DESCRIPTION_PLACEHOLDER_TEXT : self.currentDescription
             textView.font = UIFont(name: textView.font?.fontName  ?? "Helvetica", size: 16)
+            
+            if self.currentDescription == ""  || self.currentDescription == nil {
+                textView.textColor = PLACEHOLDER_COLOR
+                textView.text = DESCRIPTION_PLACEHOLDER_TEXT
+            } else {
+                textView.textColor = TEXT_COLOR
+                textView.text = self.currentDescription
+            }
             
             return textView
         }()

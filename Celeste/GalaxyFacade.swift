@@ -40,10 +40,10 @@ class GalaxyFacade{
         node.name = newPlanet.id
         
         self.galaxy.stars.append(newPlanet)
-        self.persistGalaxy()
         
         print("[GALAXYFACADE] Created planet named", node.name)
         
+        self.persistGalaxy()
         return newPlanet
         
 //        self.galaxy
@@ -100,7 +100,7 @@ class GalaxyFacade{
         }
     }
     
-    func sync(node: SCNNode){
+    func sync(node: SCNNode, name newName: String?, description newDescription : String?){
         guard let nodeStar = self.galaxy.getStar(by: node) else {
             print("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
             return
@@ -110,10 +110,18 @@ class GalaxyFacade{
         
         for star in self.galaxy.stars{
             if star == nodeStar{
+                
                 star.center = Point(position: node.position)
                 star.scale = node.scale.x
                 
-                print("[GALAXYFACADE] Sync planet named", node.name ?? "<node with no name>", star.scale)
+                if let name = newName{
+                    star.name = name
+                }
+                
+                if let description = newDescription {
+                    star.planetDescription = description
+                }
+                break
             }
         }
         self.persistGalaxy()

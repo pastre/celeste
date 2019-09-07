@@ -272,7 +272,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     // MARK: - Planet dragging helper functions
     
-    func applyPlanetName(name: String, to node: SCNNode){
+    func applyPlanetName(name: String?, to node: SCNNode){
         
         guard let radius = node.geometry?.boundingSphere.radius else { return }
         if let currentText = node.childNode(withName: "planetName", recursively: true){
@@ -335,11 +335,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             
             self.updatedOrbit(newStar)
             self.clearHighlight()
+            self.applyPlanetName(name: self.createPlanetContextMenu.currentName, to: newStar)
             
             if self.hasDeleted {
                 self.hasDeleted = false
             } else {
-                self.galaxyFacade.sync(node: newStar)
+                self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription)
             }
             
         }
@@ -530,6 +531,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.isDisplayingUIContextMenu = true
     }
     
+    func resetPosition(of star: Star){
+        guard let selectedStar = self.currentSelectedStar else { return }
+        guard let transform = self.selectedNodePreviousWorldPosition else { return }
+        
+        let newStar = selectedStar.clone()
+        
+        self.currentSelectedStar!.removeFromParentNode()
+        
+        self.sceneView.scene.rootNode.addChildNode(newStar)
+        
+        newStar.worldPosition = transform
+        newStar.name = star.id
+        
+        self.clearHighlight()
+        
+        self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription)
+        
+        self.applyPlanetName(name: self.createPlanetContextMenu.currentName, to: newStar)
+    }
     
     func hideUIContextMenu(){
         self.contextMenuView?.removeFromSuperview()
@@ -613,25 +633,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     var selectedNodePreviousWorldPosition: SCNVector3?
-
-    func resetPosition(of star: Star){
-        guard let selectedStar = self.currentSelectedStar else { return }
-        guard let transform = self.selectedNodePreviousWorldPosition else { return }
-        
-        let newStar = selectedStar.clone()
-       
-        self.currentSelectedStar!.removeFromParentNode()
-        
-        self.sceneView.scene.rootNode.addChildNode(newStar)
-        
-        newStar.worldPosition = transform
-        newStar.name = star.id
-        
-        self.clearHighlight()
-        
-        self.galaxyFacade.sync(node: newStar)
-    }
-    
+ 
     func onCancel(_ star: Star?) {
         if let s  = star {
             self.resetPosition(of: s)
@@ -646,6 +648,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         } else {
             self.moveNodeFromCamera()
         }
+        
+        
         self.closeAddPlanetMenu()
     }
     
