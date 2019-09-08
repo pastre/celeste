@@ -23,14 +23,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         return view
     }()
     
-    let sessionInfoLabel: UILabel! = {
+    var sessionInfoLabel: UILabel! = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.white
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
         return label
-    }()
+        }() {
+        didSet{
+            self.sessionInfoView.isHidden =  self.sessionInfoLabel.text == ""
+        }
+    }
     
     // Mark: - Constants
     
@@ -112,7 +116,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     var isMovingNode: Bool! = false
     var isDisplayingUIContextMenu: Bool = false{
         didSet{
-//            if self.isDisplayingUIContextMenu{
+            
                 self.sessionInfoView.isHidden = self.isDisplayingUIContextMenu
             
         }
@@ -161,21 +165,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         contextMenuGesture.require(toFail: tapGesture)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-        
-        // Run the view's session
-        sceneView.session.run(configuration)
+        self.resetTracking()
         
         
         self.enableAllOrbits()
         
     }
     
+    
+    func resetTracking(){
+        
+        // Create a session configuration
+        let configuration = ARWorldTrackingConfiguration()
+        
+        configuration.planeDetection = [.horizontal]
+        // Run the view's session
+        sceneView.session.run(configuration)
+    }
     
     override func viewDidLayoutSubviews() {
         self.setupAddDisplayButton()
@@ -249,7 +258,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.hideContextMenu()
         })
     }
-    
     func openMenu(){
         
         self.contextMenuView?.transform = (self.contextMenuView?.transform.translatedBy(x: 414, y: 0))!
@@ -260,40 +268,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.appMenuButton.transform = self.addPlanetButton.transform.translatedBy(x: 414, y: 0)
         }
     }
-   
-    
-    private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
-        // Update the UI to provide feedback on the state of the AR experience.
-        let message: String
-        
-        switch trackingState {
-        case .normal where frame.anchors.isEmpty:
-            // No planes detected; provide instructions for this app's AR interactions.
-            message = "Move the device around to detect horizontal and vertical surfaces."
-            
-        case .notAvailable:
-            message = "Tracking unavailable."
-            
-        case .limited(.excessiveMotion):
-            message = "Tracking limited - Move the device more slowly."
-            
-        case .limited(.insufficientFeatures):
-            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
-            
-        case .limited(.initializing):
-            message = "Initializing AR session."
-            
-        default:
-            // No feedback needed when tracking is normal and planes are visible.
-            // (Nor when in unreachable limited-tracking states.)
-            message = ""
-            
-        }
-        
-        sessionInfoLabel.text = message
-        sessionInfoView.isHidden = message.isEmpty ||  self.isDisplayingUIContextMenu
-    }
-
     
     func setupARInfoView(){
         self.view.addSubview(self.sessionInfoView)
@@ -311,7 +285,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
 //        self.sessionInfoView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40).isActive = true
         self.sessionInfoView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
-        self.sessionInfoView.centerYAnchor.constraint(equalTo: self.addPlanetButton.centerYAnchor).isActive = true
+        self.sessionInfoView.topAnchor.constraint(equalTo: self.appMenuButton.topAnchor).isActive = true
         self.sessionInfoView.widthAnchor.constraint(lessThanOrEqualTo: self.view.widthAnchor, multiplier: 0.4).isActive = true
         self.sessionInfoView.heightAnchor.constraint(lessThanOrEqualTo: self.view.heightAnchor, multiplier: 0.3).isActive = true
 //        self.sessionInfoView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.4).isActive = true
@@ -892,24 +866,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
     }
     
-    
-    // MARK: - ARSceneView interruption delegates
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-        
-    }
+    // MARK: - ARSessionObserver
     
     func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
+        // Inform the user that the session has been interrupted, for example, by presenting an overlay.
+        sessionInfoLabel.text = "Session was interrupted"
     }
     
     func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+        // Reset tracking and/or remove existing anchors if consistent tracking is required.
+        sessionInfoLabel.text = "Session interruption ended"
+        resetTracking()
     }
-    
     func getNode(star named: Star) -> SCNNode?{
         return self.sceneView.scene.rootNode.childNode(withName: named.id, recursively: true)
     }
@@ -959,6 +927,42 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.present(vc, animated: true, completion: nil)
         
     }
+    
+    // MARK: - ARState methods
+    
+    private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
+        // Update the UI to provide feedback on the state of the AR experience.
+        let message: String
+        
+        switch trackingState {
+        case .normal where frame.anchors.isEmpty:
+            // No planes detected; provide instructions for this app's AR interactions.
+            message = "Move the device around to detect horizontal and vertical surfaces."
+            
+        case .notAvailable:
+            message = "Tracking unavailable."
+            
+        case .limited(.excessiveMotion):
+            message = "Tracking limited - Move the device more slowly."
+            
+        case .limited(.insufficientFeatures):
+            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
+            
+        case .limited(.initializing):
+            message = "Initializing AR session."
+            
+        default:
+            // No feedback needed when tracking is normal and planes are visible.
+            // (Nor when in unreachable limited-tracking states.)
+            message = ""
+            
+        }
+        
+        sessionInfoLabel.text = message
+        sessionInfoView.isHidden = message.isEmpty ||  self.isDisplayingUIContextMenu
+    }
+    
+    
     
 }
 
