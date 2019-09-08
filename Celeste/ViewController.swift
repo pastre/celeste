@@ -63,32 +63,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    func getOption(imageView: UIImageView, action selector: Selector, mult: CGFloat = 1, heightMult: CGFloat = 0.8, rightMargin: CGFloat = 40) -> UIView{
-        
-        let tapGesture = UITapGestureRecognizer()
-        let buttonView = UIView()
-        
-        tapGesture.addTarget(self, action: selector)
-        
-        buttonView.addGestureRecognizer(tapGesture)
-        buttonView.clipsToBounds = true
-        buttonView.translatesAutoresizingMaskIntoConstraints = false
-        buttonView.layer.cornerRadius = buttonView.frame.height / 2
-        buttonView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.isUserInteractionEnabled = true
-        
-        buttonView.addSubview(imageView)
-        
-        imageView.heightAnchor.constraint(equalTo: buttonView.heightAnchor, multiplier: heightMult).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: mult).isActive = true
-        
-        imageView.rightAnchor.constraint(equalTo: buttonView.leftAnchor, constant: rightMargin).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor).isActive = true
-        
-        return buttonView
-    }
+
     
     lazy var appMenuButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "menu")), action: #selector(self.onAppMenu), mult: 8/13, heightMult: 0.5, rightMargin: 20)
     
@@ -108,6 +83,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 self.isMovingNode = false
             } else {
                 self.isMovingNode = true
+                if self.currentSelectedStar?.parent == nil{
+                    
+                    self.sceneView.pointOfView?.addChildNode(self.currentSelectedStar!)
+                }
             }
         }
     }
@@ -161,18 +140,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
-        self.modalPresentationStyle = .overCurrentContext
         
         contextMenuGesture.require(toFail: tapGesture)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.resetTracking()
-        
-        
-        self.enableAllOrbits()
-        
     }
     
     
@@ -198,6 +171,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             let node = star.getNode()
             self.sceneView.scene.rootNode.addChildNode(node)
         }
+        
+        self.resetTracking()
+        self.enableAllOrbits()
+
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -205,6 +183,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         // Pause the view's session
         sceneView.session.pause()
+        
     }
     
     // MARK: - ARSessionDelegate  methods
@@ -245,6 +224,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
     
     // MARK: - OnScreen UI menu methods
+    
+    func getOption(imageView: UIImageView, action selector: Selector, mult: CGFloat = 1, heightMult: CGFloat = 0.8, rightMargin: CGFloat = 40) -> UIView{
+        
+        let tapGesture = UITapGestureRecognizer()
+        let buttonView = UIView()
+        
+        tapGesture.addTarget(self, action: selector)
+        
+        buttonView.addGestureRecognizer(tapGesture)
+        buttonView.clipsToBounds = true
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        buttonView.layer.cornerRadius = buttonView.frame.height / 2
+        buttonView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        
+        buttonView.addSubview(imageView)
+        
+        imageView.heightAnchor.constraint(equalTo: buttonView.heightAnchor, multiplier: heightMult).isActive = true
+        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: mult).isActive = true
+        
+        imageView.rightAnchor.constraint(equalTo: buttonView.leftAnchor, constant: rightMargin).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor).isActive = true
+        
+        return buttonView
+    }
     
     func hideMenus(){
         
@@ -341,8 +347,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.height / 2
         self.addPlanetButton.clipsToBounds = true
-        
-        print("Frame size is", self.addPlanetButton.frame.height)
         
         self.addPlanetButton.setNeedsLayout()
         self.addPlanetButton.setNeedsDisplay()
@@ -755,57 +759,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onSave(_ star: Star?){
+//        self.
         if let s  = star {
             self.resetPosition(of: s)
         } else {
             self.moveNodeFromCamera()
         }
-        
-        
         self.closeAddPlanetMenu()
     }
     
     func onDelete(star: Star) {
-        self.galaxyFacade.deletePlanet(with: self.currentSelectedStar!)
+//        self.galaxyFacade.deletePlanet(with: self.tappedNode!)
+        self.galaxyFacade.delete(star: star)
         self.currentSelectedStar?.removeFromParentNode()
         self.currentSelectedStar = nil
         self.closeAddPlanetMenu()
     }
     
     
-    // MARK: - PlanetContextMenuDelegate methods
-    func onEdit() {
-        defer { self.hideUIContextMenu()}
-        print("Mostrei!")
-    }
-    
-    func onOrbit(source node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Orbit!")
-        
-    }
-    
-    func onCopy() {
-        defer { self.hideUIContextMenu()}
-        print("Copy!")
-        
-    }
-    
-    func onDelete(node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Delete!")
-        //        self.hideContextMenu()
-        //        assert(self.currentSelectedStar != nil)
-        self.hasDeleted = true
-        self.galaxyFacade.deletePlanet(with: node)
-        node.removeFromParentNode()
-        //         = nil
-    }
-    
-    func onEnded() {
-        defer { self.hideUIContextMenu()}
-        print("Ended!")
-    }
     
 
     
@@ -927,7 +898,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         let vc = storyboard.instantiateViewController(withIdentifier: "2d")
         
-        self.present(vc, animated: true, completion: nil)
+        self.present(vc, animated: true, completion: {
+            for i in self.sceneView.scene.rootNode.childNodes{
+                if i == self.currentSelectedStar { continue }
+                if i == self.tappedNode { continue }
+                
+                i.removeFromParentNode()
+            }
+        })
         
     }
     
@@ -964,7 +942,4 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         sessionInfoLabel.text = message
         sessionInfoView.isHidden = message.isEmpty ||  self.isDisplayingUIContextMenu
     }
-    
-    
-    
 }
