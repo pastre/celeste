@@ -145,7 +145,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
             
             label = SKLabelNode(fontNamed: "")
             label.verticalAlignmentMode = .center
-            label.text = names.randomElement()
+            label.text = name
             label.fontColor = .white
             label.position = CGPoint(x: 0, y: 40)
             label.fontSize = 20
@@ -158,18 +158,20 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
             
             shape.addChild(label)
             shape.addChild(force)
+        } else {
+            label.text = name
         }
         return shape
     }
     
     func transformToChild(parentShape: SKShapeNode) {
-        isChild = true
         let randomInt32 = UInt32.random(in: 0...4294967295)
         shape.physicsBody?.isDynamic = true
         shape.physicsBody?.fieldBitMask = randomInt32
         shape.constraints = [.distance(SKRange(constantValue: 75), to: parentShape)]
         shape.run(.scale(to: 0.5, duration: 0.25))
         force.categoryBitMask = 4294967295 - randomInt32
+        isChild = true
     }
     
     func transformToParent() {
@@ -208,7 +210,6 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     
     // Classe abstrata pra nois
-    let names = ["teste", "teste 2", "tes teste", "Oi\ntdbem", ";)", ":)", ">:[", ":B"]
     var shape: SKShapeNode!
     var force: SKFieldNode!
     var label: SKLabelNode!

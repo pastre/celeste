@@ -67,10 +67,6 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         panGesture.delegate = self
         pinchGesture.delegate = self
         rotationGesture.delegate = self
-        
-        skview.showsFields = true
-        skview.showsPhysics = true
-        skview.showsFPS = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
