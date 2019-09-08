@@ -10,6 +10,14 @@ import Foundation
 import SceneKit
 
 
+
+
+extension CGFloat{
+    static func + (_ a: Float, _ b: CGFloat) -> CGFloat{
+        return CGFloat(a) + b
+    }
+}
+
 extension UIColor {
     
     class func randomColor(randomAlpha randomApha:Bool = false)->UIColor{
