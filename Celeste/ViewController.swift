@@ -126,13 +126,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         // Set the scene to the view
         sceneView.scene = scene
         
-        self.contextMenuGesture.delegate = self
-        self.createPlanetContextMenu.currentParent = self
-        self.createPlanetContextMenu.delegate = self
-        self.appMenu.delegate = self
-        self.tapGesture.delegate = self
-        
-        
         self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
@@ -167,6 +160,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     override func viewDidAppear(_ animated: Bool) {
         
+        
+        self.contextMenuGesture.delegate = self
+        self.createPlanetContextMenu.currentParent = self
+        self.createPlanetContextMenu.delegate = self
+        self.appMenu.delegate = self
+        self.tapGesture.delegate = self
+
         for star in self.galaxy.stars{
             let node = star.getNode()
             self.sceneView.scene.rootNode.addChildNode(node)
@@ -182,8 +182,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         super.viewWillDisappear(animated)
         
         // Pause the view's session
-        sceneView.session.pause()
         
+    }
+    
+    deinit {
+        
+        sceneView.session.pause()
     }
     
     // MARK: - ARSessionDelegate  methods
@@ -902,6 +906,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             for i in self.sceneView.scene.rootNode.childNodes{
                 if i == self.currentSelectedStar { continue }
                 if i == self.tappedNode { continue }
+                if i == self.sceneView.pointOfView { continue }
                 
                 i.removeFromParentNode()
             }
