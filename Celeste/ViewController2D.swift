@@ -65,19 +65,16 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         panGesture.minimumNumberOfTouches = 2
         panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
-//        panGesture.isEnabled = false
-        
         pinchGesture.delegate = self
-//        pinchGesture.isEnabled = false
-        
         rotationGesture.delegate = self
-//        rotationGesture.isEnabled = false
         
-//        skview.showsFields = true
-//        skview.showsPhysics = true
-//        skview.showsFPS = true
-        
-//        skview.isMultipleTouchEnabled = true
+        skview.showsFields = true
+        skview.showsPhysics = true
+        skview.showsFPS = true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        scene.removeAllChildren()
     }
     
     override func viewDidLayoutSubviews() {
