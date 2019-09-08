@@ -13,23 +13,20 @@
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ar" id="BV1-FR-VrT" customClass="ViewController" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <gestureRecognizers/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="vJT-aL-Kqf" appends="YES" id="tpe-NE-55Z"/>
-                                </connections>
                             </arscnView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
+                            <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="U0K-SW-4ec" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
                         </constraints>
@@ -40,12 +37,61 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="1000" minimumPressDuration="0.5" id="vJT-aL-Kqf">
-                    <connections>
-                        <action selector="onLongPress:" destination="BV1-FR-VrT" id="dht-rx-22Y"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
+            <point key="canvasLocation" x="971.01449275362324" y="19.419642857142858"/>
+        </scene>
+        <!--View Controller2D-->
+        <scene sceneID="UnF-b8-ZV1">
+            <objects>
+                <viewController storyboardIdentifier="2d" id="R7J-vl-EDs" customClass="ViewController2D" customModule="Celeste" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zcO-RF-RdK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z96-VJ-eOA">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Kd6-iv-eiu" appends="YES" id="2rS-cm-3PX"/>
+                                    <outletCollection property="gestureRecognizers" destination="f9U-U7-pMi" appends="YES" id="Re4-Ks-yRl"/>
+                                    <outletCollection property="gestureRecognizers" destination="QDs-V0-Xhl" appends="YES" id="cOa-KC-wRw"/>
+                                </connections>
+                            </skView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerX" secondItem="zcO-RF-RdK" secondAttribute="centerX" id="36l-yG-rbw"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="width" secondItem="zcO-RF-RdK" secondAttribute="width" id="3DT-Di-spT"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="centerY" secondItem="zcO-RF-RdK" secondAttribute="centerY" id="7bt-WE-csQ"/>
+                            <constraint firstItem="z96-VJ-eOA" firstAttribute="height" secondItem="zcO-RF-RdK" secondAttribute="height" id="kQt-iR-weO"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="POZ-x9-gz6"/>
+                    </view>
+                    <connections>
+                        <outlet property="panGesture" destination="f9U-U7-pMi" id="uT4-cK-X9R"/>
+                        <outlet property="pinchGesture" destination="Kd6-iv-eiu" id="MHL-Oj-ESc"/>
+                        <outlet property="rotationGesture" destination="QDs-V0-Xhl" id="mJg-gr-bIh"/>
+                        <outlet property="skview" destination="z96-VJ-eOA" id="03C-HA-jpc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UT0-3r-FbF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="Kd6-iv-eiu">
+                    <connections>
+                        <action selector="pinchGesture:" destination="R7J-vl-EDs" id="6Qc-my-6BD"/>
+                    </connections>
+                </pinchGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="f9U-U7-pMi">
+                    <connections>
+                        <action selector="panGesture:" destination="R7J-vl-EDs" id="6oD-FB-q1n"/>
+                    </connections>
+                </panGestureRecognizer>
+                <rotationGestureRecognizer id="QDs-V0-Xhl">
+                    <connections>
+                        <action selector="rotationGesture:" destination="R7J-vl-EDs" id="zIA-4m-EmV"/>
+                    </connections>
+                </rotationGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1830" y="19"/>
         </scene>
     </scenes>
 </document>

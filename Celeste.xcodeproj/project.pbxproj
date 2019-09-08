@@ -7,18 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D409F61B2308B32800DCE2B4 /* Scene2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61A2308B32800DCE2B4 /* Scene2D.swift */; };
+		D409F61D2308B36800DCE2B4 /* ViewController2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61C2308B36800DCE2B4 /* ViewController2D.swift */; };
 		D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F5782305F82500B0A726 /* AppDelegate.swift */; };
 		D707F57B2305F82500B0A726 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D707F57A2305F82500B0A726 /* art.scnassets */; };
 		D707F57D2305F82500B0A726 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F57C2305F82500B0A726 /* ViewController.swift */; };
 		D707F5802305F82500B0A726 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D707F57E2305F82500B0A726 /* Main.storyboard */; };
 		D707F5822305F82700B0A726 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D707F5812305F82700B0A726 /* Assets.xcassets */; };
 		D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D707F5832305F82700B0A726 /* LaunchScreen.storyboard */; };
+		D7332424231073FB00493865 /* WheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7332423231073FB00493865 /* WheelPicker.swift */; };
+		D73324262310741A00493865 /* WheelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324252310741A00493865 /* WheelPickerCell.swift */; };
+		D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */; };
+		D733242A23123A0800493865 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242923123A0800493865 /* Extensions.swift */; };
+		D733242C2312FD0D00493865 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D733242B2312FD0D00493865 /* Provider.swift */; };
+		D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB1231C530E00403018 /* ColorSlider.swift */; };
+		D7337DB4231C534100403018 /* HSBColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB3231C534100403018 /* HSBColor.swift */; };
+		D7337DB6231C536500403018 /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB5231C536500403018 /* Gradient.swift */; };
+		D7337DB8231C53A200403018 /* DefaultPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB7231C53A200403018 /* DefaultPreviewView.swift */; };
+		D7337DBA231C53C200403018 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DB9231C53C200403018 /* GradientView.swift */; };
+		D7337DBC231C53D400403018 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7337DBB231C53D400403018 /* PreviewView.swift */; };
 		D734B87423071E0B00EFA0AD /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87323071E0B00EFA0AD /* Point.swift */; };
 		D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D734B87623071EC500EFA0AD /* Galaxy.swift */; };
+		D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742F0CC2309C0C90041F46F /* VectorMath.swift */; };
+		D758A67123205D6B00E9E31B /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D758A67023205D6B00E9E31B /* MenuView.swift */; };
+		D7781B6323241DA6008ACF8B /* ARCalibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7781B6223241DA6008ACF8B /* ARCalibration.swift */; };
+		D7781B65232424CA008ACF8B /* AppMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7781B64232424CA008ACF8B /* AppMenu.swift */; };
+		D79B1114231D9E6C004360F2 /* PlanetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */; };
+		D7BA9ACE230D8D54003ECAAD /* Orbit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BA9ACD230D8D54003ECAAD /* Orbit.swift */; };
+		D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BA9ACF230D8D9C003ECAAD /* Planet.swift */; };
+		D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */; };
+		D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */; };
+		D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DABAAC2312FE970015A0F4 /* ModelOption.swift */; };
+		D7E032C0231DE4FF00103473 /* GalaxyFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */; };
+		D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E032C1231DE54400103473 /* StorageFacade.swift */; };
+		D7E27E93231ED6120085CB67 /* stars.scnp in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E91231ED6120085CB67 /* stars.scnp */; };
+		D7E27E94231ED6120085CB67 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = D7E27E92231ED6120085CB67 /* star.png */; };
 		D7E91D8523061A9700FC88B8 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E91D8423061A9700FC88B8 /* Star.swift */; };
+		D7FE3B2323145E8900532024 /* PlanetTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D409F61A2308B32800DCE2B4 /* Scene2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene2D.swift; sourceTree = "<group>"; };
+		D409F61C2308B36800DCE2B4 /* ViewController2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController2D.swift; sourceTree = "<group>"; };
 		D707F5752305F82500B0A726 /* Celeste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celeste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D707F5782305F82500B0A726 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D707F57A2305F82500B0A726 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -27,9 +57,36 @@
 		D707F5812305F82700B0A726 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D707F5842305F82700B0A726 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D707F5862305F82700B0A726 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7332423231073FB00493865 /* WheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPicker.swift; sourceTree = "<group>"; };
+		D73324252310741A00493865 /* WheelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCell.swift; sourceTree = "<group>"; };
+		D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelPickerCollectionViewLayout.swift; sourceTree = "<group>"; };
+		D733242923123A0800493865 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D733242B2312FD0D00493865 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		D7337DB1231C530E00403018 /* ColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSlider.swift; sourceTree = "<group>"; };
+		D7337DB3231C534100403018 /* HSBColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSBColor.swift; sourceTree = "<group>"; };
+		D7337DB5231C536500403018 /* Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
+		D7337DB7231C53A200403018 /* DefaultPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPreviewView.swift; sourceTree = "<group>"; };
+		D7337DB9231C53C200403018 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		D7337DBB231C53D400403018 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		D734B87323071E0B00EFA0AD /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		D734B87623071EC500EFA0AD /* Galaxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Galaxy.swift; sourceTree = "<group>"; };
+		D742F0CC2309C0C90041F46F /* VectorMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorMath.swift; sourceTree = "<group>"; };
+		D758A67023205D6B00E9E31B /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		D7781B6223241DA6008ACF8B /* ARCalibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCalibration.swift; sourceTree = "<group>"; };
+		D7781B64232424CA008ACF8B /* AppMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMenu.swift; sourceTree = "<group>"; };
+		D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetDetailViewController.swift; sourceTree = "<group>"; };
+		D7AB3576232592CF00DA7566 /* lampupd.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = lampupd.scn; sourceTree = "<group>"; };
+		D7BA9ACD230D8D54003ECAAD /* Orbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orbit.swift; sourceTree = "<group>"; };
+		D7BA9ACF230D8D9C003ECAAD /* Planet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planet.swift; sourceTree = "<group>"; };
+		D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePlanetContextMenu.swift; sourceTree = "<group>"; };
+		D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuGestureRecognizer.swift; sourceTree = "<group>"; };
+		D7DABAAC2312FE970015A0F4 /* ModelOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOption.swift; sourceTree = "<group>"; };
+		D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyFacade.swift; sourceTree = "<group>"; };
+		D7E032C1231DE54400103473 /* StorageFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageFacade.swift; sourceTree = "<group>"; };
+		D7E27E91231ED6120085CB67 /* stars.scnp */ = {isa = PBXFileReference; lastKnownFileType = file.scp; path = stars.scnp; sourceTree = "<group>"; };
+		D7E27E92231ED6120085CB67 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		D7E91D8423061A9700FC88B8 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
+		D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetTextureProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +100,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D409F6182308AD7B00DCE2B4 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				D409F61A2308B32800DCE2B4 /* Scene2D.swift */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		D409F6192308ADA000DCE2B4 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				D409F61C2308B36800DCE2B4 /* ViewController2D.swift */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
 		D707F56C2305F82500B0A726 = {
 			isa = PBXGroup;
 			children = (
@@ -62,16 +135,65 @@
 		D707F5772305F82500B0A726 /* Celeste */ = {
 			isa = PBXGroup;
 			children = (
-				D7E91D8323061A1C00FC88B8 /* model */,
-				D707F5782305F82500B0A726 /* AppDelegate.swift */,
-				D707F57A2305F82500B0A726 /* art.scnassets */,
 				D707F57C2305F82500B0A726 /* ViewController.swift */,
+				D7781B64232424CA008ACF8B /* AppMenu.swift */,
+				D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */,
+				D758A67023205D6B00E9E31B /* MenuView.swift */,
+				D7781B6223241DA6008ACF8B /* ARCalibration.swift */,
+				D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */,
+				D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */,
+				D7AB3576232592CF00DA7566 /* lampupd.scn */,
+				D7E032C1231DE54400103473 /* StorageFacade.swift */,
+				D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */,
+				D7E27E91231ED6120085CB67 /* stars.scnp */,
+				D7E27E92231ED6120085CB67 /* star.png */,
+				D7D6516223075B9D00815B15 /* ContextMenuGestureRecognizer.swift */,
 				D707F57E2305F82500B0A726 /* Main.storyboard */,
 				D707F5812305F82700B0A726 /* Assets.xcassets */,
+				D707F57A2305F82500B0A726 /* art.scnassets */,
 				D707F5832305F82700B0A726 /* LaunchScreen.storyboard */,
+				D707F5782305F82500B0A726 /* AppDelegate.swift */,
 				D707F5862305F82700B0A726 /* Info.plist */,
+				D7E91D8323061A1C00FC88B8 /* model */,
+				D409F6192308ADA000DCE2B4 /* controller */,
+				D409F6182308AD7B00DCE2B4 /* view */,
+				D7D651642309C09700815B15 /* utils */,
 			);
 			path = Celeste;
+			sourceTree = "<group>";
+		};
+		D7332422231073E900493865 /* wheelPicker */ = {
+			isa = PBXGroup;
+			children = (
+				D7332423231073FB00493865 /* WheelPicker.swift */,
+				D73324252310741A00493865 /* WheelPickerCell.swift */,
+				D73324272310744100493865 /* WheelPickerCollectionViewLayout.swift */,
+			);
+			path = wheelPicker;
+			sourceTree = "<group>";
+		};
+		D7337DB0231C52F900403018 /* colorSlider */ = {
+			isa = PBXGroup;
+			children = (
+				D7337DB1231C530E00403018 /* ColorSlider.swift */,
+				D7337DB3231C534100403018 /* HSBColor.swift */,
+				D7337DB5231C536500403018 /* Gradient.swift */,
+				D7337DB7231C53A200403018 /* DefaultPreviewView.swift */,
+				D7337DB9231C53C200403018 /* GradientView.swift */,
+				D7337DBB231C53D400403018 /* PreviewView.swift */,
+			);
+			path = colorSlider;
+			sourceTree = "<group>";
+		};
+		D7D651642309C09700815B15 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				D7337DB0231C52F900403018 /* colorSlider */,
+				D7332422231073E900493865 /* wheelPicker */,
+				D742F0CC2309C0C90041F46F /* VectorMath.swift */,
+				D733242923123A0800493865 /* Extensions.swift */,
+			);
+			path = utils;
 			sourceTree = "<group>";
 		};
 		D7E91D8323061A1C00FC88B8 /* model */ = {
@@ -80,6 +202,10 @@
 				D7E91D8423061A9700FC88B8 /* Star.swift */,
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
+				D7BA9ACD230D8D54003ECAAD /* Orbit.swift */,
+				D7BA9ACF230D8D9C003ECAAD /* Planet.swift */,
+				D733242B2312FD0D00493865 /* Provider.swift */,
+				D7DABAAC2312FE970015A0F4 /* ModelOption.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -142,8 +268,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7E27E93231ED6120085CB67 /* stars.scnp in Resources */,
 				D707F57B2305F82500B0A726 /* art.scnassets in Resources */,
 				D707F5852305F82700B0A726 /* LaunchScreen.storyboard in Resources */,
+				D7E27E94231ED6120085CB67 /* star.png in Resources */,
 				D707F5822305F82700B0A726 /* Assets.xcassets in Resources */,
 				D707F5802305F82500B0A726 /* Main.storyboard in Resources */,
 			);
@@ -156,11 +284,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D742F0CD2309C0C90041F46F /* VectorMath.swift in Sources */,
 				D734B87423071E0B00EFA0AD /* Point.swift in Sources */,
+				D79B1114231D9E6C004360F2 /* PlanetDetailViewController.swift in Sources */,
+				D7781B65232424CA008ACF8B /* AppMenu.swift in Sources */,
+				D7BA9ACE230D8D54003ECAAD /* Orbit.swift in Sources */,
+				D409F61D2308B36800DCE2B4 /* ViewController2D.swift in Sources */,
 				D707F57D2305F82500B0A726 /* ViewController.swift in Sources */,
+				D733242C2312FD0D00493865 /* Provider.swift in Sources */,
+				D758A67123205D6B00E9E31B /* MenuView.swift in Sources */,
+				D409F61B2308B32800DCE2B4 /* Scene2D.swift in Sources */,
+				D7781B6323241DA6008ACF8B /* ARCalibration.swift in Sources */,
 				D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */,
+				D7337DB8231C53A200403018 /* DefaultPreviewView.swift in Sources */,
+				D7337DB2231C530E00403018 /* ColorSlider.swift in Sources */,
+				D7FE3B2323145E8900532024 /* PlanetTextureProvider.swift in Sources */,
+				D7E032C0231DE4FF00103473 /* GalaxyFacade.swift in Sources */,
 				D734B87723071EC500EFA0AD /* Galaxy.swift in Sources */,
+				D73324282310744100493865 /* WheelPickerCollectionViewLayout.swift in Sources */,
+				D7D651612307553C00815B15 /* CreatePlanetContextMenu.swift in Sources */,
+				D7332424231073FB00493865 /* WheelPicker.swift in Sources */,
+				D7337DBA231C53C200403018 /* GradientView.swift in Sources */,
+				D73324262310741A00493865 /* WheelPickerCell.swift in Sources */,
+				D7DABAAD2312FE970015A0F4 /* ModelOption.swift in Sources */,
+				D733242A23123A0800493865 /* Extensions.swift in Sources */,
+				D7337DB4231C534100403018 /* HSBColor.swift in Sources */,
+				D7D6516323075B9D00815B15 /* ContextMenuGestureRecognizer.swift in Sources */,
+				D7337DBC231C53D400403018 /* PreviewView.swift in Sources */,
+				D7337DB6231C536500403018 /* Gradient.swift in Sources */,
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
+				D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */,
+				D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

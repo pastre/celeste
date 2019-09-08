@@ -9,7 +9,19 @@
 import Foundation
 import SceneKit
 
-class Galaxy{
+class Galaxy: Encodable, Decodable{
+    
+    enum CodingKeys: String, CodingKey {
+        case stars = "galaxyStars"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.stars = try container.decode([Star].self, forKey: .stars)
+    }
+    
+    
     internal init(stars: [Star]?) {
         self.stars = stars
     }
@@ -25,9 +37,56 @@ class Galaxy{
         return ret
     }
     
-    func getStar(by node: SCNNode) -> Star?{
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.stars, forKey: .stars)
+    }
+    
+    func getStars() -> [Star]{
+        
+        var stars: [Star] = [Star]()
+        
         for star in self.stars{
-            if star.getNode() == node{
+            if let nest = star as? NesteableStar{
+                stars.append(contentsOf: nest.getChild())
+            }
+        }
+        
+        return stars
+
+    }
+    
+    func getStar(by position: SCNVector3) -> Star?{
+        
+        let stars = self.getStars()
+        for star in stars{
+            print(star.getPosition(), position)
+            if star.getPosition() == position {
+                return star
+            }
+        }
+        
+        return nil
+    }
+    
+//    func getStar(by id: String){
+//        for star in self.stars{
+//            if star.id == id{
+//                return star
+//            }
+//        }
+//
+//        return nil
+//    }
+
+    
+    
+    func getStar(by node: SCNNode) -> Star?{
+        
+        for star in self.stars{
+            
+            if star.id == node.name {
                 return star
             }
         }
