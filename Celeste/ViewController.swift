@@ -906,7 +906,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 i.removeFromParentNode()
             }
         })
-        
+        self.hideMenus()
     }
     
     // MARK: - ARState methods
