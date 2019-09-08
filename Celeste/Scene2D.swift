@@ -12,7 +12,8 @@ import SpriteKit
 class Scene2D: SKScene {
     var viewController: ViewController2D!
     var galaxy: Galaxy!
-    let multiplier = CGFloat(50)
+    let distanceMultiplier = CGFloat(125)
+    let sizeMultiplier = CGFloat(25)
     let distanceBetweenStars = CGFloat(75)
     var maximumDistanceToOrbit: CGFloat!
     var circles: [SKShapeNode] = []
@@ -23,6 +24,7 @@ class Scene2D: SKScene {
     var lastTouch: UITouch!
     var tempConstraints: [SKConstraint]!
     var starsShapes: [SKShapeNode] = []
+    var planets: [String: Planet] = [:]
     
     func setViewController(viewController: ViewController2D){
         self.viewController = viewController
@@ -31,141 +33,150 @@ class Scene2D: SKScene {
     override func didMove(to view: SKView) {
         let camera = SKCameraNode()
         self.camera = camera
-        camera.position = CGPoint(x: frame.width/2, y: frame.height/2)
+        let stars = GalaxyFacade.instance.galaxy.stars!
+        if !stars.isEmpty {
+            let firstPlanet = stars[0]
+            camera.position = firstPlanet.get2DPosition()
+        }
+        camera.xScale = 5
+        camera.yScale = 5
+        camera.run(.scale(to: 1, duration: 1))
         addChild(camera)
         physicsWorld.gravity = .zero
-//        physicsWorld.speed = 0.5
-        maximumDistanceToOrbit = distanceBetweenStars * 1.5
+        maximumDistanceToOrbit = distanceBetweenStars * 2
+//        GalaxyFacade.instance.galaxy.stars = []
         updateStars()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
-        lastTouchPosition = point
+        firstTouchPosition = point
         let node = self.atPoint(point)
         if node.name != nil {
             selectedShape = node as? SKShapeNode
+//            print("selectedShape.name")
+//            print(selectedShape.name)
+//            selectedShape.physicsBody?.isDynamic = false
             tempConstraints = selectedShape.constraints
             selectedShape.constraints = []
         }
+//        let galaxy = GalaxyFacade.instance.galaxy.stars
+//        print("galaxy: ")
+//        print(galaxy)
+//        for star in galaxy! {
+//            print("star: ")
+//            print(star)
+//            let planet = star as! Planet
+//            print("orbits: ")
+//            print(planet.orbits)
+//            print("getOrbiters: ")
+//            print(planet.getOrbiters())
+//        }
+//        print()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let point = touches.first!.location(in: self)
+        lastTouchPosition = touches.first!.location(in: self)
         
         if selectedShape != nil {
-            selectedShape.position = point
+            selectedShape.position = lastTouchPosition
         } else {
-            camera?.position.x += lastTouchPosition.x - point.x
-            camera?.position.y += lastTouchPosition.y - point.y
+            camera?.position.x += firstTouchPosition.x - lastTouchPosition.x
+            camera?.position.y += firstTouchPosition.y - lastTouchPosition.y
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
-        updateHierarchy(point: point)
+//        updateHierarchy(point: point)
+        selectedShape = nil
+        firstTouchPosition = nil
+        lastTouchPosition = nil
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
-        updateHierarchy(point: point)
+//        updateHierarchy(point: point)
+        selectedShape = nil
+        firstTouchPosition = nil
+        lastTouchPosition = nil
     }
     
     func updateHierarchy(point: CGPoint) {
         if selectedShape != nil {
-            var selectedStar: Star!
-            var selectedStarHasChild: Bool!
-            for star in Model.shared.galaxy.stars {
-                if let nested = star as? NesteableStar {
-                    if let children = nested.child {
-                        for child in children {
-                            if child.id == selectedShape.name {
-                                selectedStar = child
+            let selectedPlanet = planets[selectedShape.name!]!
+            print("selectedPlanet.getOrbiters()")
+            print(selectedPlanet.getOrbiters())
+            let orbiters = selectedPlanet.getOrbiters()
+            let selectedPlanetHasChild = orbiters == nil || orbiters!.isEmpty ? false : true
+            print("selectedPlanetHasChild")
+            print(selectedPlanetHasChild)
+            if !selectedPlanetHasChild {
+                var closestPlanet: Planet!
+                for star in GalaxyFacade.instance.galaxy.stars {
+                    let planet = star as! Planet
+                    if planet.id != selectedPlanet.id && closestPlanet == nil {
+                        closestPlanet = planet
+                    }
+                    if closestPlanet != nil {
+                        if distance(planet.get2DPosition(), point) < distance(closestPlanet.get2DPosition(), point) {
+                            closestPlanet = planet
+                        }
+                    }
+                }
+                
+                if closestPlanet != nil {
+                    print("closestPlanet.id")
+                    print(closestPlanet.id)
+//                    let closestPlanetShape = planets[closestPlanet.id]!.shape!
+                    
+                    for star in GalaxyFacade.instance.galaxy.stars {
+                        let planet = star as! Planet
+                        
+                        for (index, child) in (planet.getOrbiters() ?? []).enumerated() {
+                            if child.id == selectedPlanet.id {
+                                print("print(planet.orbits)")
+                                print(planet.orbits)
+                                print("index >= planet.orbits!.count")
+                                print(index >= planet.orbits!.count)
+                                let count = planet.orbits!.count
+                                planet.orbits?.remove(at: index % count)
                             }
                         }
                     }
-                }
-                if star.id == selectedShape.name {
-                    selectedStar = star
-                }
-            }
-            
-            if let nested = selectedStar as? NesteableStar {
-                if let children = nested.child {
-                    selectedStarHasChild = children.isEmpty ? false : true
-                }
-            }
-            
-            if !selectedStarHasChild {
-                var closestStar: Star!
-                for star in Model.shared.galaxy.stars {
                     
-                    if star.id != selectedStar.id && closestStar == nil {
-                        closestStar = star
-                    }
-                    if closestStar != nil {
-                        if distance(star.get2DPosition(), point) < distance(closestStar.get2DPosition(), point) && selectedStar.id != star.id{
-                            closestStar = star
+                    if distance(closestPlanet.get2DPosition(), point) <= maximumDistanceToOrbit {
+                        selectedPlanet.transformToChild(parentShape: closestPlanet.shape)
+                        print("closestPlanet.orbits0")
+                        print(closestPlanet.orbits)
+                        GalaxyFacade.instance.createOrbit(around: closestPlanet.getNode(), child: selectedPlanet.getNode(), with: 0.2)
+                        if closestPlanet.orbits == nil {
+                            closestPlanet.orbits = []
                         }
+                        closestPlanet.orbits?.append(Orbit(radius: CGFloat.random(in: 0...0.5), orbiter: selectedPlanet))
+                        print("closestPlanet.orbits1")
+                        print(closestPlanet.orbits)
+//                        let parent = closestPlanet
+////                        parent.child?.append(selectedPlanet)
+//
+//                        selectedShape.constraints = [.distance(SKRange(constantValue: distanceBetweenStars), to: closestPlanetShape)]
+//                        if !selectedPlanet.isChild {
+//                            selectedPlanet.isChild = true
+//                            updateStarType(star: selectedPlanet)
+//                        }
+                    } else {
+                        selectedPlanet.transformToParent()
                     }
+//                    closestPlanet =
                 }
-                
-                var closestStarShape: SKShapeNode!
-                for shape in starsShapes {
-                    if shape.name == closestStar.id {
-                        closestStarShape = shape
-                    }
-                }
-                
-                for (index, star) in Model.shared.galaxy.stars.enumerated() {
-                    if star.id == selectedStar.id {
-                        Model.shared.galaxy.stars.remove(at: index)
-                    }
-                    var nesteableStar = star as! NesteableStar
-                    for (index, child) in nesteableStar.child!.enumerated() {
-                        if child.id == selectedStar.id {
-                            nesteableStar.child!.remove(at: index)
-                        }
-                    }
-                }
-                
-                if distance(closestStar.get2DPosition(), point) < maximumDistanceToOrbit {
-                    let parent = closestStar as! NesteableStar
-                    parent.child?.append(selectedStar)
-                    selectedShape.constraints = [.distance(SKRange(constantValue: distanceBetweenStars), to: closestStarShape)]
-                    if !selectedStar.isChild {
-                        selectedStar.isChild = true
-                        updateStarType(star: selectedStar)
-                    }
-                } else {
-                    selectedShape.constraints = []
-                    Model.shared.galaxy.stars.append(selectedStar)
-                    if selectedStar.isChild {
-                        selectedStar.isChild = false
-                        updateStarType(star: selectedStar)
-                    }
-                }
-                closestStar = nil
-                closestStarShape = nil
+//                selectedPlanet.center.x = point.x / distanceMultiplier
+//                selectedPlanet.center.y = point.y / distanceMultiplier
             }
-            selectedStar.center.x = point.x
-            selectedStar.center.y = point.y
+            selectedShape = nil
         }
-        selectedShape = nil
-    }
-    
-    func updateStarType(star: Star) {
-        if star.isChild {
-            star.shape.run(.scale(by: 0.5, duration: 0.25))
-            star.shape.physicsBody?.isDynamic = true
-            let randomInt32 = UInt32.random(in: 0...4294967295)
-            star.shape.physicsBody?.fieldBitMask = randomInt32
-            star.force.categoryBitMask = 4294967295 - randomInt32
-        } else {
-            star.shape.run(.scale(by: 2, duration: 0.25))
-            star.shape.physicsBody?.isDynamic = false
-            star.force.categoryBitMask = 0
-        }
+        print()
+        firstTouchPosition = nil
+        lastTouchPosition = nil
     }
     
     func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
@@ -175,31 +186,23 @@ class Scene2D: SKScene {
     }
     
     func updateStars() {
-        for star in Model.shared.galaxy.stars {
-            updateStar(star: star, parent: nil, level: 1.0)
+        for star in GalaxyFacade.instance.galaxy.stars {
+            let planet = star as! Planet
+            planet.isChild = false
+            addChild(planet.get2DNode())
+            planets[planet.id] = planet
+        }
+        for star in GalaxyFacade.instance.galaxy.stars {
+            let planet = star as! Planet
+            for child in planet.getOrbiters() ?? [] {
+                planets[child.id]!.transformToChild(parentShape: planet.shape)
+            }
         }
     }
     
-    func updateStar(star: Star, parent: SKShapeNode!, level: CGFloat) {
-        let shape = star.get2DNode()
-        addChild(shape)
-        starsShapes.append(shape)
-        
-        if parent != nil {
-            shape.constraints = [.distance(SKRange(constantValue: distanceBetweenStars), to: parent)]
-            star.isChild = true
-        } else {
-            shape.physicsBody?.isDynamic = false
-            star.isChild = false
-            star.force.categoryBitMask = 0
-        }
-        
-        if let nested = star as? NesteableStar{
-            if let children = nested.child {
-                for child in children {
-                    updateStar(star: child, parent: shape, level: level + 1)
-                }
-            }
+    override func update(_ currentTime: TimeInterval) {
+        if selectedShape != nil && lastTouchPosition != nil {
+            selectedShape.position = lastTouchPosition
         }
     }
 }

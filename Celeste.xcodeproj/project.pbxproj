@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		D409F61B2308B32800DCE2B4 /* Scene2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61A2308B32800DCE2B4 /* Scene2D.swift */; };
 		D409F61D2308B36800DCE2B4 /* ViewController2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D409F61C2308B36800DCE2B4 /* ViewController2D.swift */; };
-		D4B17B09230B183000A4F53E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B17B08230B183000A4F53E /* Model.swift */; };
 		D707F5792305F82500B0A726 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F5782305F82500B0A726 /* AppDelegate.swift */; };
 		D707F57B2305F82500B0A726 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D707F57A2305F82500B0A726 /* art.scnassets */; };
 		D707F57D2305F82500B0A726 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D707F57C2305F82500B0A726 /* ViewController.swift */; };
@@ -50,7 +49,6 @@
 /* Begin PBXFileReference section */
 		D409F61A2308B32800DCE2B4 /* Scene2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene2D.swift; sourceTree = "<group>"; };
 		D409F61C2308B36800DCE2B4 /* ViewController2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController2D.swift; sourceTree = "<group>"; };
-		D4B17B08230B183000A4F53E /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		D707F5752305F82500B0A726 /* Celeste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celeste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D707F5782305F82500B0A726 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D707F57A2305F82500B0A726 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -199,7 +197,6 @@
 		D7E91D8323061A1C00FC88B8 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				D4B17B08230B183000A4F53E /* Model.swift */,
 				D7E91D8423061A9700FC88B8 /* Star.swift */,
 				D734B87323071E0B00EFA0AD /* Point.swift */,
 				D734B87623071EC500EFA0AD /* Galaxy.swift */,
@@ -315,7 +312,6 @@
 				D7337DB6231C536500403018 /* Gradient.swift in Sources */,
 				D7E91D8523061A9700FC88B8 /* Star.swift in Sources */,
 				D7BA9AD0230D8D9C003ECAAD /* Planet.swift in Sources */,
-				D4B17B09230B183000A4F53E /* Model.swift in Sources */,
 				D7E032C2231DE54400103473 /* StorageFacade.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,7 +459,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QM43B7QRF9;
+				DEVELOPMENT_TEAM = 7JAFRWUBYM;
 				INFOPLIST_FILE = Celeste/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -481,7 +477,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QM43B7QRF9;
+				DEVELOPMENT_TEAM = 7JAFRWUBYM;
 				INFOPLIST_FILE = Celeste/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
