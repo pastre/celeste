@@ -45,9 +45,7 @@ class Scene2D: SKScene {
         addChild(camera)
         physicsWorld.gravity = .zero
         maximumDistanceToOrbit = distanceBetweenStars * 2
-//        GalaxyFacade.instance.galaxy.stars = []
     }
-
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
@@ -55,25 +53,7 @@ class Scene2D: SKScene {
         let node = self.atPoint(point)
         if node.name != nil {
             selectedShape = node as? SKShapeNode
-//            print("selectedShape.name")
-//            print(selectedShape.name)
-//            selectedShape.physicsBody?.isDynamic = false
-            tempConstraints = selectedShape.constraints
-            selectedShape.constraints = []
         }
-//        let galaxy = GalaxyFacade.instance.galaxy.stars
-//        print("galaxy: ")
-//        print(galaxy)
-//        for star in galaxy! {
-//            print("star: ")
-//            print(star)
-//            let planet = star as! Planet
-//            print("orbits: ")
-//            print(planet.orbits)
-//            print("getOrbiters: ")
-//            print(planet.getOrbiters())
-//        }
-//        print()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -90,28 +70,49 @@ class Scene2D: SKScene {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
 //        updateHierarchy(point: point)
-        selectedShape = nil
-        firstTouchPosition = nil
-        lastTouchPosition = nil
+        updatePosition(point: point)
+//        resetPlanetPosition()
+        resetVars()
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
 //        updateHierarchy(point: point)
+        updatePosition(point: point)
+//        resetPlanetPosition()
+        resetVars()
+    }
+    
+    func resetPlanetPosition() {
+        if selectedShape != nil {
+            let selectedPlanet = planets[selectedShape.name!]!
+            if !selectedPlanet.isChild {
+                selectedShape.run(.move(to: firstTouchPosition, duration: 0.75))
+            }
+        }
+    }
+    
+    func resetVars() {
         selectedShape = nil
         firstTouchPosition = nil
         lastTouchPosition = nil
     }
     
+    func updatePosition(point: CGPoint) {
+        if selectedShape != nil {
+            let selectedPlanet = planets[selectedShape.name!]!
+            if !selectedPlanet.isChild {
+                selectedPlanet.x = point.x / distanceMultiplier
+                selectedPlanet.y = point.y / distanceMultiplier
+            }
+        }
+    }
+    
     func updateHierarchy(point: CGPoint) {
         if selectedShape != nil {
             let selectedPlanet = planets[selectedShape.name!]!
-            print("selectedPlanet.getOrbiters()")
-            print(selectedPlanet.getOrbiters())
             let orbiters = selectedPlanet.getOrbiters()
             let selectedPlanetHasChild = orbiters == nil || orbiters!.isEmpty ? false : true
-            print("selectedPlanetHasChild")
-            print(selectedPlanetHasChild)
             if !selectedPlanetHasChild {
                 var closestPlanet: Planet!
                 for star in GalaxyFacade.instance.galaxy.stars {
@@ -127,19 +128,11 @@ class Scene2D: SKScene {
                 }
                 
                 if closestPlanet != nil {
-                    print("closestPlanet.id")
-                    print(closestPlanet.id)
-//                    let closestPlanetShape = planets[closestPlanet.id]!.shape!
-                    
                     for star in GalaxyFacade.instance.galaxy.stars {
                         let planet = star as! Planet
                         
                         for (index, child) in (planet.getOrbiters() ?? []).enumerated() {
                             if child.id == selectedPlanet.id {
-                                print("print(planet.orbits)")
-                                print(planet.orbits)
-                                print("index >= planet.orbits!.count")
-                                print(index >= planet.orbits!.count)
                                 let count = planet.orbits!.count
                                 planet.orbits?.remove(at: index % count)
                             }
@@ -148,36 +141,17 @@ class Scene2D: SKScene {
                     
                     if distance(closestPlanet.get2DPosition(), point) <= maximumDistanceToOrbit {
                         selectedPlanet.transformToChild(parentShape: closestPlanet.shape)
-                        print("closestPlanet.orbits0")
-                        print(closestPlanet.orbits)
                         GalaxyFacade.instance.createOrbit(around: closestPlanet.getNode(), child: selectedPlanet.getNode(), with: 0.2)
                         if closestPlanet.orbits == nil {
                             closestPlanet.orbits = []
                         }
                         closestPlanet.orbits?.append(Orbit(radius: CGFloat.random(in: 0...0.5), orbiter: selectedPlanet))
-                        print("closestPlanet.orbits1")
-                        print(closestPlanet.orbits)
-//                        let parent = closestPlanet
-////                        parent.child?.append(selectedPlanet)
-//
-//                        selectedShape.constraints = [.distance(SKRange(constantValue: distanceBetweenStars), to: closestPlanetShape)]
-//                        if !selectedPlanet.isChild {
-//                            selectedPlanet.isChild = true
-//                            updateStarType(star: selectedPlanet)
-//                        }
                     } else {
                         selectedPlanet.transformToParent()
                     }
-//                    closestPlanet =
                 }
-//                selectedPlanet.center.x = point.x / distanceMultiplier
-//                selectedPlanet.center.y = point.y / distanceMultiplier
             }
-            selectedShape = nil
         }
-        print()
-        firstTouchPosition = nil
-        lastTouchPosition = nil
     }
     
     func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {

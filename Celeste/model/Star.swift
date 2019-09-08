@@ -18,8 +18,6 @@ protocol SKNodeTransformer {
 protocol SCNNodeTransformer{
     func getPosition() -> SCNVector3
     func getNode() -> SCNNode
-//    func contains(point: CGPoint) -> Bool
-    
 }
 
 protocol SceneNodeInteractable{
@@ -36,7 +34,6 @@ class Color: Encodable, Decodable{
         case r = "r"
         case g = "g"
         case b = "b"
-
     }
     
     required init(decoder aDecoder: Decoder) throws {
@@ -64,13 +61,11 @@ class Color: Encodable, Decodable{
     }
     
     func getUIColor() -> UIColor{
-        
         return UIColor(red: r, green: g, blue: b, alpha: 1)
     }
 }
 
 class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
-    
     
     func contains(point: CGPoint) -> Bool {
         return self.getNode().frame.contains(point)
@@ -87,10 +82,9 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         try container.encode(self.planetDescription ?? "No description", forKey: .description)
         try container.encode(self.shapeName.rawValue, forKey: .shapeName)
         try container.encode(self.scale ?? 1, forKey: .scale)
-        
     }
     
-    enum CodingKeys: String, CodingKey{
+    enum CodingKeys: String, CodingKey {
         case radius = "radius"
         case center = "center"
         case color = "color"
@@ -99,9 +93,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         case description = "description"
         case shapeName = "shapeName"
         case scale = "scale"
-        
         case child = "child"
-        
         case orbits = "orbits"
     }
     
@@ -115,7 +107,6 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         self.name = try container.decode(String.self, forKey: .name)
         self.planetDescription = try container.decode(String.self, forKey: .description)
         self.shapeName = ShapeName.getShapeName(by: try container.decode(String.self, forKey: .shapeName))
-        self.scale = try container.decode(Float.self, forKey: .scale)
         
         if self.name == "No name" { self.name = nil}
         if self.planetDescription == "No description" { self.planetDescription = nil}
@@ -129,7 +120,11 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     
     func get2DPosition() -> CGPoint {
-        return CGPoint(x: center.x * distanceMultiplier, y: center.y * distanceMultiplier)
+        if x != nil && y != nil && x != CGFloat(0) && y != CGFloat(0) {
+            return CGPoint(x: x * distanceMultiplier, y: y * distanceMultiplier)
+        } else {
+            return CGPoint(x: center.x * distanceMultiplier, y: center.y * distanceMultiplier)
+        }
     }
     
     func get2DNode() -> SKShapeNode {
@@ -145,7 +140,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
             
             label = SKLabelNode(fontNamed: "")
             label.verticalAlignmentMode = .center
-            label.text = names.randomElement()
+            label.text = name
             label.fontColor = .white
             label.position = CGPoint(x: 0, y: 40)
             label.fontSize = 20
@@ -158,18 +153,21 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
             
             shape.addChild(label)
             shape.addChild(force)
+        } else {
+            shape.position = get2DPosition()
+            label.text = name
         }
         return shape
     }
     
     func transformToChild(parentShape: SKShapeNode) {
-        isChild = true
         let randomInt32 = UInt32.random(in: 0...4294967295)
         shape.physicsBody?.isDynamic = true
         shape.physicsBody?.fieldBitMask = randomInt32
         shape.constraints = [.distance(SKRange(constantValue: 75), to: parentShape)]
         shape.run(.scale(to: 0.5, duration: 0.25))
         force.categoryBitMask = 4294967295 - randomInt32
+        isChild = true
     }
     
     func transformToParent() {
@@ -177,7 +175,6 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         shape.physicsBody?.isDynamic = false
         shape.run(.scale(to: 1, duration: 0.25))
         shape.constraints = []
-//        force.categoryBitMask = 0
     }
     
     func getPosition() -> SCNVector3 {
@@ -208,7 +205,8 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     
     // Classe abstrata pra nois
-    let names = ["teste", "teste 2", "tes teste", "Oi\ntdbem", ";)", ":)", ">:[", ":B"]
+    var x: CGFloat!
+    var y: CGFloat!
     var shape: SKShapeNode!
     var force: SKFieldNode!
     var label: SKLabelNode!
@@ -253,7 +251,6 @@ class NesteableStar: Star {
         self.child = try container.decode([Star].self, forKey: .child)
     }
     
-    
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = try encoder.container(keyedBy: Star.CodingKeys.self)
@@ -281,9 +278,7 @@ class NesteableStar: Star {
                 ret.append(contentsOf: c.getChild())
             }
         }
-        
         return ret
     }
-    
 }
 
