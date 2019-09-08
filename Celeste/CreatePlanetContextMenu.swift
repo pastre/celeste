@@ -411,7 +411,6 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         if wheelPicker == self.planetPicker{
             let imgIcon = "\(ShapeName.allCases[index])_icon"
             let img = UIImage(named: imgIcon)
-            print("Image is", imgIcon)
             return resizeImage(image: img!, newWidth: 50) ?? UIImage(named: "1")!
         }
         
