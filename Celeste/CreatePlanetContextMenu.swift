@@ -98,7 +98,7 @@ class CreatePlanetContextMenu: MenuView, SCNNodeTransformer, WheelPickerDelegate
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.layer.borderColor = UIColor.clear.cgColor
         slider.addTarget(self, action: #selector(self.onColorChanged(_:)), for: .valueChanged)
-        slider.previewView?.removeFromSuperview()
+//        slider.previewView?.removeFromSuperview()
         
         return slider
     }()
