@@ -388,10 +388,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func getHighlighterNode() -> SCNNode{
-        let geometry = SCNPyramid(width: 0.6, height: 0.8, length: 0.6)
+        let scale: CGFloat = 0.5
+        
+        let geometry = SCNPyramid(width: scale * 0.6, height: scale * 0.8, length: scale * 0.6)
         let node = SCNNode(geometry: geometry)
         
-        geometry.firstMaterial?.diffuse.contents = UIColor.purple
+        geometry.firstMaterial?.diffuse.contents = UIColor.white
         
         return node
     }
@@ -406,6 +408,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.highlighterNode = highlighter
         node.addChildNode(highlighter)
         guard let radius = node.geometry?.boundingSphere.radius else { return }
+        guard let geometry = highlighter.geometry as? SCNPyramid else { return }
         
         let rotate = SCNAction.rotateBy(x: 0, y: CGFloat.pi, z: 0, duration: 1)
         let foreverAction = SCNAction.repeatForever(rotate)
@@ -413,7 +416,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         highlighterNode?.runAction(foreverAction)
         
         highlighterNode?.eulerAngles.x = Float.pi
-        highlighterNode?.position = SCNVector3(x: 0, y: (radius + 0.85), z: 0)
+        highlighterNode?.position = SCNVector3(x: 0, y: (radius + geometry.height + 0.05), z: 0)
         
     }
     
@@ -965,4 +968,3 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     
 }
-
