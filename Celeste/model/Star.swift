@@ -141,12 +141,22 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
             shape.name = id
             shape.physicsBody = SKPhysicsBody(circleOfRadius: sizeMultiplier)
             shape.physicsBody?.isDynamic = false
-        
+            shape.physicsBody?.allowsRotation = false
+            
+            label = SKLabelNode(fontNamed: "")
+            label.verticalAlignmentMode = .center
+            label.text = names.randomElement()
+            label.fontColor = .white
+            label.position = CGPoint(x: 0, y: 40)
+            label.fontSize = 20
+            label.fontName = ""
+            
             force = SKFieldNode.radialGravityField()
             force.minimumRadius = 0
             force.strength = -0.1
             force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
             
+            shape.addChild(label)
             shape.addChild(force)
         }
         return shape
@@ -198,8 +208,10 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     
     // Classe abstrata pra nois
+    let names = ["teste", "teste 2", "tes teste", "Oi\ntdbem", ";)", ":)", ">:[", ":B"]
     var shape: SKShapeNode!
     var force: SKFieldNode!
+    var label: SKLabelNode!
     var isChild: Bool!
     var distanceMultiplier: CGFloat = 125
     var sizeMultiplier: CGFloat = 25
