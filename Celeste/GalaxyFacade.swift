@@ -49,11 +49,20 @@ class GalaxyFacade{
 //        self.galaxy
     }
     
-    func deletePlanet(with node: SCNNode){
-        
+//    func deletePlanet(with node: SCNNode){
+//        assert(node.name != "")
+//        self.galaxy.stars.removeAll { (s) -> Bool in
+//            print("Nodename", node.name, "Starid", s.id)
+//            return s.id == node.name
+//        }
+//
+//        self.persistGalaxy()
+//    }
+
+    func delete(star: Star){
         self.galaxy.stars.removeAll { (s) -> Bool in
-            print("Nodename", node.name, "Starid", s.id)
-            return s.id == node.name
+            
+            return s.id == star.id
         }
         
         self.persistGalaxy()
@@ -125,6 +134,7 @@ class GalaxyFacade{
                 break
             }
         }
+        
         self.persistGalaxy()
     }
     
