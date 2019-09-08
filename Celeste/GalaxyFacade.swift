@@ -52,10 +52,11 @@ class GalaxyFacade{
     func deletePlanet(with node: SCNNode){
         
         self.galaxy.stars.removeAll { (s) -> Bool in
-            s.id == node.name
+            print("Nodename", node.name, "Starid", s.id)
+            return s.id == node.name
         }
-        self.persistGalaxy()
         
+        self.persistGalaxy()
     }
     
     func createOrbit(around aroundNode: SCNNode, child childNode: SCNNode, with radius: CGFloat){

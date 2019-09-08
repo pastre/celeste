@@ -42,7 +42,7 @@ class AppMenu: MenuView {
         aboutOption.heightAnchor.constraint(equalTo: mapOption.heightAnchor).isActive = true
         helpOption.heightAnchor.constraint(equalTo: mapOption.heightAnchor).isActive = true
         
-        mapOption.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        mapOption.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.92).isActive = true
         aboutOption.widthAnchor.constraint(equalTo: mapOption.widthAnchor).isActive = true
         helpOption.widthAnchor.constraint(equalTo: mapOption.widthAnchor).isActive = true
         
@@ -54,8 +54,8 @@ class AppMenu: MenuView {
         
         helpOption.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        aboutOption.topAnchor.constraint(equalTo: mapOption.bottomAnchor, constant: 20).isActive = true
-        aboutOption.bottomAnchor.constraint(equalTo: helpOption.topAnchor, constant: -20).isActive = true
+        aboutOption.topAnchor.constraint(equalTo: mapOption.bottomAnchor, constant: 10).isActive = true
+        aboutOption.bottomAnchor.constraint(equalTo: helpOption.topAnchor, constant: -10).isActive = true
         
         return view
     }
