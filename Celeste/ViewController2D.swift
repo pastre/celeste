@@ -102,6 +102,11 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     
     @IBAction func rotationGesture(_ sender: UIRotationGestureRecognizer) {
         scene.camera!.zRotation += sender.rotation
+        for (_, planet) in scene.planets {
+            planet.label.zRotation += sender.rotation
+            planet.label.position.x = -40 * CGFloat(sin(scene.camera!.zRotation))
+            planet.label.position.y = 40 * CGFloat(cos(planet.label.zRotation))
+        }
         sender.rotation = 0
     }
     

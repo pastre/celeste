@@ -31,6 +31,7 @@ class Scene2D: SKScene {
     }
     
     override func didMove(to view: SKView) {
+        updateStars()
         let camera = SKCameraNode()
         self.camera = camera
         let stars = GalaxyFacade.instance.galaxy.stars!
@@ -45,7 +46,6 @@ class Scene2D: SKScene {
         physicsWorld.gravity = .zero
         maximumDistanceToOrbit = distanceBetweenStars * 2
 //        GalaxyFacade.instance.galaxy.stars = []
-        updateStars()
     }
 
     
