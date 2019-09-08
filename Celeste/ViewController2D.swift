@@ -18,10 +18,41 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     var scene: Scene2D!
     var lastPosition = CGPoint()
     
-//    let backButton: UIView {
-//        
-//    }
-//    
+    lazy var backButton: UIView = {
+        let view = UIView()
+        let imageView = UIImageView(image: UIImage(named: "menu"))
+        let label = UILabel()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.onBackButton))
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.backgroundColor = UIColor.clear
+//        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        label.text = "Back"
+        label.textColor = UIColor.white
+        
+        view.addGestureRecognizer(tap)
+        view.addSubview(imageView)
+        view.addSubview(label)
+        
+        imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
+        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 8/13).isActive = true
+        
+        label.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 5).isActive = true
+        label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -5).isActive = true
+        
+        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        label.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.8).isActive = true
+        
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -47,6 +78,22 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
 //        skview.showsFPS = true
         
 //        skview.isMultipleTouchEnabled = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        self.setupBackButton()
+    }
+    
+    func setupBackButton(){
+        self.view.addSubview(self.backButton)
+        
+        self.backButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant:  40).isActive = true
+        self.backButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.backButton.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.03).isActive = true
+        self.backButton.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.25).isActive = true
+        
+        self.backButton.layer.cornerRadius = self.backButton.frame.height / 2
+        
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -100,4 +147,8 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
 //        return UIRectEdge.all
 //    }
 
+    
+    @objc func onBackButton(_ sender: UIButton){
+        self.dismiss(animated: true, completion: nil)
+    }
 }

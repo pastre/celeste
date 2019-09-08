@@ -319,8 +319,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.view.addSubview(menu)
         
-        menu.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.32).isActive = true
-        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.1).isActive = true
+        menu.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.34).isActive = true
+        menu.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.13).isActive = true
         
         menu.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 80).isActive = true
         menu.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true

@@ -24,7 +24,7 @@ class Scene2D: SKScene {
     var lastTouch: UITouch!
     var tempConstraints: [SKConstraint]!
     var starsShapes: [SKShapeNode] = []
-    var planets: [String: Planet] = [:]
+    var planets: [String: Planet]! = [:]
     
     func setViewController(viewController: ViewController2D){
         self.viewController = viewController
@@ -47,6 +47,7 @@ class Scene2D: SKScene {
 //        GalaxyFacade.instance.galaxy.stars = []
         updateStars()
     }
+
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let point = touches.first!.location(in: self)
