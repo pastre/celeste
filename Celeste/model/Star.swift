@@ -129,29 +129,45 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     
     func get2DPosition() -> CGPoint {
-        return CGPoint(x: center.x, y: center.y)
+        return CGPoint(x: center.x * distanceMultiplier, y: center.y * distanceMultiplier)
     }
     
     func get2DNode() -> SKShapeNode {
-        shape = SKShapeNode(circleOfRadius: radius * multiplier)
-        shape.position = get2DPosition()
-        shape.strokeColor = color
-        shape.fillColor = color
-        shape.name = id
+        if shape == nil {
+            shape = SKShapeNode(circleOfRadius: sizeMultiplier)
+            shape.position = get2DPosition()
+            shape.strokeColor = color
+            shape.fillColor = color
+            shape.name = id
+            shape.physicsBody = SKPhysicsBody(circleOfRadius: sizeMultiplier)
+            shape.physicsBody?.isDynamic = false
         
-        let randomInt32 = UInt32.random(in: 0...4294967295)
-        shape.physicsBody = SKPhysicsBody(circleOfRadius: radius * multiplier)
-        shape.physicsBody?.fieldBitMask = randomInt32
-        shape.physicsBody?.mass = 1
-        
-        force = SKFieldNode.radialGravityField()
-        force.minimumRadius = 0
-        force.strength = -0.1
-        force.categoryBitMask = 4294967295 - randomInt32
-        force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
-        shape.addChild(force)
-        
+            force = SKFieldNode.radialGravityField()
+            force.minimumRadius = 0
+            force.strength = -0.1
+            force.constraints = [.distance(SKRange(constantValue: 0), to: shape)]
+            
+            shape.addChild(force)
+        }
         return shape
+    }
+    
+    func transformToChild(parentShape: SKShapeNode) {
+        isChild = true
+        let randomInt32 = UInt32.random(in: 0...4294967295)
+        shape.physicsBody?.isDynamic = true
+        shape.physicsBody?.fieldBitMask = randomInt32
+        shape.constraints = [.distance(SKRange(constantValue: 75), to: parentShape)]
+        shape.run(.scale(to: 0.5, duration: 0.25))
+        force.categoryBitMask = 4294967295 - randomInt32
+    }
+    
+    func transformToParent() {
+        isChild = false
+        shape.physicsBody?.isDynamic = false
+        shape.run(.scale(to: 1, duration: 0.25))
+        shape.constraints = []
+//        force.categoryBitMask = 0
     }
     
     func getPosition() -> SCNVector3 {
@@ -185,7 +201,8 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     var shape: SKShapeNode!
     var force: SKFieldNode!
     var isChild: Bool!
-    var multiplier: CGFloat = 50
+    var distanceMultiplier: CGFloat = 125
+    var sizeMultiplier: CGFloat = 25
     var radius: CGFloat!
     var center: Point!
     var color: UIColor!

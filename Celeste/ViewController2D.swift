@@ -88,8 +88,12 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         return true
     }
     
-    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
-        return UIRectEdge.all
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
     }
+    
+//    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+//        return UIRectEdge.all
+//    }
 
 }
