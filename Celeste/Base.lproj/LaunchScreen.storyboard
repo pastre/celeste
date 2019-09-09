@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -10,11 +14,40 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    <view key="view" contentMode="scaleToFill" id="8rr-Pa-huD">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_background" translatesAutoresizingMaskIntoConstraints="NO" id="AP6-ZZ-2N0">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Space for your space." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ttf-eE-LYu" userLabel="loading_label">
+                                <rect key="frame" x="79.5" y="309" width="255" height="33.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="28"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_planet" translatesAutoresizingMaskIntoConstraints="NO" id="nIg-IX-HLT" userLabel="loading_image">
+                                <rect key="frame" x="2" y="392.5" width="410" height="111"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="111" id="ure-wH-VG6"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="nIg-IX-HLT" firstAttribute="width" secondItem="8rr-Pa-huD" secondAttribute="height" multiplier="80:33" constant="-1762.121212121212" id="9Ii-LW-59s"/>
+                            <constraint firstItem="nIg-IX-HLT" firstAttribute="centerX" secondItem="8rr-Pa-huD" secondAttribute="centerX" id="9f0-zL-PFe"/>
+                            <constraint firstItem="nIg-IX-HLT" firstAttribute="centerY" secondItem="AP6-ZZ-2N0" secondAttribute="centerY" id="DaF-nk-p2v"/>
+                            <constraint firstItem="nIg-IX-HLT" firstAttribute="top" secondItem="ttf-eE-LYu" secondAttribute="bottom" constant="50" id="Gd1-nZ-Q2A"/>
+                            <constraint firstItem="AP6-ZZ-2N0" firstAttribute="height" secondItem="8rr-Pa-huD" secondAttribute="height" id="LcG-zh-6u3"/>
+                            <constraint firstItem="AP6-ZZ-2N0" firstAttribute="width" secondItem="8rr-Pa-huD" secondAttribute="width" id="P0c-6C-opO"/>
+                            <constraint firstItem="AP6-ZZ-2N0" firstAttribute="centerX" secondItem="8rr-Pa-huD" secondAttribute="centerX" id="aOe-M6-L4u"/>
+                            <constraint firstItem="ttf-eE-LYu" firstAttribute="centerX" secondItem="8rr-Pa-huD" secondAttribute="centerX" id="m79-vX-RZa"/>
+                            <constraint firstItem="AP6-ZZ-2N0" firstAttribute="centerY" secondItem="8rr-Pa-huD" secondAttribute="centerY" id="z8k-Rs-tOe"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="vpQ-Sm-xGG"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -22,4 +55,8 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="loading_background" width="414" height="896"/>
+        <image name="loading_planet" width="112" height="112"/>
+    </resources>
 </document>
