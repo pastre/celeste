@@ -65,19 +65,14 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         panGesture.minimumNumberOfTouches = 2
         panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
-//        panGesture.isEnabled = false
-        
         pinchGesture.delegate = self
-//        pinchGesture.isEnabled = false
-        
         rotationGesture.delegate = self
-//        rotationGesture.isEnabled = false
         
-//        skview.showsFields = true
-//        skview.showsPhysics = true
-//        skview.showsFPS = true
-        
-//        skview.isMultipleTouchEnabled = true
+        scene.updateStars()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        scene.removeAllChildren()
     }
     
     override func viewDidLayoutSubviews() {
@@ -102,6 +97,11 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
     
     @IBAction func rotationGesture(_ sender: UIRotationGestureRecognizer) {
         scene.camera!.zRotation += sender.rotation
+        for (_, planet) in scene.planets {
+            planet.label.zRotation += sender.rotation
+            planet.label.position.x = -40 * CGFloat(sin(scene.camera!.zRotation))
+            planet.label.position.y = 40 * CGFloat(cos(planet.label.zRotation))
+        }
         sender.rotation = 0
     }
     

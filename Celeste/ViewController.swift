@@ -12,7 +12,9 @@ import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, UITextViewDelegate, AppMenuDelegate {
     
+    @IBOutlet weak var loadingView: UIView!
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet weak var loadingImage: UIImageView!
     
     let sessionInfoView: UIView! = {
         let view = UIView()
@@ -36,13 +38,44 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
+    
+    var timer: Timer?
+    func animateLoadingScreen(){
+//        let images = ["loading_brain", "loading_lamp", "loading_planet", "loading_venus", "loading_teapot"]
+//        var currentIndex: Int = 0 {
+//            didSet{
+//                if currentIndex >= images.count {
+//                    currentIndex = 0
+//                }
+//            }
+//        }
+//        let duration: TimeInterval =  1.2
+//        DispatchQueue.main.async {
+//            self.timer = Timer.scheduledTimer(withTimeInterval: duration + 0.2 , repeats: true) { (_) in
+//                UIView.animate(withDuration: duration/2, animations: {
+//                    self.loadingImage.transform = self.loadingImage.transform.scaledBy(x: 0.1, y: 0.1)
+//                }, completion: { (_) in
+//                    self.loadingImage.image = UIImage(named: images[currentIndex])
+//                    UIView.animate(withDuration: duration/2, animations: {
+//                        self.loadingImage.transform = self.loadingImage.transform.scaledBy(x: 10, y: 10)
+//                    }, completion: { (_) in
+////                        UIView.animate(withDuration: duration/3, animations: {
+////                            self.loadingImage.transform = .identity
+////                        })
+//                    currentIndex  += 1
+//                    })
+//                })
+//            }
+//        }
+    }
+    
     // Mark: - Constants
     
     let createPlanetContextMenu = CreatePlanetContextMenu.instance
     let appMenu = AppMenu.instance
     
 //    let orbitContextMenu = OrbitContextMenu.instance
-    lazy var galaxy: Galaxy = self.galaxyFacade.galaxy
+    
     let galaxyFacade = GalaxyFacade.instance
 
     // MARK: - Gestures
@@ -63,32 +96,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     
-    func getOption(imageView: UIImageView, action selector: Selector, mult: CGFloat = 1, heightMult: CGFloat = 0.8, rightMargin: CGFloat = 40) -> UIView{
-        
-        let tapGesture = UITapGestureRecognizer()
-        let buttonView = UIView()
-        
-        tapGesture.addTarget(self, action: selector)
-        
-        buttonView.addGestureRecognizer(tapGesture)
-        buttonView.clipsToBounds = true
-        buttonView.translatesAutoresizingMaskIntoConstraints = false
-        buttonView.layer.cornerRadius = buttonView.frame.height / 2
-        buttonView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.isUserInteractionEnabled = true
-        
-        buttonView.addSubview(imageView)
-        
-        imageView.heightAnchor.constraint(equalTo: buttonView.heightAnchor, multiplier: heightMult).isActive = true
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: mult).isActive = true
-        
-        imageView.rightAnchor.constraint(equalTo: buttonView.leftAnchor, constant: rightMargin).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor).isActive = true
-        
-        return buttonView
-    }
+
     
     lazy var appMenuButton: UIView = self.getOption(imageView: UIImageView(image: UIImage(named: "menu")), action: #selector(self.onAppMenu), mult: 8/13, heightMult: 0.5, rightMargin: 20)
     
@@ -108,6 +116,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 self.isMovingNode = false
             } else {
                 self.isMovingNode = true
+                if self.currentSelectedStar?.parent == nil{
+                    
+                    self.sceneView.pointOfView?.addChildNode(self.currentSelectedStar!)
+                }
             }
         }
     }
@@ -122,12 +134,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     var hasDeleted = false
+    var hasLoaded = false
 
 
     // MARK: - UIViewController overrides
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.animateLoadingScreen()
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -147,13 +161,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         // Set the scene to the view
         sceneView.scene = scene
         
-        self.contextMenuGesture.delegate = self
-        self.createPlanetContextMenu.currentParent = self
-        self.createPlanetContextMenu.delegate = self
-        self.appMenu.delegate = self
-        self.tapGesture.delegate = self
-        
-        
         self.tapGesture.name = "TapGesture"
 //        contextMenuGesture.shouldRequireFailure(of: tapGesture)
         
@@ -161,18 +168,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.view.addGestureRecognizer(tapGesture)
         
         self.contextMenuGesture.cancelsTouchesInView = false
-        self.modalPresentationStyle = .overCurrentContext
         
         contextMenuGesture.require(toFail: tapGesture)
+        
+        animateLoadingScreen()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.resetTracking()
-        
-        
-        self.enableAllOrbits()
-        
     }
     
     
@@ -194,9 +197,27 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     override func viewDidAppear(_ animated: Bool) {
         
-        for star in self.galaxy.stars{
+        
+        self.contextMenuGesture.delegate = self
+        self.createPlanetContextMenu.currentParent = self
+        self.createPlanetContextMenu.delegate = self
+        self.appMenu.delegate = self
+        self.tapGesture.delegate = self
+
+        for star in self.galaxyFacade.galaxy.stars{
             let node = star.getNode()
             self.sceneView.scene.rootNode.addChildNode(node)
+            self.applyPlanetName(name: star.name, to: node)
+        }
+        
+        self.resetTracking()
+        self.enableAllOrbits()
+
+        
+        self.timer?.invalidate()
+        if !self.hasLoaded{
+            self.loadingView.removeFromSuperview()
+            self.hasLoaded = true
         }
     }
     
@@ -204,6 +225,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         super.viewWillDisappear(animated)
         
         // Pause the view's session
+        
+    }
+    
+    deinit {
+        
         sceneView.session.pause()
     }
     
@@ -245,6 +271,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
     
     // MARK: - OnScreen UI menu methods
+    
+    func getOption(imageView: UIImageView, action selector: Selector, mult: CGFloat = 1, heightMult: CGFloat = 0.8, rightMargin: CGFloat = 40) -> UIView{
+        
+        let tapGesture = UITapGestureRecognizer()
+        let buttonView = UIView()
+        
+        tapGesture.addTarget(self, action: selector)
+        
+        buttonView.addGestureRecognizer(tapGesture)
+        buttonView.clipsToBounds = true
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        buttonView.layer.cornerRadius = buttonView.frame.height / 2
+        buttonView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        
+        buttonView.addSubview(imageView)
+        
+        imageView.heightAnchor.constraint(equalTo: buttonView.heightAnchor, multiplier: heightMult).isActive = true
+        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: mult).isActive = true
+        
+        imageView.rightAnchor.constraint(equalTo: buttonView.leftAnchor, constant: rightMargin).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor).isActive = true
+        
+        return buttonView
+    }
     
     func hideMenus(){
         
@@ -341,8 +394,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.addPlanetButton.layer.cornerRadius = self.addPlanetButton.frame.height / 2
         self.addPlanetButton.clipsToBounds = true
-        
-        print("Frame size is", self.addPlanetButton.frame.height)
         
         self.addPlanetButton.setNeedsLayout()
         self.addPlanetButton.setNeedsDisplay()
@@ -481,9 +532,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
                 
                 self.createPlanetContextMenu.isDirty = false
                 //                self.createPlanetContextMenu.setDefaults()
-            } else {
-                
             }
+            
             
             self.sceneView.scene.rootNode.addChildNode(newStar)
             newStar.setWorldTransform(transform)
@@ -493,11 +543,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.clearHighlight()
             self.applyPlanetName(name: self.createPlanetContextMenu.currentName, to: newStar)
             
-            if self.hasDeleted {
-                self.hasDeleted = false
-            } else {
-                self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription)
-            }
+            self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription, color: self.createPlanetContextMenu.currentColor, shape: self.createPlanetContextMenu.currentShape)
             
         }
         
@@ -521,7 +567,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             self.createOrbit(around: test.node, child: star, radius: 0.02)
             
             if test.node.name == "sphere"{
-                guard let node = self.galaxy.getStar(by: test.node.position)?.getNode() else { return }
+                guard let node = self.galaxyFacade.galaxy.getStar(by: test.node.position)?.getNode() else { return }
                 self.galaxyFacade.createOrbit(around: node, child: star, with: 0.02)
             } else {
                 self.galaxyFacade.createOrbit(around: test.node, child: star, with: 0.02)
@@ -559,13 +605,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func disableOrbit(of node: SCNNode){
-        node.removeAllActions()
+        guard let inclinator = node.childNode(withName: "inclinator", recursively: true) else { return }
+        guard let orbiter = node.childNode(withName: "rotator", recursively: true)?.childNodes.first else { return }
+        let worldPos = orbiter.worldPosition
+        
+        orbiter.removeFromParentNode()
+        self.sceneView.scene.rootNode.addChildNode(orbiter)
+        orbiter.worldPosition = worldPos
+        
+        inclinator.removeFromParentNode()
+        
     }
+    
     
     func enableAllOrbits(){
         var orbitingNodes = [SCNNode]()
         
-        for star in self.galaxy.stars{
+        for star in self.galaxyFacade.galaxy.stars{
             if let planet = star as? Planet{
                 print("ASPLANET BRO")
                 guard let parentNode = self.getNode(star: planet) else {
@@ -666,7 +722,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         self.clearHighlight()
         
-        self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription)
+        self.galaxyFacade.sync(node: newStar, name: self.createPlanetContextMenu.currentName, description: self.createPlanetContextMenu.currentDescription, color: self.createPlanetContextMenu.currentColor, shape: self.createPlanetContextMenu.currentShape)
         
         self.applyPlanetName(name: self.createPlanetContextMenu.currentName, to: newStar)
     }
@@ -755,57 +811,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func onSave(_ star: Star?){
+//        self.
         if let s  = star {
             self.resetPosition(of: s)
         } else {
             self.moveNodeFromCamera()
         }
         
-        
+//        self.galaxyFacade.sync(node: <#T##SCNNode#>, name: <#T##String?#>, description: <#T##String?#>)
         self.closeAddPlanetMenu()
     }
     
     func onDelete(star: Star) {
-        self.galaxyFacade.deletePlanet(with: self.currentSelectedStar!)
+//        self.galaxyFacade.deletePlanet(with: self.tappedNode!)
+        self.galaxyFacade.delete(star: star)
         self.currentSelectedStar?.removeFromParentNode()
         self.currentSelectedStar = nil
         self.closeAddPlanetMenu()
     }
     
     
-    // MARK: - PlanetContextMenuDelegate methods
-    func onEdit() {
-        defer { self.hideUIContextMenu()}
-        print("Mostrei!")
-    }
-    
-    func onOrbit(source node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Orbit!")
-        
-    }
-    
-    func onCopy() {
-        defer { self.hideUIContextMenu()}
-        print("Copy!")
-        
-    }
-    
-    func onDelete(node: SCNNode) {
-        defer { self.hideUIContextMenu()}
-        print("Delete!")
-        //        self.hideContextMenu()
-        //        assert(self.currentSelectedStar != nil)
-        self.hasDeleted = true
-        self.galaxyFacade.deletePlanet(with: node)
-        node.removeFromParentNode()
-        //         = nil
-    }
-    
-    func onEnded() {
-        defer { self.hideUIContextMenu()}
-        print("Ended!")
-    }
     
 
     
@@ -841,7 +866,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
             } else  if !self.contextMenuGesture.hasTriggered{
                 self.tappedNode = hit.node
                 
-                let star = self.galaxy.getStar(by: hit.node)
+                let star = self.galaxyFacade.galaxy.getStar(by: hit.node)
                 self.createPlanetContextMenu.currentStar = star
                 
                 self.selectedNodePreviousWorldPosition = hit.node.worldPosition
@@ -921,15 +946,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         
         return true
     }
-    
-    func onChangeMode() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        
-        let vc = storyboard.instantiateViewController(withIdentifier: "2d")
-        
-        self.present(vc, animated: true, completion: nil)
-        
-    }
+
     
     // MARK: - ARState methods
     
@@ -966,5 +983,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     
-    
+    func onChangeMode() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let vc = storyboard.instantiateViewController(withIdentifier: "2d")
+        
+        self.present(vc, animated: true, completion: {
+            for i in self.sceneView.scene.rootNode.childNodes{
+                if i == self.currentSelectedStar { continue }
+                if i == self.tappedNode { continue }
+                if i == self.sceneView.pointOfView { continue }
+                
+                i.removeFromParentNode()
+            }
+        })
+        
+        self.closeAddPlanetMenu()
+    }
 }

@@ -75,7 +75,6 @@
 		D7781B6223241DA6008ACF8B /* ARCalibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCalibration.swift; sourceTree = "<group>"; };
 		D7781B64232424CA008ACF8B /* AppMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMenu.swift; sourceTree = "<group>"; };
 		D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetDetailViewController.swift; sourceTree = "<group>"; };
-		D7AB3576232592CF00DA7566 /* lampupd.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = lampupd.scn; sourceTree = "<group>"; };
 		D7BA9ACD230D8D54003ECAAD /* Orbit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orbit.swift; sourceTree = "<group>"; };
 		D7BA9ACF230D8D9C003ECAAD /* Planet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planet.swift; sourceTree = "<group>"; };
 		D7D651602307553C00815B15 /* CreatePlanetContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePlanetContextMenu.swift; sourceTree = "<group>"; };
@@ -142,7 +141,6 @@
 				D7781B6223241DA6008ACF8B /* ARCalibration.swift */,
 				D7FE3B2223145E8900532024 /* PlanetTextureProvider.swift */,
 				D7E032BF231DE4FF00103473 /* GalaxyFacade.swift */,
-				D7AB3576232592CF00DA7566 /* lampupd.scn */,
 				D7E032C1231DE54400103473 /* StorageFacade.swift */,
 				D79B1113231D9E6C004360F2 /* PlanetDetailViewController.swift */,
 				D7E27E91231ED6120085CB67 /* stars.scnp */,

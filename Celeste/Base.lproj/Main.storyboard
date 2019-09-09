@@ -22,17 +22,56 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <gestureRecognizers/>
                             </arscnView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="36m-BN-upH">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_background" translatesAutoresizingMaskIntoConstraints="NO" id="TvH-EF-huL">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Space for your space." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lFE-LW-d25" userLabel="loading_label">
+                                        <rect key="frame" x="79.5" y="309" width="255" height="33.5"/>
+                                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="28"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_planet" translatesAutoresizingMaskIntoConstraints="NO" id="lWx-40-wBv" userLabel="loading_image">
+                                        <rect key="frame" x="2" y="392.5" width="410" height="111"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="111" id="awC-9q-zmn"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="lFE-LW-d25" firstAttribute="centerX" secondItem="36m-BN-upH" secondAttribute="centerX" id="0un-Jy-53F"/>
+                                    <constraint firstItem="lWx-40-wBv" firstAttribute="centerY" secondItem="TvH-EF-huL" secondAttribute="centerY" id="4h1-M7-tmE"/>
+                                    <constraint firstItem="TvH-EF-huL" firstAttribute="centerX" secondItem="36m-BN-upH" secondAttribute="centerX" id="AX8-wa-ioE"/>
+                                    <constraint firstItem="TvH-EF-huL" firstAttribute="height" secondItem="36m-BN-upH" secondAttribute="height" id="IKg-dq-1Og"/>
+                                    <constraint firstItem="TvH-EF-huL" firstAttribute="width" secondItem="36m-BN-upH" secondAttribute="width" id="LPd-sg-LhH"/>
+                                    <constraint firstItem="lWx-40-wBv" firstAttribute="centerX" secondItem="36m-BN-upH" secondAttribute="centerX" id="V7H-ZZ-9ab"/>
+                                    <constraint firstItem="lWx-40-wBv" firstAttribute="width" secondItem="36m-BN-upH" secondAttribute="height" multiplier="80:33" constant="-1762.121212121212" id="kLv-hh-vra"/>
+                                    <constraint firstItem="lWx-40-wBv" firstAttribute="top" secondItem="lFE-LW-d25" secondAttribute="bottom" constant="50" id="vl4-zd-AWC"/>
+                                    <constraint firstItem="TvH-EF-huL" firstAttribute="centerY" secondItem="36m-BN-upH" secondAttribute="centerY" id="zL0-MC-pZY"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="36m-BN-upH" firstAttribute="height" secondItem="BrB-h1-WRS" secondAttribute="height" id="8Fc-lJ-cDQ"/>
+                            <constraint firstItem="36m-BN-upH" firstAttribute="centerX" secondItem="BrB-h1-WRS" secondAttribute="centerX" id="BiZ-6N-HDF"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
+                            <constraint firstItem="36m-BN-upH" firstAttribute="centerY" secondItem="BrB-h1-WRS" secondAttribute="centerY" id="MiK-VE-9Eu"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="U0K-SW-4ec" secondAttribute="bottom" id="VpT-BR-CcM"/>
+                            <constraint firstItem="36m-BN-upH" firstAttribute="width" secondItem="BrB-h1-WRS" secondAttribute="width" id="X4B-Kd-nO0"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                     </view>
                     <connections>
+                        <outlet property="loadingImage" destination="lWx-40-wBv" id="sQK-fT-wdb"/>
+                        <outlet property="loadingView" destination="36m-BN-upH" id="beI-Zy-XyT"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
                     </connections>
                 </viewController>
@@ -94,4 +133,8 @@
             <point key="canvasLocation" x="1830" y="19"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="loading_background" width="414" height="896"/>
+        <image name="loading_planet" width="112" height="112"/>
+    </resources>
 </document>

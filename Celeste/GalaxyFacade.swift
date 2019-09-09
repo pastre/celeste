@@ -49,14 +49,27 @@ class GalaxyFacade{
 //        self.galaxy
     }
     
-    func deletePlanet(with node: SCNNode){
-        
+//    func deletePlanet(with node: SCNNode){
+//        assert(node.name != "")
+//        self.galaxy.stars.removeAll { (s) -> Bool in
+//            print("Nodename", node.name, "Starid", s.id)
+//            return s.id == node.name
+//        }
+//
+//        self.persistGalaxy()
+//    }
+
+    func delete(star: Star){
         self.galaxy.stars.removeAll { (s) -> Bool in
-            print("Nodename", node.name, "Starid", s.id)
-            return s.id == node.name
+            
+            return s.id == star.id
         }
         
         self.persistGalaxy()
+    }
+    
+    func reloadAllOrbits(){
+        
     }
     
     func createOrbit(around aroundNode: SCNNode, child childNode: SCNNode, with radius: CGFloat){
@@ -101,31 +114,42 @@ class GalaxyFacade{
         }
     }
     
-    func sync(node: SCNNode, name newName: String?, description newDescription : String?){
+    func sync(node: SCNNode, name newName: String?, description newDescription : String?, color newColor: UIColor?, shape newShape: ShapeName?){
         guard let nodeStar = self.galaxy.getStar(by: node) else {
-            print("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
+//            fatalError("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
             return
         }
         
-        print("NODE HAS ACTIONS", node.hasActions)
-        
-        for star in self.galaxy.stars{
-            if star == nodeStar{
+        for (i, star) in self.galaxy.stars.enumerated(){
+            if star.id == node.name{
                 
-                star.center = Point(position: node.position)
-                star.scale = node.scale.x
+                self.galaxy.stars[i].center = Point(position: node.position)
+                self.galaxy.stars[i].scale = node.scale.x
+                
+                if let color = newColor{
+                    self.galaxy.stars[i].color = color
+                }
+                
+                if let shape = newShape{
+                    self.galaxy.stars[i].shapeName = shape
+                }
                 
                 if let name = newName{
-                    star.name = name
+                    self.galaxy.stars[i].name = name
                 }
                 
                 if let description = newDescription {
-                    star.planetDescription = description
+                    self.galaxy.stars[i].planetDescription = description
                 }
+                print("[NAMED] ", newName ??  "noname", newDescription ?? "nodesc")
+                
+                print("[GALAXYFACADE] SYNCD ", star.id)
+                
+                self.persistGalaxy()
                 break
             }
         }
-        self.persistGalaxy()
+        
     }
     
     func updateOrbit(of node: SCNNode){
@@ -146,6 +170,10 @@ class GalaxyFacade{
     
     func persistGalaxy(){
         self.storage.updateGalaxy(to: self.galaxy)
+        self.galaxy = self.storage.getGalaxy()!
+    }
+    
+    func forceSync(from scene: SCNNode){
         
     }
 }

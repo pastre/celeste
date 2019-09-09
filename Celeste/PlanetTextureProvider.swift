@@ -42,7 +42,9 @@ enum ShapeName: String, CaseIterable{
     case microondas = "microondas"
     case cone = "cone"
     case monkey = "monkey"
-    case tubarao = "tubarao"
+//    case tubarao = "tubarao"
+    case lamp = "lamp"
+    case satellite = "satellite"
     
     static func getShapeName(by string: String) -> ShapeName?{
         for i in ShapeName.allCases{
@@ -73,7 +75,9 @@ let kTEXTURE_TO_SHAPE = [
     ShapeName.microondas:  "microondas",
     ShapeName.cone: "cone",
     ShapeName.monkey: "monkey",
-    ShapeName.tubarao: "tubarao",
+//    ShapeName.tubarao: "tubarao",
+    ShapeName.lamp: "lamp",
+    ShapeName.satellite : "satellite"
 //    ShapeName.venus : "sphere",
 ]
 
@@ -106,7 +110,7 @@ class PlanetTextureProvider{
         
         print("\t-> Model Texture is", modelTexture)
 //        let maskedTexture = uiColor == nil ? modelTexture : modelTexture.maskWithColor(color: uiColor!)
-        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true) as? SCNNode else { return nil }
+        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true) else { return nil }
         
         
         
