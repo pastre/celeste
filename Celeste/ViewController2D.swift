@@ -67,6 +67,8 @@ class ViewController2D: UIViewController, UIGestureRecognizerDelegate {
         panGesture.delegate = self
         pinchGesture.delegate = self
         rotationGesture.delegate = self
+        
+        scene.updateStars()
     }
     
     override func viewDidDisappear(_ animated: Bool) {

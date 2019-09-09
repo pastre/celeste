@@ -116,7 +116,7 @@ class GalaxyFacade{
     
     func sync(node: SCNNode, name newName: String?, description newDescription : String?, color newColor: UIColor?, shape newShape: ShapeName?){
         guard let nodeStar = self.galaxy.getStar(by: node) else {
-            fatalError("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
+//            fatalError("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
             return
         }
         
@@ -141,6 +141,7 @@ class GalaxyFacade{
                 if let description = newDescription {
                     self.galaxy.stars[i].planetDescription = description
                 }
+                print("[NAMED] ", newName ??  "noname", newDescription ?? "nodesc")
                 
                 print("[GALAXYFACADE] SYNCD ", star.id)
                 
