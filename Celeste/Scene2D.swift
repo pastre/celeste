@@ -162,6 +162,10 @@ class Scene2D: SKScene {
     }
     
     func updateStars() {
+        for child in self.children{
+            if child == self.camera { continue }
+            child.removeFromParent()
+        }
         for star in GalaxyFacade.instance.galaxy.stars {
             let planet = star as! Planet
             planet.isChild = false
