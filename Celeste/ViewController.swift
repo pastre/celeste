@@ -12,7 +12,9 @@ import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, ContextMenuGestureDelegate, ContextMenuDelegate, UITextViewDelegate, AppMenuDelegate {
     
+    @IBOutlet weak var loadingView: UIView!
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet weak var loadingImage: UIImageView!
     
     let sessionInfoView: UIView! = {
         let view = UIView()
@@ -34,6 +36,37 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         didSet{
             self.sessionInfoView.isHidden =  self.sessionInfoLabel.text == ""
         }
+    }
+    
+    
+    var timer: Timer?
+    func animateLoadingScreen(){
+//        let images = ["loading_brain", "loading_lamp", "loading_planet", "loading_venus", "loading_teapot"]
+//        var currentIndex: Int = 0 {
+//            didSet{
+//                if currentIndex >= images.count {
+//                    currentIndex = 0
+//                }
+//            }
+//        }
+//        let duration: TimeInterval =  1.2
+//        DispatchQueue.main.async {
+//            self.timer = Timer.scheduledTimer(withTimeInterval: duration + 0.2 , repeats: true) { (_) in
+//                UIView.animate(withDuration: duration/2, animations: {
+//                    self.loadingImage.transform = self.loadingImage.transform.scaledBy(x: 0.1, y: 0.1)
+//                }, completion: { (_) in
+//                    self.loadingImage.image = UIImage(named: images[currentIndex])
+//                    UIView.animate(withDuration: duration/2, animations: {
+//                        self.loadingImage.transform = self.loadingImage.transform.scaledBy(x: 10, y: 10)
+//                    }, completion: { (_) in
+////                        UIView.animate(withDuration: duration/3, animations: {
+////                            self.loadingImage.transform = .identity
+////                        })
+//                    currentIndex  += 1
+//                    })
+//                })
+//            }
+//        }
     }
     
     // Mark: - Constants
@@ -107,6 +140,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.animateLoadingScreen()
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -135,6 +169,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.contextMenuGesture.cancelsTouchesInView = false
         
         contextMenuGesture.require(toFail: tapGesture)
+        
+        animateLoadingScreen()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -177,6 +213,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         self.enableAllOrbits()
 
         
+        self.timer?.invalidate()
+        self.loadingView.removeFromSuperview()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
