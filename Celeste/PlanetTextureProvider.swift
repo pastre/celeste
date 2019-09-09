@@ -45,6 +45,8 @@ enum ShapeName: String, CaseIterable{
 //    case tubarao = "tubarao"
     case lamp = "lamp"
     case satellite = "satellite"
+    case meteor = "meteor"
+    case trophy = "trophy"
     
     static func getShapeName(by string: String) -> ShapeName?{
         for i in ShapeName.allCases{
@@ -77,7 +79,9 @@ let kTEXTURE_TO_SHAPE = [
     ShapeName.monkey: "monkey",
 //    ShapeName.tubarao: "tubarao",
     ShapeName.lamp: "lamp",
-    ShapeName.satellite : "satellite"
+    ShapeName.satellite : "satellite",
+    ShapeName.meteor: "meteor",
+    ShapeName.trophy: "trophy",
 //    ShapeName.venus : "sphere",
 ]
 
