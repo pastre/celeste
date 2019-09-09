@@ -39,16 +39,14 @@ class StorageFacade{
             let star = galaxy.stars[i]
             let planet = Planet(from: star)
             
-            print(planetDict)
-            
             if let orbits = planetDict["orbits"] as? NSArray{
                 let orbitsData = try! JSONSerialization.data(withJSONObject: orbits, options: [])
                 let newOrbits = try! JSONDecoder().decode([Orbit].self, from: orbitsData)
                 
                 planet.orbits = newOrbits
-                print("AE")
+                
             } else {
-                print("NUL")
+                
                 planet.orbits = nil
             }
             
@@ -63,7 +61,6 @@ class StorageFacade{
         let truePlanets = [Planet]()
         
         
-        print("TA VAZIO?", truePlanets.isEmpty)
         return Galaxy(stars: truePlanets)
         
         

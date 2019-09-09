@@ -114,25 +114,36 @@ class GalaxyFacade{
         }
     }
     
-    func sync(node: SCNNode, name newName: String?, description newDescription : String?){
+    func sync(node: SCNNode, name newName: String?, description newDescription : String?, color newColor: UIColor?, shape newShape: ShapeName?){
         guard let nodeStar = self.galaxy.getStar(by: node) else {
             fatalError("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
             return
         }
         
-        for star in self.galaxy.stars{
-            if star == nodeStar{
+        for (i, star) in self.galaxy.stars.enumerated(){
+            if star.id == node.name{
                 
-                star.center = Point(position: node.position)
-                star.scale = node.scale.x
+                self.galaxy.stars[i].center = Point(position: node.position)
+                self.galaxy.stars[i].scale = node.scale.x
+                
+                if let color = newColor{
+                    self.galaxy.stars[i].color = color
+                }
+                
+                if let shape = newShape{
+                    self.galaxy.stars[i].shapeName = shape
+                }
                 
                 if let name = newName{
-                    star.name = name
+                    self.galaxy.stars[i].name = name
                 }
                 
                 if let description = newDescription {
-                    star.planetDescription = description
+                    self.galaxy.stars[i].planetDescription = description
                 }
+                
+                print("[GALAXYFACADE] SYNCD ", star.id)
+                
                 self.persistGalaxy()
                 break
             }
@@ -158,6 +169,7 @@ class GalaxyFacade{
     
     func persistGalaxy(){
         self.storage.updateGalaxy(to: self.galaxy)
+        self.galaxy = self.storage.getGalaxy()!
     }
     
     func forceSync(from scene: SCNNode){

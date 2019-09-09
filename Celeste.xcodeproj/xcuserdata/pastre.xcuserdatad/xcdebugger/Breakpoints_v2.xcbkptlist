@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Celeste/GalaxyFacade.swift"
-            timestampString = "589682565.215724"
+            timestampString = "589688807.1279221"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "68"
@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Celeste/GalaxyFacade.swift"
-            timestampString = "589682565.21582"
+            timestampString = "589688807.12831"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "126"
             endingLineNumber = "126"
-            landmarkName = "sync(node:name:description:)"
+            landmarkName = "sync(node:name:description:color:shape:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
