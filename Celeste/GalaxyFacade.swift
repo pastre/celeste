@@ -68,6 +68,10 @@ class GalaxyFacade{
         self.persistGalaxy()
     }
     
+    func reloadAllOrbits(){
+        
+    }
+    
     func createOrbit(around aroundNode: SCNNode, child childNode: SCNNode, with radius: CGFloat){
         print()
         
@@ -112,11 +116,9 @@ class GalaxyFacade{
     
     func sync(node: SCNNode, name newName: String?, description newDescription : String?){
         guard let nodeStar = self.galaxy.getStar(by: node) else {
-            print("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
+            fatalError("[GALAXYFACADE] ---- FAILED TO SYNC MODEL! PLEASE FIX ME!")
             return
         }
-        
-        print("NODE HAS ACTIONS", node.hasActions)
         
         for star in self.galaxy.stars{
             if star == nodeStar{
@@ -131,11 +133,11 @@ class GalaxyFacade{
                 if let description = newDescription {
                     star.planetDescription = description
                 }
+                self.persistGalaxy()
                 break
             }
         }
         
-        self.persistGalaxy()
     }
     
     func updateOrbit(of node: SCNNode){
@@ -156,6 +158,9 @@ class GalaxyFacade{
     
     func persistGalaxy(){
         self.storage.updateGalaxy(to: self.galaxy)
+    }
+    
+    func forceSync(from scene: SCNNode){
         
     }
 }

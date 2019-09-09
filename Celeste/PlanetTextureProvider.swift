@@ -110,7 +110,7 @@ class PlanetTextureProvider{
         
         print("\t-> Model Texture is", modelTexture)
 //        let maskedTexture = uiColor == nil ? modelTexture : modelTexture.maskWithColor(color: uiColor!)
-        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true) as? SCNNode else { return nil }
+        guard let modelNode = scene.rootNode.childNode(withName: modelShape!, recursively: true) else { return nil }
         
         
         

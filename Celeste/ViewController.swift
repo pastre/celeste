@@ -170,6 +170,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         for star in self.galaxy.stars{
             let node = star.getNode()
             self.sceneView.scene.rootNode.addChildNode(node)
+            self.applyPlanetName(name: star.name, to: node)
         }
         
         self.resetTracking()
@@ -567,8 +568,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
     }
     
     func disableOrbit(of node: SCNNode){
-        node.removeAllActions()
+        guard let inclinator = node.childNode(withName: "inclinator", recursively: true) else { return }
+        guard let orbiter = node.childNode(withName: "rotator", recursively: true)?.childNodes.first else { return }
+        let worldPos = orbiter.worldPosition
+        
+        orbiter.removeFromParentNode()
+        self.sceneView.scene.rootNode.addChildNode(orbiter)
+        orbiter.worldPosition = worldPos
+        
+        inclinator.removeFromParentNode()
+        
     }
+    
     
     func enableAllOrbits(){
         var orbitingNodes = [SCNNode]()
@@ -766,9 +777,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 //        self.
         if let s  = star {
             self.resetPosition(of: s)
-        } else {
-            self.moveNodeFromCamera()
         }
+        
+//        self.galaxyFacade.sync(node: <#T##SCNNode#>, name: <#T##String?#>, description: <#T##String?#>)
         self.closeAddPlanetMenu()
     }
     

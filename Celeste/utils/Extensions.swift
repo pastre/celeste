@@ -33,6 +33,7 @@ extension UIColor {
 }
 
 extension UIImage {
+
     func resizeImage(size: CGSize) -> UIImage? {
         
         UIGraphicsBeginImageContext(CGSize(width: size.width, height: size.height))
