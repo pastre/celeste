@@ -134,6 +134,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
         }
     }
     var hasDeleted = false
+    var hasLoaded = false
 
 
     // MARK: - UIViewController overrides
@@ -214,7 +215,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, Co
 
         
         self.timer?.invalidate()
-        self.loadingView.removeFromSuperview()
+        if !self.hasLoaded{
+            self.loadingView.removeFromSuperview()
+            self.hasLoaded = true
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
