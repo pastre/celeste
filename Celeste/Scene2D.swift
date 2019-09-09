@@ -85,6 +85,7 @@ class Scene2D: SKScene {
     
     func resetPlanetPosition() {
         if selectedShape != nil {
+            
             let selectedPlanet = planets[selectedShape.name!]!
             if !selectedPlanet.isChild {
                 selectedShape.run(.move(to: firstTouchPosition, duration: 0.75))
