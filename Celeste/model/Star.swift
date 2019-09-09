@@ -81,7 +81,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         try container.encode(self.name ?? "No name", forKey: .name)
         try container.encode(self.planetDescription ?? "No description", forKey: .description)
         try container.encode(self.shapeName.rawValue, forKey: .shapeName)
-        try container.encode(self.scale ?? 1, forKey: .scale)
+        try container.encode(self.scale!, forKey: .scale)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -107,7 +107,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
         self.name = try container.decode(String.self, forKey: .name)
         self.planetDescription = try container.decode(String.self, forKey: .description)
         self.shapeName = ShapeName.getShapeName(by: try container.decode(String.self, forKey: .shapeName))
-        
+        self.scale = try container.decode(Float.self, forKey: .scale)
         if self.name == "No name" { self.name = nil}
         if self.planetDescription == "No description" { self.planetDescription = nil}
     }
@@ -226,7 +226,7 @@ class Star: SCNNodeTransformer, SKNodeTransformer, Encodable, Decodable{
     }
     var planetDescription: String?{
         didSet{
-            if name == "No name"{
+            if name == "No description"{
                 self.name = nil
             }
         }
